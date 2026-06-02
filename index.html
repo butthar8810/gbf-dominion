@@ -1,37 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="js/dominion.js"></script>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="https://magicant.github.io/sjavascript/mt.js"></script>
+	<script src="js/dominion.js"></script>
 
-    <link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/style.css">
 
-    <title>Dominion</title>
+	<title>Dominion</title>
 </head>
 <body onload="startGame()">
-    <div class="supply-area">
-        <div class="victory-point-area"></div>
-        <div class="treasure-point-area"></div>
-        <div class="kingdon-area"></div>
-    </div>
-    <div class="play-area">
-        <div class="left-info">
-            <div class="count-area">
-                <div class="action-count">1</div>
-                <div class="buy-count">2</div>
-                <div class="moon-count">3</div>
-            </div>
-            <div class="point-area">
-                <div class="point-count">1</div>
-            </div>
-            <div class="deck-area">
-                <div class="deck-count">10</div>
-            </div>
-        </div>
-    </div>
+	<img class="back" src="images/back.jpg" alt="背景">
+	<div class="supply-area">
+		<div class="victory-point-area"></div>
+		<div class="treasure-point-area"></div>
+		<div class="kingdon-area"></div>
+	</div>
+	<div class="infomation-area">
+		<div class="left-info">
+			<div class="count-area">
+				<div class="action-count">1</div>
+				<div class="buy-count">1</div>
+				<div class="moon-count">0</div>
+			</div>
+			<div class="point-area">
+				<div class="point-count">1</div>
+			</div>
+			<div class="deck-area">
+				<img src="images/deck.png" alt="">
+				<div class="deck-count"></div>
+			</div>
+		</div>
+		<div class="main-info">
+			<div class="play-area"></div>
+		</div>
+		<div class="right-info">
+			<div class="phase-info">
+				<div class="action-phase">アクションフェイズ</div>
+				<div class="buy-phase">購入フェイズ</div>
+				<div class="cleanup-phase">クリーンアップ</div>
+			</div>
+			<div class="trash-count">1</div>
+		</div>
+	</div>
+	<div class="hand-area">
+		<div class="hand-info"></div>
+	</div>
 
 
 </body>
