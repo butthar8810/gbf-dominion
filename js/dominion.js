@@ -1,35 +1,35 @@
 const victoryPointCard = {
-	High: {name: '特別交換券', cost: 8, type: '勝利点', remain: 8, func: cardHigh, effect: '6点', image: 'images/point_6.jpg'},
-	Middle: {name: 'ダマスカス鋼', cost: 5, type: '勝利点', remain: 8, func: cardMiddle, effect: '3点', image: 'images/point_3.jpg'},
-	Low: {name: 'ラジエルの書', cost: 2, type: '勝利点', remain: 8+3, func: cardLow, effect: '1点', image: 'images/point_1.jpg'}
+	High: {name: 'ダマスカス鋼', cost: 8, type: '勝利点', remain: 8, func: cardHigh, effect: '6点', image: 'images/point_6.jpg'},
+	Middle: {name: '玉鋼', cost: 5, type: '勝利点', remain: 8, func: cardMiddle, effect: '3点', image: 'images/point_3.jpg'},
+	Low: {name: 'ギガス鋼', cost: 2, type: '勝利点', remain: 8+3, func: cardLow, effect: '1点', image: 'images/point_1.jpg'}
 };
 const treasurePointCard = {
-	Gold: {name: '金月', cost: 6, type: '財宝', remain: 30, func: cardGold, effect: '3●', image: 'images/moon_Gold.png'},
-	Silver: {name: '銀月', cost: 3, type: '財宝', remain: 40, func: cardSilver, effect: '2●', image: 'images/moon_Silver.png'},
-	Bronze: {name: '銅月', cost: 0, type: '財宝', remain: 46+7, func: cardBronze, effect: '1●', image: 'images/moon_Bronze.png'}
+	Gold: {name: '金月', cost: 6, type: '財宝', remain: 30, func: cardGold, effect: '3Moon', image: 'images/moon_Gold.png'},
+	Silver: {name: '銀月', cost: 3, type: '財宝', remain: 40, func: cardSilver, effect: '2Moon', image: 'images/moon_Silver.png'},
+	Bronze: {name: '銅月', cost: 0, type: '財宝', remain: 46+7, func: cardBronze, effect: '1Moon', image: 'images/moon_Bronze.png'}
 };
 //用いる王国カード
 const kingdomCard = [
-	{name: '地下貯蔵庫', cost: 2, type: 'アクション', remain: 10, func: cardDammy, effect: '+1アクション、手札を好きな枚数捨て、捨てた枚数だけドロー', image: 'images/dammy.jpg'},
+	{name: 'アストラルアーム', cost: 2, type: 'アクション', remain: 10, func: cardAstralWeapons, effect: '+1アクション、手札を好きな枚数捨て、捨てた枚数だけドロー', image: 'images/Astral_Weapons.jpg'},
 	{name: '礼拝堂', cost: 2, type: 'アクション', remain: 10, func: cardDammy, effect: '手札を4枚まで廃棄可能', image: 'images/dammy.jpg'},
-	{name: '家臣', cost: 3, type: 'アクション', remain: 10, func: cardDammy, effect: '+2●、デッキのトップを捨て、それがアクションなら使用できる', image: 'images/dammy.jpg'},
+	{name: 'ガチャチケット', cost: 3, type: 'アクション', remain: 10, func: cardGachaTicket, effect: '+2Moon、デッキのトップを捨て、それがアクションなら使用できる', image: 'images/Gacha_Ticket.png'},
 	{name: '工房', cost: 3, type: 'アクション', remain: 10, func: cardDammy, effect: '4コスト以下のカード1枚を獲得', image: 'images/dammy.jpg'},
-	{name: '商人', cost: 3, type: 'アクション', remain: 10, func: cardDammy, effect: '+1ドロー+1アクション、銀貨1枚を使用すれば+1●', image: 'images/dammy.jpg'},
-	{name: '前駆者', cost: 3, type: 'アクション', remain: 10, func: cardDammy, effect: '+1ドロー+1アクション、捨て札からデッキトップにカード1枚を置ける', image: 'images/dammy.jpg'},
-	{name: '村', cost: 3, type: 'アクション', remain: 10, func: cardDammy, effect: '+1ドロー+2アクション', image: 'images/dammy.jpg'},
-	{name: '改築', cost: 4, type: 'アクション', remain: 10, func: cardDammy, effect: '手札1枚を廃棄、(廃棄カードのコスト)+2コスト以下のカード1枚を獲得', image: 'images/dammy.jpg'},
-	{name: '鍛冶屋', cost: 4, type: 'アクション', remain: 10, func: cardDammy, effect: '+3ドロー', image: 'images/dammy.jpg'},
-	{name: '金貸し', cost: 4, type: 'アクション', remain: 10, func: cardDammy, effect: '銅貨1枚を廃棄してもよい、廃棄した場合+3●', image: 'images/dammy.jpg'},
-	{name: '玉座の間', cost: 4, type: 'アクション', remain: 10, func: cardDammy, effect: '手札のアクション1枚を2回使用してもよい', image: 'images/dammy.jpg'},
-	{name: '庭園', cost: 4, type: '勝利点', remain: 10, func: cardGarden, effect: 'デッキ10枚につき1点', image: 'images/dammy.jpg'},
-	{name: '市場', cost: 5, type: 'アクション', remain: 10, func: cardMarket, effect: '+1ドロー+1アクション+1購入+1●', image: 'images/dammy.jpg'},
-	{name: '衛兵', cost: 5, type: 'アクション', remain: 10, func: cardDammy, effect: '+1ドロー+1アクション、デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。', image: 'images/dammy.jpg'},
-	{name: '議事堂', cost: 5, type: 'アクション', remain: 10, func: cardDammy, effect: '+4ドロー+1購入、他プレイヤーも+1ドロー', image: 'images/dammy.jpg'},
-	{name: '研究所', cost: 5, type: 'アクション', remain: 10, func: cardDammy, effect: '+2ドロー+1アクション', image: 'images/dammy.jpg'},
-	{name: '鉱山', cost: 5, type: 'アクション', remain: 10, func: cardDammy, effect: '財宝1枚を廃棄、(廃棄カードのコスト)+3以下の財宝1枚を手札に獲得', image: 'images/dammy.jpg'},
-	{name: '祝祭', cost: 5, type: 'アクション', remain: 10, func: cardfestival, effect: '+2アクション+1購入+2●', image: 'images/dammy.jpg'},
-	{name: '書庫', cost: 5, type: 'アクション', remain: 10, func: cardDammy, effect: '手札が7枚になるまでカードを引く。アクションカードを引いた場合は脇に置け、7枚になるまで引いた後捨てる', image: 'images/dammy.jpg'},
-	{name: '職人', cost: 6, type: 'アクション', remain: 10, func: cardDammy, effect: '5コスト以下のカード1枚を手札に獲得。手札1枚をデッキトップに置く', image: 'images/dammy.jpg'}
+	{name: 'ラジエルの書・銅', cost: 3, type: 'アクション', remain: 10, func: cardSeferRazielBronze, effect: '+1ドロー+1アクション、銀月1枚を使用すれば+1Moon', image: 'images/Sefer_Raziel_1.jpg'},
+	{name: 'ラジエルの書・銀', cost: 3, type: 'アクション', remain: 10, func: cardSeferRazielSilver, effect: '+1ドロー+1アクション、捨て札からデッキトップにカード1枚を置ける', image: 'images/Sefer_Raziel_2.jpg'},
+	{name: 'ソウルシード', cost: 3, type: 'アクション', remain: 10, func: cardSoulBerry, effect: '+1ドロー+2アクション', image: 'images/Soul_Berry.jpg'},
+	{name: 'プロヴィデンスグローブ ', cost: 4, type: 'アクション', remain: 10, func: cardProvidenceGrove, effect: '手札1枚を廃棄、(廃棄カードのコスト)+2コスト以下のカード1枚を獲得', image: 'images/Providence_Grove.jpg'},
+	{name: '輝晶', cost: 4, type: 'アクション', remain: 10, func: cardCrystal, effect: '+3ドロー', image: 'images/Crystal.jpg'},
+	{name: 'ルピ', cost: 4, type: 'アクション', remain: 10, func: cardLupi, effect: '銅貨1枚を廃棄してもよい、廃棄した場合+3Moon', image: 'images/lupi.jpg'},
+	{name: 'カーバンクル', cost: 4, type: 'アクション', remain: 10, func: cardCarbuncle, effect: '手札のアクション1枚を2回使用してもよい', image: 'images/Carbuncle.jpg'},
+	{name: 'ダマスカス骸晶', cost: 4, type: '勝利点', remain: 10, func: cardDamascusCrystal, effect: 'デッキ10枚につき1点', image: 'images/Damascus_Crystal.jpg'},
+	{name: 'エリクシールハーフ', cost: 5, type: 'アクション', remain: 10, func: cardHalfElixirs, effect: '+1ドロー+1アクション+1購入+1Moon', image: 'images/Half_Elixirs.jpg'},
+	{name: 'ラジエルの書・金', cost: 5, type: 'アクション', remain: 10, func: cardSeferRazielGold, effect: '+1ドロー+1アクション、デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。', image: 'images/Sefer_Raziel_3.jpg'},
+	{name: '月光晶', cost: 5, type: 'アクション', remain: 10, func: cardMoonlightStone, effect: '+4ドロー+1購入、他プレイヤーも+1ドロー', image: 'images/Moonlight_Stone.jpg'},
+	{name: 'ソウルパウダー', cost: 5, type: 'アクション', remain: 10, func: cardSoulPowder, effect: '+2ドロー+1アクション', image: 'images/Soul_Powder.png'},
+	{name: 'オプティマスグローブ', cost: 5, type: 'アクション', remain: 10, func: cardOptimusGlobe, effect: '財宝1枚を廃棄、(廃棄カードのコスト)+3以下の財宝1枚を手札に獲得', image: 'images/Optimus_Globe.jpg'},
+	{name: 'エリクシール', cost: 5, type: 'アクション', remain: 10, func: cardElixirs, effect: '+2アクション+1購入+2Moon', image: 'images/Elixirs.png'},
+	{name: '金剛晶', cost: 5, type: 'アクション', remain: 10, func: cardSunlightStone, effect: '手札が7枚になるまでカードを引く。アクションカードを引いた場合は脇に置き、7枚になるまで引いた後捨てる', image: 'images/Sunlight_Stone.jpg'},
+	{name: 'シェロチケ', cost: 6, type: 'アクション', remain: 10, func: cardSiero, effect: '5コスト以下のカード1枚を手札に獲得。手札1枚をデッキトップに置く', image: 'images/Siero.jpg'}
 ];
 // 定数
 const supplyKingdomNum = 10;
@@ -47,14 +47,20 @@ let buyCount = 1;
 let moonCount = 0;
 let currentPoint = 1;
 let currentPhase;
-
+let SeferRazielBronzeFlag = false;
 
 
 /*******************************************************/
 /* startGame：ゲームスタート
 /*******************************************************/
 function startGame(){
-	
+	//モーダルの外側をクリックしたらモーダルを閉じる
+	$(document).on('click',function(e) {
+		if(!$(e.target).closest('.modal-body').length) {
+			$('.modal-container').removeClass('active');
+		}
+	});
+
 	//用いる王国カードを10種類決める
 	supplyKingdom = shuffleArray(kingdomCard).slice(supplyKingdomNum);
 	// デッキの準備
@@ -90,6 +96,32 @@ function startTurn(){
 
 	startActionPhase();
 
+}
+/*******************************************************/
+/* startActionPhase：アクションフェイズを開始する
+/*******************************************************/
+function startActionPhase(){
+	// アクションフェイズに設定
+	changePhase(phase.action);
+	updateNextPhaseBtnDom();
+	updateInfomationDom();
+	// 手札にアクションカードがなければ、次のフェイズに移行する
+	if (myHand.findIndex((card) => card.type == 'アクション') == -1) {
+		changeNextPhase();
+	}
+}
+function startBuyPhase(){
+	changePhase(phase.buy);
+	updateNextPhaseBtnDom();
+	updateInfomationDom();
+}
+function startCleanupPhase(){
+	changePhase(phase.cleanup);
+	updateNextPhaseBtnDom();
+	updateInfomationDom();
+	cleanUp();
+
+	startTurn();
 }
 /*******************************************************/
 /* setupDeck：初期デッキとなる10枚のカードを配る
@@ -136,6 +168,10 @@ function buySupplyCard(supplyCard, count = 1){
 	moonCount -=supplyCard.cost;
 	updateMoonDom();
 	drawSupplyCard(supplyCard, count);
+
+	if (buyCount <= 0) {
+		changeNextPhase();
+	}
 }
 /*******************************************************/
 /* drawDeckCard：デッキからカードをドローする
@@ -237,21 +273,7 @@ function changePhaseDOM(ph){
 			break;
 	}
 }
-/*******************************************************/
-/* startActionPhase：アクションフェイズを開始する
-/*******************************************************/
-function startActionPhase(){
-	changePhase(phase.action);
-}
-function startBuyPhase(){
-	changePhase(phase.buy);
-}
-function startCleanupPhase(){
-	changePhase(phase.cleanup);
-	cleanUp();
 
-	startTurn();
-}
 /*******************************************************/
 /* reconfigureDeck：捨て札のカードをデッキに再構成する
 /*******************************************************/
@@ -293,6 +315,32 @@ function updateDeckDom(){
 }
 function updateTrashDom(){
 	$(`.trash-count`).html(`${myDiscard.length}`);
+}
+function updateNextPhaseBtnDom(){
+	switch(currentPhase){
+		case phase.action:
+			$(`.next-phase`).html(`アクション<br>フェイズ終了`);
+			break;
+		case phase.buy:
+			$(`.next-phase`).html(`購入フェイズ<br>終了`);
+			break;
+		case phase.cleanup:
+		default:
+			break;
+	}
+}
+function updateInfomationDom(){
+	switch(currentPhase){
+		case phase.action:
+			$(`.info-text`).html(`アクションカードを使用してください`);
+			break;
+		case phase.buy:
+			$(`.info-text`).html(`ムーンカードを使用してください`);
+			break;
+		case phase.cleanup:
+		default:
+			break;
+	}
 }
 function updatePointDom(){
 	currentPoint = 0;
@@ -357,8 +405,12 @@ function updateHandDom(){
 					break;
 			}
 		});
+		cardDiv.contextmenu(hand ,() => {
+			$('.modal-content').html(`${hand.effect}`);
+			$('.modal-container').addClass('active');
+			return false;
+		});
 	});
-
 }
 function updateSupplyDom(){
 	$(".kingdon-area").html(``);
@@ -379,6 +431,11 @@ function updateSupplyDom(){
 					break;
 			}
 		});
+		$(`.card${i}`).contextmenu(kingdom ,() => {
+			$('.modal-content').html(`${kingdom.effect}`);
+			$('.modal-container').addClass('active');
+			return false;
+		});
 	});
 	$(".victory-point-area").html(``);
 	for (const key in victoryPointCard) {
@@ -397,6 +454,11 @@ function updateSupplyDom(){
 						alert("このフェイズでは購入はできません");
 					break;
 			}
+		});
+		$(`.victory_${key}`).contextmenu(victoryPointCard[key] ,() => {
+			$('.modal-content').html(`${victoryPointCard[key].effect}`);
+			$('.modal-container').addClass('active');
+			return false;
 		});
 	};
 	$(".treasure-point-area").html(``);
@@ -417,6 +479,11 @@ function updateSupplyDom(){
 					break;
 			}
 		});
+		$(`.treasure_${key}`).contextmenu(treasurePointCard[key] ,() => {
+			$('.modal-content').html(`${treasurePointCard[key].effect}`);
+			$('.modal-container').addClass('active');
+			return false;
+		});
 	};
 }
 function updatePlayAreaDom(){
@@ -434,13 +501,11 @@ function updatePlayAreaDom(){
 /*******************************************************/
 /* 各カードの効果関数の宣言
 /*******************************************************/
-function cardDammy(){
-	
-}
+function cardDammy(){}
 function cardLow(){return 1;}
 function cardMiddle(){return 3;}
 function cardHigh(){return 6;}
-function cardGarden(){return (myHand.length/10);}
+function cardDamascusCrystal(){return (myHand.length/10);}
 function cardBronze(){
 	// 1メダル追加
 	moonCount += 1;
@@ -449,6 +514,9 @@ function cardBronze(){
 function cardSilver(){
 	// 3メダル追加
 	moonCount += 3;
+	if (SeferRazielBronzeFlag){
+		moonCount += 1;
+	}
 	updateMoonDom();
 }
 function cardGold(){
@@ -456,16 +524,64 @@ function cardGold(){
 	moonCount += 6;
 	updateMoonDom();
 }
+function cardAstralWeapons(){
+	// +1アクション、手札を好きな枚数捨て、捨てた枚数だけドロー
+	actionCount += 1;
+	updateActionDom();
+	$(`.hand-info`).html('');
+	myHand.forEach((hand, i) => {
+		const cardDiv = $('<div>');
+		$(`.hand-info`).append(
+			cardDiv.css('left', i*(900/myHand.length)).addClass('hand-card').html(
+				`${hand.name}<img src="${hand.image}">`
+			)
+		);
+		// 手札クリック時の処理登録
+		cardDiv.click(hand ,() => {
+			alert('捨てます');
+		});
+	});
+}
+function cardGachaTicket(){
+	// +2Moon、デッキのトップを捨て、それがアクションなら使用できる
+	moonCount += 2;
+	updateMoonDom();
 
-
-
-
-
-
-
-
-function cardMarket(){
-	//+1ドロー+1アクション+1購入+1●
+}
+function cardSeferRazielBronze(){
+	// +1ドロー+1アクション、銀月1枚を使用すれば+1Moon
+	drawDeckCard(1);
+	actionCount += 1;
+	updateActionDom();
+	// 銀月を使用したときに+1Moonするフラグを立てる
+	SeferRazielBronzeFlag = true;
+}
+function cardSeferRazielSilver(){
+	// +1ドロー+1アクション、捨て札からデッキトップにカード1枚を置ける
+	drawDeckCard(1);
+	actionCount += 1;
+	updateActionDom();
+}
+function cardSeferRazielGold(){
+	// +1ドロー+1アクション、デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。
+	drawDeckCard(1);
+	actionCount += 1;
+	updateActionDom();
+}
+function cardSoulBerry(){
+	// +1ドロー+2アクション
+	drawDeckCard(1);
+	actionCount += 2;
+	updateActionDom();
+}
+function cardSoulPowder(){
+	// +2ドロー+1アクション
+	drawDeckCard(2);
+	actionCount += 1;
+	updateActionDom();
+}
+function cardHalfElixirs(){
+	//+1ドロー+1アクション+1購入+1Moon
 	drawDeckCard(1);
 	actionCount += 1;
 	updateActionDom();
@@ -474,10 +590,8 @@ function cardMarket(){
 	moonCount += 1;
 	updateMoonDom();
 }
-
-
-function cardfestival(){
-	//+2アクション+1購入+2●
+function cardElixirs(){
+	//+2アクション+1購入+2Moon
 	actionCount += 2;
 	updateActionDom();
 	buyCount += 1;
@@ -485,7 +599,34 @@ function cardfestival(){
 	moonCount += 2;
 	updateMoonDom();
 }
-
+function cardProvidenceGrove(){
+	// 手札1枚を廃棄、(廃棄カードのコスト)+2コスト以下のカード1枚を獲得
+}
+function cardOptimusGlobe(){
+	// 財宝1枚を廃棄、(廃棄カードのコスト)+3以下の財宝1枚を手札に獲得
+}
+function cardCrystal(){
+	// +3ドロー
+	drawDeckCard(3);
+}
+function cardMoonlightStone(){
+	// +4ドロー+1購入、他プレイヤーも+1ドロー
+	drawDeckCard(4);
+	buyCount += 1;
+	updateBuyDom();
+}
+function cardSunlightStone(){
+	// 手札が7枚になるまでカードを引く。アクションカードを引いた場合は脇に置き、7枚になるまで引いた後捨てる
+}
+function cardLupi(){
+	// 銅貨1枚を廃棄してもよい、廃棄した場合+3Moon
+}
+function cardCarbuncle(){
+	// 手札のアクション1枚を2回使用してもよい
+}
+function cardSiero(){
+	// 5コスト以下のカード1枚を手札に獲得。手札1枚をデッキトップに置く
+}
 
 
 
