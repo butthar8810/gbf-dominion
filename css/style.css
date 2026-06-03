@@ -17,8 +17,8 @@
 .supply-area{
 	width: 100%;
 	max-width: 900px;
-	margin: 10px auto;
-	height: 400px;
+	margin: 0px auto;
+	height: 380px;
 	display: flex;
 	align-items: center;
 }
@@ -96,7 +96,7 @@
 	width: 100%;
 	max-width: 900px;
 	margin: 10px auto;
-	height: 30vh;
+	height: 25vh;
 	display: flex;
 }
 .left-info{
@@ -220,6 +220,9 @@
 .phase-info{
 	width: 100%;
 }
+.next-phase{
+	width: 100%;
+}
 .phase-info div{
 	width: 100%;
 	text-align: center;
@@ -249,14 +252,16 @@
 
 .hand-area{
 	width: 100%;
+	max-width: 900px;
+	height: 20vh;
+	margin: 10px auto;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 .hand-info{
 	width: 100%;
-	max-width: 900px;
-	height: 20vh;
+	height: 100%;
 	display: flex;
 	flex-wrap: nowrap;
 	position: relative;
