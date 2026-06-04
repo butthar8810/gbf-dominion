@@ -2,6 +2,7 @@
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
+	user-select: none;
 }
 
 .back{
@@ -14,6 +15,9 @@
 	opacity: 0.7;
 	z-index: -1;
 }
+/***********************************************************************/
+/* supply-area
+/***********************************************************************/
 .supply-area{
 	width: 100%;
 	max-width: 900px;
@@ -55,8 +59,11 @@
 }
 
 .supply-card{
+	font-size: 15px;
+	line-height: 20px;
 	text-align: center;
-	background-color: gray;
+	border: 2px solid black;
+	border-radius: 5px;
 	position: relative;
 	width: 100%;
 	height: 100%;
@@ -64,6 +71,18 @@
 }
 .supply-card img{
 	width: 100%;
+}
+.kingdon-card{
+	background-color: #f3f0e8;
+}
+.victory-card{
+	background-color: #bad6a5;
+}
+.treasure-card{
+	background-color: #fff897;
+}
+.empty-card{
+	background-color: #1d1916;
 }
 .cost{
 	position: absolute;
@@ -92,6 +111,9 @@
 	border-radius: 50%;
 }
 
+/***********************************************************************/
+/* infomation-area
+/***********************************************************************/
 .infomation-area{
 	width: 100%;
 	max-width: 900px;
@@ -99,6 +121,9 @@
 	height: 25vh;
 	display: flex;
 }
+/***********************************************************************/
+/* left-info
+/***********************************************************************/
 .left-info{
 	width: 20%;
 	height: 100%;
@@ -115,9 +140,10 @@
 	align-items: center;
 	width: 40px;
 	height: 40px;
-	color: white;
+	color: black;
 	font-size: 24px;
-	background-color: black;
+	background-color: white;
+	border: 2px solid gray;
 	border-radius: 50%;
 	margin: 0 2px;
 }
@@ -191,6 +217,9 @@
 	transform: translate(-50%, -50%);
 }
 
+/***********************************************************************/
+/* main-info
+/***********************************************************************/
 .main-info{
 	width: 65%;
 	height: 100%;
@@ -211,14 +240,16 @@
 }
 .play-area{
 	width: 100%;
-	height: calc(100% - 2rem);
+	margin-top: 5px;
+	height: calc(100% - 2rem - 5px);
 	position: relative;
 }
 .play-card{
 	width: 120px;
 	height: 150px;
-	background-color: gray;
 	text-align: center;
+	border: 2px solid black;
+	border-radius: 5px;
 	box-shadow: 1px 1px 5px black;
 	position: absolute;
 	top: 0;
@@ -228,6 +259,9 @@
 	width: 100%;
 }
 
+/***********************************************************************/
+/* right-info
+/***********************************************************************/
 .right-info{
 	width: 20%;
 	height: 100%;
@@ -235,7 +269,7 @@
 .phase-info{
 	width: 100%;
 }
-.next-phase{
+.multiple-btn{
 	width: 100%;
 	height: 3rem;
 	color: black;
@@ -247,7 +281,7 @@
 	line-height: 20px;
 	transition: all 0.3s ease;
 }
-.next-phase:hover{
+.multiple-btn:hover{
 	color: white;
 	background-color: gray;
 }
@@ -278,6 +312,9 @@
 }
 
 
+/***********************************************************************/
+/* hand-area
+/***********************************************************************/
 .hand-area{
 	width: 100%;
 	max-width: 900px;
@@ -297,7 +334,8 @@
 .hand-card{
 	width: 120px;
 	height: 150px;
-	background-color: gray;
+	border: 2px solid black;
+	border-radius: 5px;
 	text-align: center;
 	box-shadow: 1px 1px 5px black;
 	position: absolute;
@@ -313,7 +351,7 @@
 	box-shadow: 1px 1px 5px red;
 }
 .hand-card.available{
-	box-shadow: 1px 1px 5px rgb(112, 253, 24);
+	box-shadow: -5px -5px 15px 5px rgb(112, 253, 24), 5px 5px 15px 7px rgb(112, 253, 24) !important;
 }
 .hand-card img{
 	width: 100%;
@@ -327,32 +365,80 @@
 
 
 
+/***********************************************************************/
+/* 説明用モーダルの設定
+/***********************************************************************/
 /*モーダル本体の指定 + モーダル外側の背景の指定*/
-.modal-container{
+.explanation-modal{
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
 	text-align: center;
-	background: rgba(0,0,0,50%);
+	background: rgba(0,0,0,0.5);
 	padding: 40px 20px;
 	overflow: auto;
 	opacity: 0;
 	visibility: hidden;
-	transition: .3s;
-    box-sizing: border-box;
+	transition: all .3s;
+	box-sizing: border-box;
+	z-index: 1000;
 }
-/*モーダル本体の擬似要素の指定*/
-.modal-container:before{
-	content: "";
+
+/*モーダル本体に「active」クラス付与した時のスタイル*/
+.explanation-modal.active{
+	opacity: 1;
+	visibility: visible;
+}
+/*モーダル枠の指定*/
+.explanation-modal-body{
+	position: relative;
 	display: inline-block;
 	vertical-align: middle;
-	height: 100%;
+	max-width: 300px;
+	width: 90%;
 }
+/*モーダル内のコンテンツの指定*/
+.explanation-modal-card{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	border: 3px solid black;
+	border-radius: 10px;
+}
+.explanation-modal-card h1{
+	font-size: 24px;
+}
+.explanation-modal-card img{
+	width: 100%;
+}
+.explanation-modal-card div{
+	padding: 10px 30px;
+	height: 200px;
+	display: flex;
+	font-size: 20px;
+	font-weight: 700;
+	justify-content: center;
+	align-items: center;
+}
+/***********************************************************************/
+/* モーダルの設定
+/***********************************************************************/
+/*モーダル本体の指定 + モーダル外側の背景の指定*/
+.modal{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	visibility: hidden;
+	transition: all .3s;
+	box-sizing: border-box;
+}
+
 /*モーダル本体に「active」クラス付与した時のスタイル*/
-.modal-container.active{
-	opacity: 1;
+.modal.active{
 	visibility: visible;
 }
 /*モーダル枠の指定*/
@@ -360,26 +446,58 @@
 	position: relative;
 	display: inline-block;
 	vertical-align: middle;
-	max-width: 500px;
+	max-width: 600px;
 	width: 90%;
+	height: 380px;
+	background-color: #1d1916;
+	border: 3px solid gray;
 }
-/*モーダルを閉じるボタンの指定*/
-.modal-close{
-	position: absolute;
+.modal-title{
+	width: 100%;
+	height: 30px;
+	font-size: 20px;
+	font-weight: 900;
+	color: white;
+	background-color: #5e1917;
 	display: flex;
-    align-items: center;
-    justify-content: center;
-	top: -40px;
-	right: -40px;
-	width: 40px;
-	height: 40px;
-	font-size: 40px;
-	color: #fff;
-	cursor: pointer;
+	justify-content: center;
+	align-items: center;
+
 }
 /*モーダル内のコンテンツの指定*/
 .modal-content{
-	background: #fff;
-	text-align: left;
-	padding: 30px;
+	width: 100%;
+	height: 340px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.modal-card{
+	width: 200px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	border: 2px solid black;
+	border-radius: 7px;
+}
+.modal-card.available{
+	box-shadow: -5px -5px 15px 5px rgb(112, 253, 24), 5px 5px 15px 7px rgb(112, 253, 24) !important;
+	cursor: pointer;
+}
+.modal-card h1{
+	font-size: 18px;
+}
+.modal-card img{
+	width: 100%;
+}
+.modal-card div{
+	padding: 10px 30px;
+	height: 150px;
+	display: flex;
+	font-size: 15px;
+	font-weight: 700;
+	justify-content: center;
+	align-items: center;
 }
