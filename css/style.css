@@ -307,6 +307,14 @@
 .hand-card:hover{
 	transform: translateY(-30px);
 }
+.hand-card.trash{
+	transform: translateY(-30px);
+	background-color: rgba(254, 197, 105);
+	box-shadow: 1px 1px 5px red;
+}
+.hand-card.available{
+	box-shadow: 1px 1px 5px rgb(112, 253, 24);
+}
 .hand-card img{
 	width: 100%;
 }
