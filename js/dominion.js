@@ -39,6 +39,7 @@ const phase = {
 	buy: '購入フェイズ', 
 	cleanup: 'クリーンアップフェイズ',
 	executeActionByCellar: 'アクション実行フェイズ(地下貯蔵庫)',
+	executeActionByChapel: 'アクション実行フェイズ(礼拝堂)',
 	executeActionByRemodel: 'アクション実行フェイズ(工房)',
 	executeActionByMine: 'アクション実行フェイズ(鉱山)',
 	executeActionByVassal: 'アクション実行フェイズ(家臣)'
@@ -320,6 +321,10 @@ function pushMultiplebtn(){
 			break;
 		case phase.executeActionByCellar:
 			cardCellarSub();
+			startActionPhase();
+			break;
+		case phase.executeActionByChapel:
+			cardChapelSub();
 			startActionPhase();
 			break;
 		case phase.executeActionByRemodel:
@@ -633,19 +638,9 @@ function clickHandProcess(handCardDiv, hand){
 			}
 			break;
 		case phase.executeActionByCellar:
+		case phase.executeActionByChapel:
 			if (index === -1) {
 				if(tmpArea.length < 4){
-					tmpArea.unshift(hand);
-					handCardDiv.addClass("trash");
-				}
-			} else {
-				tmpArea.splice(index, 1);
-				handCardDiv.removeClass("trash");
-			}
-			break;
-		case phase.executeActionByRemodel:
-			if (index === -1) {
-				if (tmpArea.length < 1){
 					tmpArea.unshift(hand);
 					handCardDiv.addClass("trash");
 				}
@@ -742,8 +737,22 @@ function cardCellarSub(){
 /*******************************************************/
 /* 「礼拝堂」の効果関数の宣言
 /*******************************************************/
-function cardChapel(){}
+function cardChapel(){
+	//手札を4枚まで廃棄可能
+	currentPhase = phase.executeActionByChapel;
+	updateNextPhaseBtnDom(`ＯＫ`);
+	updateInfomationDom(`廃棄するカードを選んでください`);
 
+	updateHandDom();
+}
+function cardChapelSub(){
+	//手札を4枚まで廃棄可能
+	while (tmpArea.length > 0) {
+		const trashCard = tmpArea.shift();
+		const index = myHand.findIndex((card) => card.id == trashCard.id);
+		const card = myHand.splice(index, 1);
+	}
+}
 
 
 /*******************************************************/
@@ -790,7 +799,9 @@ function cardVassalSub(){
 /*******************************************************/
 /* 「工房」の効果関数の宣言
 /*******************************************************/
-function cardWorkshop(){}
+function cardWorkshop(){
+	//4コスト以下のカード1枚を獲得
+}
 
 /*******************************************************/
 /* 「商人」の効果関数の宣言
@@ -838,14 +849,22 @@ function cardRemodel(){
 }
 function cardRemodelSub(){
 	// 手札1枚を廃棄、(廃棄カードのコスト)+2コスト以下のカード1枚を獲得
+	if(tmpArea.length === 0){
+		return false;
+	}
 	const discardCard = tmpArea.shift();
 	const index = myHand.findIndex((card) => card.id == discardCard.id);
+	if (index === -1) {
+		return false;
+	}
 	const cost = myHand.splice(index, 1)[0].cost;
 	updateSupplyDom();
 	updateHandDom();
 
 	exchangeCost = cost + 2;
 	updateInfomationDom(`獲得するカードを選んでください（コスト${exchangeCost}以下）`);
+	
+	return true;
 }
 
 /*******************************************************/
