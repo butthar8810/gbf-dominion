@@ -66,7 +66,6 @@
 	border-radius: 5px;
 	position: relative;
 	width: 100%;
-	height: 100%;
 	cursor: pointer;
 }
 .supply-card img{
@@ -246,7 +245,7 @@
 }
 .play-card{
 	width: 120px;
-	height: 150px;
+	aspect-ratio: 12 / 15;
 	text-align: center;
 	border: 2px solid black;
 	border-radius: 5px;
@@ -330,22 +329,26 @@
 	display: flex;
 	flex-wrap: nowrap;
 	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .hand-card{
 	width: 120px;
-	height: 150px;
+	aspect-ratio: 12 / 15;
 	border: 2px solid black;
 	border-radius: 5px;
 	text-align: center;
 	box-shadow: 1px 1px 5px black;
-	position: absolute;
-	top: 0;
 	transition: transform 0.2s ease-in-out;
+
+
+	margin-right: -2rem;
 }
 .hand-card:hover{
 	transform: translateY(-30px);
 }
-.hand-card.trash{
+.hand-card.select{
 	transform: translateY(-30px);
 	background-color: rgba(254, 197, 105);
 	box-shadow: 1px 1px 5px red;
