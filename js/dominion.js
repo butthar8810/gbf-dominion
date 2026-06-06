@@ -1,19 +1,17 @@
-const cardType = {
-	Action: 'アクション',
-	Point: '勝利点',
-	Money: 'Moon'
-}
+// タイプ
+const cardType = {Action: 'アクション', Point: '勝利点', Money: 'Moon'}
+// 勝利点カード
 const victoryPointCard = {
 	High: {name: 'ダマスカス鋼', cost: 8, type: cardType.Point, remain: 8, func: cardHigh, effect: '+6点', image: 'images/point_6.jpg'},
 	Middle: {name: '玉鋼', cost: 5, type: cardType.Point, remain: 8, func: cardMiddle, effect: '+3点', image: 'images/point_3.jpg'},
 	Low: {name: 'ギガス鋼', cost: 2, type: cardType.Point, remain: 8+3, func: cardLow, effect: '+1点', image: 'images/point_1.jpg'}
 };
+// コイン(Moon)カード
 const treasurePointCard = {
 	Gold: {name: 'ゴールドムーン', cost: 6, type: cardType.Money, remain: 30, func: cardGold, effect: '+3Moon', image: 'images/moon_Gold.png'},
 	Silver: {name: 'シルバームーン', cost: 3, type: cardType.Money, remain: 40, func: cardSilver, effect: '+2Moon', image: 'images/moon_Silver.png'},
 	Bronze: {name: 'ブロンズムーン', cost: 0, type: cardType.Money, remain: 46+7, func: cardBronze, effect: '+1Moon', image: 'images/moon_Bronze.png'}
 };
-
 //用いる王国カード
 const kingdomCard = {
 	Cellar: {name: '騎空艇の貨物室', cost: 2, type: cardType.Action, remain: 10, func: cardCellar, effect: '+1アクション<br><br>手札を好きな枚数捨て、捨てた枚数だけドロー', image: 'images/Cellar.png'},
@@ -32,7 +30,7 @@ const kingdomCard = {
 	Gardens: {name: '庭園', cost: 4, type: cardType.Point, remain: 10, func: cardGardens, effect: 'デッキ10枚につき1点', image: 'images/Gardens.png'},
 	Market: {name: '市場', cost: 5, type: cardType.Action, remain: 10, func: cardMarket, effect: '+1ドロー<br>+1アクション<br>+1購入<br>+1Moon', image: 'images/Market.png'},
 	Sentry: {name: '年長の衛兵', cost: 5, type: cardType.Action, remain: 10, func: cardSentry, effect: '+1ドロー<br>+1アクション<br>デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。', image: 'images/Sentry.png'},
-	CouncilRoom: {name: '賑やかな議事堂', cost: 5, type: cardType.Action, remain: 10, func: cardCouncilRoom, effect: '+4ドロー<br>+1購入<br><br>他プレイヤーも+1ドロー', image: 'images/CouncilRoom.png'},
+	CouncilRoom: {name: '賑やかな議事堂', cost: 5, type: cardType.Action, remain: 10, func: cardCouncilRoom, effect: '+4ドロー<br>+1購入<br><br>', image: 'images/CouncilRoom.png'},
 	Laboratory: {name: '開祖の研究所', cost: 5, type: cardType.Action, remain: 10, func: cardLaboratory, effect: '+2ドロー<br>+1アクション', image: 'images/Laboratory.png'},
 	Mine: {name: 'バルツ鉱山', cost: 5, type: cardType.Action, remain: 10, func: cardMine, effect: `Moon1枚を廃棄、(廃棄カードのコスト)+3以下のMoon1枚を手札に獲得`, image: 'images/Mine.png'},
 	Festival: {name: 'グラブルフェス', cost: 5, type: cardType.Action, remain: 10, func: cardFestival, effect: '+2アクション<br>+1購入<br>+2Moon', image: 'images/Festival.png'},
@@ -61,7 +59,7 @@ const phase = {
 	executeActionByArtisan1: 'アクション実行フェイズ(職人1)',
 	executeActionByArtisan2: 'アクション実行フェイズ(職人2)',
 };
-
+//変数
 let myDeck = [];//name, cost, type, effect, image
 let myHand = [];//id, name, cost, type, effect, image
 let myTrash = [];//name, cost, type, effect, image
@@ -106,7 +104,7 @@ function startGame(){
 	startTurn();
 }
 /*******************************************************/
-/* startTurn：ゲームスタート
+/* startTurn：ターンの始まり
 /*******************************************************/
 function startTurn(){
 	
@@ -121,35 +119,54 @@ function startTurn(){
 	startActionPhase();
 
 }
+
 /*******************************************************/
 /* startActionPhase：アクションフェイズを開始する
 /*******************************************************/
 function startActionPhase(){
-	console.log('startActionPhase: myDeck');
-	console.log(myDeck);
 	// アクションフェイズに設定
 	changePhase(phase.action);
 	updateMultipleBtnDom(`アクション<br>フェイズ終了`);
 	updateInfomationDom(`アクションカードを使用してください`);
 	// 手札にアクションカードがなければ、次のフェイズに移行する
 	updateHandDom();
-	if (myHand.findIndex((card) => card.type == cardType.Action) == -1 || actionCount <= 0) {
+	if (findIndexHand('type', cardType.Action) == -1 || actionCount <= 0) {
 		startBuyPhase();
 	}
 }
+/*******************************************************/
+/* startBuyPhase：購入フェイズを開始する
+/*******************************************************/
 function startBuyPhase(){
 	changePhase(phase.buy);
 	updateMultipleBtnDom(`購入フェイズ<br>終了`);
 	updateInfomationDom(`ムーンカードを使用してください`);
 	updateHandDom();
 }
+/*******************************************************/
+/* startCleanupPhase：クリーンアップフェイズを開始する
+/*******************************************************/
 function startCleanupPhase(){
 	changePhase(phase.cleanup);
 	updateInfomationDom(`クリーンアップ中です。`);
 	// クリーンアップ処理を実行
-	cleanUp();
+	animateCleanupToTrash();
 
-	startTurn();
+	deletAllPlayArea().forEach((card) => {
+		pushTrash(card);
+	});
+	// 手札を捨て札エリアに格納
+	deletAllHand().forEach((card) => {
+		pushTrash(card);
+	});
+
+	// ガードを5枚引く
+	drawDeckCard(initialHandNum);
+	setTimeout(() => {
+		updateTrashDom();
+		updatePlayAreaDom();
+		startTurn();
+	}, 400);
 }
 
 /*******************************************************/
@@ -162,13 +179,7 @@ function setupDeck(){
 	// 配ったカードをデッキに格納する
 	reconfigureDeck();
 }
-/*******************************************************/
-/* changePhase：フェイズを変更する
-/*******************************************************/
-function changePhase(ph){
-	$('.phase-count').html(ph);
-	currentPhase = ph;
-}
+
 /*******************************************************/
 /* setupExplanationModal：説明モーダルの初期設定
 /*******************************************************/
@@ -261,30 +272,31 @@ function openModalForSentryDom(title, ...openCard){
 	$('.modal-body').css('width', `${width}px`);
 	// モーダルのタイトル部分を設定
 	$('.modal-title').html(title);
-	// 各エリアごとのcssのIDを設定
-	dropTrashArea.attr('id', 'modal-trash-area');
-	dropDiscardArea.attr('id', 'modal-discard-area');
-	dropDeckArea.attr('id', 'modal-deck-area');
+	// 各エリアごとの設定
+	dropTrashArea
+		.attr('id', 'modal-trash-area')
+		.append($('<h1>').html('捨て札'));
+	dropDiscardArea
+		.attr('id', 'modal-discard-area')
+		.append($('<h1>').html('廃棄する'));
+	dropDeckArea
+		.attr('id', 'modal-deck-area')
+		.append($('<h1>').html('山札'))
+		.append($('<p>').html('下　　　　　　上'))
+		.append(dropDeckAreaBottom)
+		.append(dropDeckAreaTop);
 	dropDeckAreaBottom.attr('id', 'modal-deck-bottom-area');
 	dropDeckAreaTop.attr('id', 'modal-deck-top-area');
-	// 各エリアごとのタイトルを設定
-	dropTrashArea.append($('<h1>').html('捨て札'));
-	dropDeckArea.append($('<h1>').html('山札'));
-	dropDeckArea.append($('<p>').html('下　　　　　　上'));
-	dropDiscardArea.append($('<h1>').html('廃棄する'));
 	// modalContentに各エリアを設定
-	modalContent.append(dropTrashArea);
-	modalContent.append(dropDeckArea);
-	modalContent.append(dropDiscardArea);
-	// dropDeckAreaに各エリアを設定
-	dropDeckArea.append(dropDeckAreaBottom);
-	dropDeckArea.append(dropDeckAreaTop);
+	modalContent
+		.append(dropTrashArea)
+		.append(dropDeckArea)
+		.append(dropDiscardArea);
 
 	// モーダルコンテンツ内のカード部分を設定
 	openCard.forEach((card, i) => {
 		const modalCard = $('<div>');
 		// modalCardのクラス設定
-		modalCard.addClass('modal-card available');
 		if (card.type == cardType.Point) {
 			modalCard.addClass('victory-card');
 		} else if (card.type == cardType.Money) {
@@ -292,10 +304,11 @@ function openModalForSentryDom(title, ...openCard){
 		} else if (card.type == cardType.Action) {
 			modalCard.addClass('kingdon-card');
 		}
-		modalCard.attr('id', `drop-card${i}`);
-		modalCard.attr('draggable', true);
-		// modalCardの内容の設定
-		modalCard.html(`
+		modalCard
+			.addClass('modal-card available')
+			.attr('id', `drop-card${i}`)
+			.attr('draggable', true)
+		.html(`
 			<h1>${card.name}</h1>
 			<img src="${card.image}" draggable='false'>
 			<div>${card.effect}</div>
@@ -391,10 +404,10 @@ function analysisModalForSentryDom(){
 	if (dropDeckBottomCards.length > 0) {
 		dropCards.forEach((dropCard) => {
 			if($(dropDeckBottomCards[0]).attr('id') == dropCard.id){
-				const index = tmpArea.findIndex((card) => card.name == dropCard.name);
+				const index = findIndexTemporaryArea('name', dropCard.name);
 				if( index !== -1 ){
-					const deckCard = tmpArea.splice(index, 1)[0];
-					myDeck.unshift(deckCard);
+					const deckCard = spliceTemporaryArea(index);
+					unshiftDeck(deckCard);
 				}
 			}
 		});
@@ -402,10 +415,10 @@ function analysisModalForSentryDom(){
 	if (dropDeckTopCards.length > 0) {
 		dropCards.forEach((dropCard) => {
 			if($(dropDeckTopCards[0]).attr('id') == dropCard.id){
-				const index = tmpArea.findIndex((card) => card.name == dropCard.name);
+				const index = findIndexTemporaryArea('name', dropCard.name);
 				if( index !== -1 ){
-					const deckCard = tmpArea.splice(index, 1)[0];
-					myDeck.unshift(deckCard);
+					const deckCard = spliceTemporaryArea(index);
+					unshiftDeck(deckCard);
 				}
 			}
 		});
@@ -415,10 +428,11 @@ function analysisModalForSentryDom(){
 	for (let i = 0; i < dropTrashCards.length; i++) {
 		dropCards.forEach((dropCard) => {
 			if($(dropTrashCards[i]).attr('id') == dropCard.id){
-				const index = tmpArea.findIndex((card) => card.name == dropCard.name);
+				const index = findIndexTemporaryArea('name', dropCard.name);
 				if( index !== -1 ){
-					const trashCard = tmpArea.splice(index, 1)[0];
-					myTrash.push(trashCard);
+					const trashCard = spliceTemporaryArea(index);
+					pushTrash(trashCard);
+					
 				}
 			}
 		});
@@ -426,15 +440,15 @@ function analysisModalForSentryDom(){
 	for (let i = 0; i < dropDiscardCards.length; i++) {
 		dropCards.forEach((dropCard) => {
 			if($(dropDiscardCards[i]).attr('id') == dropCard.id){
-				const index = tmpArea.findIndex((card) => card.name == dropCard.name);
+				const index = findIndexTemporaryArea('name', dropCard.name);
 				if( index !== -1 ){
-					const discardCard = tmpArea.splice(index, 1)[0];
-					discard.push(discardCard);
+					const discardCard = spliceTemporaryArea(index);
+					pushDiscard(discardCard)
 				}
 			}
 		});
 	}
-	tmpArea.splice(0, tmpArea.length);
+	deletAllTemporaryArea();
 	updateTrashDom();
 	updateDeckDom();
 }
@@ -460,18 +474,16 @@ function openModalTrashList(){
 	let trashCount = [];
 	let trashIndex = 0;
 	myTrash.forEach((card) => {
-		const trashIndex = tmpArea.findIndex((trash) => trash.name == card.name);
+		const trashIndex = findIndexTemporaryArea('name', card.name);
 		if (trashIndex === -1) {
 			const modalCard = $('<div>');
 			const contentDiv = $('<div>');
 			const remain = $('<div>');
-			tmpArea.push({
+			pushTemporaryArea({
 				name: card.name,
 				count: 1,
 				div: remain
 			});
-			modalCard.addClass('modal-card');
-			modalCard.addClass('available');
 			if (card.type == cardType.Point) {
 				modalCard.addClass('victory-card');
 			} else if (card.type == cardType.Money) {
@@ -479,15 +491,17 @@ function openModalTrashList(){
 			} else if (card.type == cardType.Action) {
 				modalCard.addClass('kingdon-card');
 			}
-			modalCard.append(`<h1>${card.name}</h1>`);
-			modalCard.append(`<img src='${card.image}'>`);
-			contentDiv.html(card.effect);
-			modalCard.append(contentDiv);
+			modalCard
+				.addClass('modal-card')
+				.addClass('available')
+				.append(`<h1>${card.name}</h1>`)
+				.append(`<img src='${card.image}'>`)
+				.append(contentDiv);
 			modalCard.click(card ,() => {
-				const index = myTrash.findIndex((trash) => trash.name == card.name);
+				const index = findIndexTrash('name', card.name);
 				if (index !== -1){
-					const trashCard = myTrash.splice(index, 1)[0];
-					myDeck.unshift(trashCard);
+					const trashCard = spliceTrash(index);
+					unshiftDeck(trashCard);
 					updateTrashDom();
 					updateDeckDom();
 					closeModalDom();
@@ -501,7 +515,9 @@ function openModalTrashList(){
 				openExplanationModalDom(card);
 				return false;
 			});
-			contentDiv.append(remain);
+			contentDiv
+				.html(card.effect)
+				.append(remain);
 			remain.html(1);
 			modalContent.append(modalCard);
 		} else {
@@ -510,30 +526,24 @@ function openModalTrashList(){
 		}
 	});
 	$('.modal').addClass('active');
-	tmpArea.splice(0, tmpArea.length);
+	deletAllTemporaryArea();
 }
 /*******************************************************/
 /* drawSupplyCard：サプライからカードを取得する
 /*******************************************************/
 function drawSupplyCard(supplyCard, count = 1){
 	if (supplyCard.remain <= 0) {
-		alert('指定したサプライのカードがありません');
+		debugAlert('指定したサプライのカードがありません');
 		return false;
 	}
 	for(let i = 0; i < count; i++){
 		// 獲得したカードは指示が無い限りは捨て札置き場に表向きにして置く
-		myTrash.push({
-			name: supplyCard.name,
-			cost: supplyCard.cost,
-			type: supplyCard.type,
-			effect: supplyCard.effect,
-			image: supplyCard.image,
-			func: supplyCard.func
-		});
+		pushTrash(supplyCard);
 		supplyCard.remain--;
 	}
 	updateSupplyDom();
 	updateTrashDom();
+	updatePointDom();
 	return true;
 }
 /*******************************************************/
@@ -541,24 +551,10 @@ function drawSupplyCard(supplyCard, count = 1){
 /*******************************************************/
 function drowSupplyCardToHand(supplyCard, count = 1){
 	if (supplyCard.remain <= 0) {
-		alert('指定したサプライのカードがありません');
+		debugAlert('指定したサプライのカードがありません');
 		return false;
 	}
-	// IDを採番しなおす
-	myHand = myHand.map((user, index) => ({
-		...user,
-		id: index + 1
-	}));
-	// デッキから手札へカードを引く
-	myHand.push({
-		id: myHand.length+1,
-		name: supplyCard.name,
-		cost: supplyCard.cost,
-		type: supplyCard.type,
-		effect: supplyCard.effect,
-		image: supplyCard.image,
-		func: supplyCard.func
-	});
+	pushHand(supplyCard);
 	updateSupplyDom();
 	updateHandDom();
 	
@@ -569,10 +565,10 @@ function drowSupplyCardToHand(supplyCard, count = 1){
 /*******************************************************/
 function buySupplyCard(supplyCard, count = 1){
 	if (moonCount < supplyCard.cost) {
-		alert('Moonが足りません');
+		debugAlert('Moonが足りません');
 		return false;
 	} else if (buyCount <= 0){
-		alert('購入回数が足りません');
+		debugAlert('購入回数が足りません');
 		return false;
 	}
 	if (drawSupplyCard(supplyCard, count)){
@@ -593,54 +589,37 @@ function buySupplyCard(supplyCard, count = 1){
 /* drawDeckCard：デッキからカードをドローする
 /*******************************************************/
 function drawDeckCard(count = 1){
+
 	if (myDeck.length < count) {
 		// 捨て札をデッキに再構築する
 		reconfigureDeck();
 	} 
 
-	// IDを採番しなおす
-	myHand = myHand.map((user, index) => ({
-		...user,
-		id: index + 1
-	}));
-
 	for(let i = 0; i < count; i++){
 		if(myDeck.length > 0){
 			// デッキから手札へカードを引く
-			const card = myDeck.shift();
-			myHand.push({
-				id: myHand.length+1,
-				name: card.name,
-				cost: card.cost,
-				type: card.type,
-				effect: card.effect,
-				image: card.image,
-				func: card.func
-			});
+			const card = shiftDeck();
+			pushHand(card);
+			animateCleanupDrow(card);
 		} else {
 			break;
 		}
 	}
 	updateDeckDom();
-	updateHandDom();
+	setTimeout(() => {
+		updateHandDom();
+	}, 400);
 }
 /*******************************************************/
 /* playHandCard：カードをプレイする
 /*******************************************************/
 function playHandCard(index){
-	const card = myHand.splice(index, 1)[0];
+	const card = spliceHand(index);
 	// 手札表示の更新
 	updateHandDom();
-	playAreaCard.push({
-		name: card.name,
-		cost: card.cost,
-		type: card.type,
-		effect: card.effect,
-		image: card.image,
-		func: card.func
-	});
+	pushPlayArea(card);
 	updatePlayAreaDom();
-	stackCard.push(card.func);
+	pushStackCard(card.func);
 
 	endAction();
 }
@@ -649,12 +628,12 @@ function playHandCard(index){
 /* endAction：プレイしたカードの終了処理をする
 /*******************************************************/
 function endAction(){
-	tmpArea.splice(0, tmpArea.length);
+	deletAllTemporaryArea();
 	if ( stackCard.length === 0 ){
 		startActionPhase();
 		return true;
 	}
-	const playFunc = stackCard.shift();
+	const playFunc = shiftStackCard();
 	if (playFunc) {
 		playFunc();
 	}
@@ -664,7 +643,7 @@ function endMoon(){
 	if ( stackCard.length === 0 ){
 		return true;
 	}
-	const playFunc = stackCard.shift();
+	const playFunc = shiftStackCard();
 	if (playFunc) {
 		playFunc();
 	}
@@ -675,8 +654,8 @@ function endMoon(){
 /*******************************************************/
 function reconfigureDeck(){
 	// 捨て札をデッキに格納
-	myTrash.splice(0, myTrash.length).forEach((card) => {
-		myDeck.push(card);
+	deletAllTrash().forEach((card) => {
+		pushDeck(card);
 	});
 	//デッキをシャッフル
 	myDeck = shuffleArray(myDeck);
@@ -685,73 +664,50 @@ function reconfigureDeck(){
 	updateTrashDom();
 }
 
-/*******************************************************/
-/* cleanUp：クリーンアップ処理を実行する
-/*******************************************************/
-function cleanUp(){
-	// プレイエリアのカードを捨て札エリアに格納
-	playAreaCard.splice(0, playAreaCard.length).forEach((card) => {
-		myTrash.push(card);
-	});
-	// 手札を捨て札エリアに格納
-	myHand.splice(0, myHand.length).forEach((card) => {
-		myTrash.push({
-			name: card.name,
-			cost: card.cost,
-			type: card.type,
-			effect: card.effect,
-			image: card.image,
-			func: card.func
-		});
-	});
-	// ガードを5枚引く
-	drawDeckCard(initialHandNum);
-	updatePlayAreaDom();
-	updateTrashDom();
-}
+
 /*******************************************************/
 /* pushMultiplebtn：マルチボタンが押された時の処理を行う
 /*******************************************************/
 function pushMultiplebtn(){
 	switch(currentPhase) {
-		case phase.action:
+		case phase.action://アクションフェイズ
 			startBuyPhase();
 			break;
-		case phase.buy:
+		case phase.buy://購入フェイズ
 			startCleanupPhase();
 			break;
-		case phase.cleanup:
+		case phase.cleanup://クリーンアップフェイズ
 			startActionPhase();
 			break;
-		case phase.executeActionByCellar:
+		case phase.executeActionByCellar://地下貯蔵庫
 			cardCellarSub();
 			break;
-		case phase.executeActionByChapel:
+		case phase.executeActionByChapel://礼拝堂
 			cardChapelSub();
 			break;
-		case phase.executeActionByRemodel:
-			cardRemodelSub();
-			break;
-		case phase.executeActionByMine:
-			cardMineSub();
-			break;
-		case phase.executeActionByVassal:
+		case phase.executeActionByVassal://家臣
 			cardVassalSub();
 			break;
-		case phase.executeActionByMoneylender:
+		case phase.executeActionByRemodel://改築
+			cardRemodelSub();
+			break;
+		case phase.executeActionByMoneylender://金貸し
 			cardMoneylenderSub();
 			break;
-		case phase.executeActionByThroneRoom:
+		case phase.executeActionByThroneRoom://玉座の間
 			cardThroneRoomSub();
 			break;
-		case phase.executeActionByArtisan2:
-			cardArtisanSubSub();
+		case phase.executeActionByPoacher://密猟者
+			cardPoacherSub();
 			break;
-		case phase.executeActionBySentry:
+		case phase.executeActionBySentry://衛兵
 			cardSentrySub();
 			break;
-		case phase.executeActionByPoacher:
-			cardPoacherSub();
+		case phase.executeActionByMine://鉱山
+			cardMineSub();
+			break;
+		case phase.executeActionByArtisan2://職人2
+			cardArtisanSubSub();
 			break;
 		default:
 			endAction();
@@ -772,9 +728,21 @@ function updateMoonDom(){
 	$(`.moon-count`).html(`${moonCount}`);
 }
 function updateDeckDom(){
+	const deckImage = $(`.deck-area`).children('img');
+	if(myDeck.length <= 0){
+		deckImage.addClass('empty');
+	}else{
+		deckImage.removeClass('empty');
+	}
 	$(`.deck-count`).html(`${myDeck.length}`);
 }
 function updateTrashDom(){
+	const trashImage = $(`.trash-area`).children('img');
+	if(myTrash.length <= 0){
+		trashImage.addClass('empty');
+	}else{
+		trashImage.removeClass('empty');
+	}
 	$(`.trash-count`).html(`${myTrash.length}`);
 }
 function updateMultipleBtnDom(text){
@@ -855,10 +823,11 @@ function updateSupplyDom(){
 		} else if (kingdom.type == cardType.Action) {
 			supplyCardDiv.addClass('kingdon-card');
 		}
-		supplyCardDiv.html(kingdom.name);
-		supplyCardDiv.append(`<img src="${kingdom.image}"></img>`);
-		supplyCardDiv.append(`<div class="cost">${kingdom.cost}</div>`);
-		supplyCardDiv.append(`<div class="remain">${kingdom.remain}</div>`);
+		supplyCardDiv
+			.html(kingdom.name)
+			.append(`<img src="${kingdom.image}"></img>`)
+			.append(`<div class="cost">${kingdom.cost}</div>`)
+			.append(`<div class="remain">${kingdom.remain}</div>`);
 		supplyCardDiv.click(kingdom, () => {
 			switch(currentPhase) {
 				case phase.buy:
@@ -882,7 +851,7 @@ function updateSupplyDom(){
 					}
 					break;
 				default:
-						alert("このフェイズでは購入はできません");
+						debugAlert("このフェイズでは購入はできません");
 					break;
 			}
 		});
@@ -900,10 +869,11 @@ function updateSupplyDom(){
 		} else {
 			supplyCardDiv.addClass('victory-card');
 		}
-		supplyCardDiv.html(victoryPointCard[key].name);
-		supplyCardDiv.append(`<img src="${victoryPointCard[key].image}"></img>`);
-		supplyCardDiv.append(`<div class="cost">${victoryPointCard[key].cost}</div>`);
-		supplyCardDiv.append(`<div class="remain">${victoryPointCard[key].remain}</div>`);
+		supplyCardDiv
+			.html(victoryPointCard[key].name)
+			.append(`<img src="${victoryPointCard[key].image}"></img>`)
+			.append(`<div class="cost">${victoryPointCard[key].cost}</div>`)
+			.append(`<div class="remain">${victoryPointCard[key].remain}</div>`);
 		supplyCardDiv.click(victoryPointCard[key], () => {
 			switch(currentPhase) {
 				case phase.buy:
@@ -913,7 +883,7 @@ function updateSupplyDom(){
 				case phase.executeActionByWorkshop:
 					if (victoryPointCard[key].cost <= exchangeCost) {
 						if (victoryPointCard[key].remain <= 0) {
-							alert('指定したサプライのカードがありません');
+							debugAlert('指定したサプライのカードがありません');
 							break;
 						}
 						const ret = drawSupplyCard(victoryPointCard[key]);
@@ -930,7 +900,7 @@ function updateSupplyDom(){
 					}
 					break;
 				default:
-						alert("このフェイズでは購入はできません");
+						debugAlert("このフェイズでは購入はできません");
 					break;
 			}
 		});
@@ -948,10 +918,11 @@ function updateSupplyDom(){
 		}else {
 			supplyCardDiv.addClass('treasure-card');
 		}
-		supplyCardDiv.html(treasurePointCard[key].name);
-		supplyCardDiv.append(`<img src="${treasurePointCard[key].image}"></img>`);
-		supplyCardDiv.append(`<div class="cost">${treasurePointCard[key].cost}</div>`);
-		supplyCardDiv.append(`<div class="remain">${treasurePointCard[key].remain}</div>`);
+		supplyCardDiv
+			.html(treasurePointCard[key].name)
+			.append(`<img src="${treasurePointCard[key].image}"></img>`)
+			.append(`<div class="cost">${treasurePointCard[key].cost}</div>`)
+			.append(`<div class="remain">${treasurePointCard[key].remain}</div>`);
 		supplyCardDiv.click(treasurePointCard[key], () => {
 			switch(currentPhase) {
 				case phase.buy:
@@ -976,7 +947,7 @@ function updateSupplyDom(){
 					}
 					break;
 				default:
-						alert("このフェイズでは購入はできません");
+						debugAlert("このフェイズでは購入はできません");
 					break;
 			}
 		});
@@ -990,8 +961,7 @@ function updateSupplyDom(){
 function updatePlayAreaDom(){
 	$(`.play-area`).html('');
 	playAreaCard.forEach((play, i) => {
-		const playCardDiv = $('<div>');
-		playCardDiv.addClass('play-card');
+		const playCardDiv = $('<div>').addClass('play-card');
 		if (play.type == cardType.Point) {
 			playCardDiv.addClass('victory-card');
 		} else if (play.type == cardType.Money) {
@@ -999,7 +969,7 @@ function updatePlayAreaDom(){
 		} else if (play.type == cardType.Action) {
 			playCardDiv.addClass('kingdon-card');
 		}
-		playCardDiv.css('left', i*(585/playAreaCard.length));
+		playCardDiv.css('left', i*(500/playAreaCard.length));
 		playCardDiv.html(`${play.name}<img src="${play.image}">`);
 		$(`.play-area`).append(playCardDiv);
 		playCardDiv.contextmenu(play ,() => {
@@ -1007,39 +977,38 @@ function updatePlayAreaDom(){
 			return false;
 		});
 	});
-
 }
 /*******************************************************/
 /* クリック時の処理
 /*******************************************************/
 // 手札クリック時の処理
 function clickHandProcess(handCardDiv, hand){
-	const index = tmpArea.findIndex((card) => card.id == hand.id);
+	const index = findIndexTemporaryArea('id', hand.id);
 	switch(currentPhase) {
 		case phase.action:
 			if (actionCount <= 0) {
-				alert("アクションポイントが足りません");
-				tmpArea.splice(0, tmpArea.length);
+				debugAlert("アクションポイントが足りません");
+				deletAllTemporaryArea();
 				return false;
 			}
 			if (hand.type === cardType.Action && actionCount > 0) {
-				const index = myHand.findIndex((card) => card.id === hand.id);
+				const index = findIndexHand('id', hand.id);
 				actionCount--;
 				updateActionDom();
 				playHandCard(index);
 			} else {
-				alert("このフェイズでは使用できません");
-				tmpArea.splice(0, tmpArea.length);
+				debugAlert("このフェイズでは使用できません");
+				deletAllTemporaryArea();
 				return false;
 			}
 			break;
 		case phase.buy:
 			if (hand.type == cardType.Money) {
-				const index = myHand.findIndex((card) => card.id === hand.id);
+				const index = findIndexHand('id', hand.id);
 				playHandCard(index);
 			} else {
-				alert("このフェイズでは使用できません");
-				tmpArea.splice(0, tmpArea.length);
+				debugAlert("このフェイズでは使用できません");
+				deletAllTemporaryArea();
 				return false;
 			}
 			break;
@@ -1047,11 +1016,11 @@ function clickHandProcess(handCardDiv, hand){
 		case phase.executeActionByChapel:
 			if (index === -1) {
 				if(tmpArea.length < 4){
-					tmpArea.unshift(hand);
+					pushTemporaryArea(hand);
 					handCardDiv.addClass("select");
 				}
 			} else {
-				tmpArea.splice(index, 1);
+				spliceTemporaryArea(index);
 				handCardDiv.removeClass("select");
 			}
 			break;
@@ -1059,55 +1028,56 @@ function clickHandProcess(handCardDiv, hand){
 			if ( hand.type == cardType.Money) {
 				if (index === -1) {
 					if (tmpArea.length < 1){
-						tmpArea.unshift(hand);
+						pushTemporaryArea(hand);
 						handCardDiv.addClass("select");
 					}
 				} else {
-					tmpArea.splice(index, 1);
+					spliceTemporaryArea(index);
 					handCardDiv.removeClass("select");
 				}
 			} else {
-				alert('Moonを選択してください。');
+				debugAlert('Moonを選択してください。');
 			}
 			break;
 		case phase.executeActionByMoneylender:
 			if ( hand.name == treasurePointCard.Bronze.name) {
 				if (index === -1) {
 					if (tmpArea.length < 1){
-						tmpArea.unshift(hand);
+						pushTemporaryArea(hand);
 						handCardDiv.addClass("select");
 					}
 				} else {
-					tmpArea.splice(index, 1);
+					spliceTemporaryArea(index);
 					handCardDiv.removeClass("select");
 				}
 			} else {
-				alert(`${treasurePointCard.Bronze.name}を選択してください。`);
+				debugAlert(`${treasurePointCard.Bronze.name}を選択してください。`);
 			}
 			break;
 		case phase.executeActionByThroneRoom:
 			if ( hand.type == cardType.Action ) {
 				if (index === -1) {
 					if (tmpArea.length < 1){
-						tmpArea.unshift(hand);
+						pushTemporaryArea(hand);
 						handCardDiv.addClass("select");
 					}
 				} else {
-					tmpArea.splice(index, 1);
+					spliceTemporaryArea(index);
 					handCardDiv.removeClass("select");
 				}
 			} else {
-				alert(`${cardType.Action}を選択してください。`);
+				debugAlert(`${cardType.Action}を選択してください。`);
 			}
-			break;
+			break;	
+		case phase.executeActionByRemodel:
 		case phase.executeActionByArtisan2:
 			if (index === -1) {
 				if(tmpArea.length < 1){
-					tmpArea.unshift(hand);
+					pushTemporaryArea(hand);
 					handCardDiv.addClass("select");
 				}
 			} else {
-				tmpArea.splice(index, 1);
+				spliceTemporaryArea(index);
 				handCardDiv.removeClass("select");
 			}
 			break;
@@ -1118,17 +1088,17 @@ function clickHandProcess(handCardDiv, hand){
 				for (const key in victoryPointCard) {if(victoryPointCard[key].remain === 0){supplyCount++;}}
 				for (const key in treasurePointCard) {if(treasurePointCard[key].remain === 0){supplyCount++;}}
 				if(tmpArea.length < supplyCount){
-					tmpArea.unshift(hand);
+					pushTemporaryArea(hand);
 					handCardDiv.addClass("select");
 				}
 			} else {
-				tmpArea.splice(index, 1);
+				spliceTemporaryArea(index);
 				handCardDiv.removeClass("select");
 			}
 			break;
 		case phase.cleanup:
 		default:
-			alert("このフェイズでは使用できません");
+			debugAlert("このフェイズでは使用できません");
 			return false;
 	}
 	return true;
@@ -1182,17 +1152,10 @@ function cardCellar(){
 function cardCellarSub(){
 	drawDeckCard(tmpArea.length);
 	while (tmpArea.length > 0) {
-		const trashCard = tmpArea.shift();
-		const index = myHand.findIndex((card) => card.id == trashCard.id);
-		const card = myHand.splice(index, 1)[0];
-		myTrash.push({
-			name: card.name,
-			cost: card.cost,
-			type: card.type,
-			effect: card.effect,
-			image: card.image,
-			func: card.func
-		});
+		const trashCard = shiftTemporaryArea();
+		const index = findIndexHand('id', trashCard.id);
+		const card = spliceHand(index);
+		pushTrash(card);
 	}
 	updateHandDom();
 	updateTrashDom();
@@ -1214,10 +1177,10 @@ function cardChapel(){
 function cardChapelSub(){
 	//手札を4枚まで廃棄可能
 	while (tmpArea.length > 0) {
-		const trashCard = tmpArea.shift();
-		const index = myHand.findIndex((card) => card.id == trashCard.id);
-		const card = myHand.splice(index, 1);
-		discard.push(card);
+		const trashCard = shiftTemporaryArea();
+		const index = findIndexHand('id', trashCard.id);
+		const card = spliceHand(index);
+		pushDiscard(card);
 	}
 	endAction();
 	return true;
@@ -1242,17 +1205,17 @@ function cardVassal(){
 	if (myDeck.length <= 0){
 		reconfigureDeck();
 	}
-	const trashCard = myDeck.shift();
+	const trashCard = shiftDeck();
 	if (trashCard.type == cardType.Action) {
 		changePhase(phase.executeActionByVassal);
 		updateMultipleBtnDom(`使用しない`);
 		updateInfomationDom(`アクションカードを使用しますか：${trashCard.name}`);
-		tmpArea.unshift(trashCard);
+		pushTemporaryArea(trashCard);
 
 		const modalCard = openModalDom(kingdomCard.Vassal.name, 500, trashCard)[0];
 		modalCard.click(trashCard,() => {
-			stackCard.push(trashCard.func);
-			myTrash.push(trashCard);
+			pushStackCard(trashCard.func);
+			pushTrash(trashCard);
 			updateTrashDom();
 			closeModalDom();
 			endAction();
@@ -1263,7 +1226,7 @@ function cardVassal(){
 		});
 		return true;
 	} else {
-		myTrash.push(trashCard);
+		pushTrash(trashCard);
 	}
 
 	updateDeckDom();
@@ -1275,8 +1238,8 @@ function cardVassalSub(){
 	// +2Moon、デッキのトップをtrashCard捨て、それがアクションなら使用できる
 	// トップのアクションを実行しないとき
 	closeModalDom();
-	const trashCard = tmpArea.shift();
-	myTrash.push(trashCard);
+	const trashCard = shiftTemporaryArea();
+	pushTrash(trashCard);
 	updateTrashDom();
 	endAction();
 }
@@ -1343,6 +1306,11 @@ function cardVillage(){
 /*******************************************************/
 function cardRemodel(){
 	// 手札1枚を廃棄、(廃棄カードのコスト)+2コスト以下のカード1枚を獲得
+	if(myHand.length === 0){
+		// 手札がなかった場合は何もしない
+		endAction();
+		return true;
+	}
 	changePhase(phase.executeActionByRemodel);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`廃棄するカードを選んでください`);
@@ -1354,14 +1322,14 @@ function cardRemodelSub(){
 	if(tmpArea.length === 0){
 		return false;
 	}
-	const discardCard = tmpArea.shift();
-	const index = myHand.findIndex((card) => card.id == discardCard.id);
+	const discardCard = shiftTemporaryArea();
+	const index = findIndexHand('id', discardCard.id);
 	if (index === -1) {
 		return false;
 	}
-	const card = myHand.splice(index, 1)[0];
+	const card = spliceHand(index);
 	const cost = card.cost;
-	discard.push(card);
+	pushDiscard(card);
 	updateSupplyDom();
 	updateHandDom();
 
@@ -1396,13 +1364,13 @@ function cardMoneylenderSub(){
 		endAction();
 		return true;
 	}
-	const discardCard = tmpArea.shift();
-	const index = myHand.findIndex((card) => card.id == discardCard.id);
+	const discardCard = shiftTemporaryArea();
+	const index = findIndexHand('id', discardCard.id);
 	if (index === -1) {
 		return false;
 	}
-	const card = myHand.splice(index, 1)[0];
-	discard.push(card);
+	const card = spliceHand(index);
+	pushDiscard(card);
 
 	moonCount += 3;
 	updateMoonDom();
@@ -1430,23 +1398,16 @@ function cardThroneRoomSub(){
 		endAction();
 		return true;
 	}
-	const discardCard = tmpArea.shift();
-	const index = myHand.findIndex((card) => card.id == discardCard.id);
+	const discardCard = shiftTemporaryArea();
+	const index = findIndexHand('id', discardCard.id);
 	if (index === -1) {
 		return false;
 	}
-	const card = myHand.splice(index, 1)[0];
-	playAreaCard.push({
-		name: card.name,
-		cost: card.cost,
-		type: card.type,
-		effect: card.effect,
-		image: card.image,
-		func: card.func
-	});
+	const card = spliceHand(index);
+	pushPlayArea(card);
 	updatePlayAreaDom();
-	stackCard.push(card.func);
-	stackCard.push(card.func);
+	pushStackCard(card.func);
+	pushStackCard(card.func);
 	endAction();
 	return true;
 	
@@ -1498,20 +1459,13 @@ function cardPoacherSub(){
 		return true;
 	}
 	while (tmpArea.length > 0) {
-		const trashCard = tmpArea.shift();
-		const index = myHand.findIndex((card) => card.id == trashCard.id);
+		const trashCard = shiftTemporaryArea();
+		const index = findIndexHand('id', trashCard.id);
 		if (index === -1) {
 			return false;
 		}
-		const card = myHand.splice(index, 1)[0];
-		myTrash.push({
-			name: card.name,
-			cost: card.cost,
-			type: card.type,
-			effect: card.effect,
-			image: card.image,
-			func: card.func
-		});
+		const card = spliceHand(index);
+		pushTrash(card);
 	}
 	endAction();
 	return true;
@@ -1553,15 +1507,15 @@ function cardSentry(){
 	if (myDeck.length < 2){
 		reconfigureDeck();
 	} 
-	const topCard = myDeck.shift();
-	const bottomCard = myDeck.shift();
+	const topCard = shiftDeck();
+	const bottomCard = shiftDeck();
 	updateDeckDom();
 	changePhase(phase.executeActionBySentry);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`衛兵効果：カードを廃棄か、捨て札か、山札に戻すか選ぶ`);
 	const modalCards = openModalForSentryDom(kingdomCard.Sentry.name, bottomCard, topCard);
-	tmpArea.push(topCard);
-	tmpArea.push(bottomCard);
+	pushTemporaryArea(topCard);
+	pushTemporaryArea(bottomCard);
 	modalCards[top].contextmenu(topCard ,() => {
 		openExplanationModalDom(topCard);
 		return false;
@@ -1614,11 +1568,11 @@ function cardMine(){
 }
 function cardMineSub(){
 	// Moon1枚を廃棄、(廃棄カードのコスト)+3以下のMoon1枚を手札に獲得
-	const discardCard = tmpArea.shift();
-	const index = myHand.findIndex((card) => card.id == discardCard.id);
-	const card = myHand.splice(index, 1)[0];
+	const discardCard = shiftTemporaryArea();
+	const index = findIndexHand('id', discardCard.id);
+	const card = spliceHand(index);
 	const cost = card.cost;
-	discard.push(card);
+	pushDiscard(card);
 	updateSupplyDom();
 	updateHandDom();
 
@@ -1651,35 +1605,20 @@ function cardLibrary(){
 		} 
 		if(myDeck.length > 0){
 			// デッキから手札へカードを引く
-			const card = myDeck.shift();
+			const card = shiftDeck();
 			if (card.type == cardType.Action){
-				tmpArea.push(card);
+				pushTemporaryArea(card);
 				continue;
 			}else{
-				myHand.push({
-					id: myHand.length+1,
-					name: card.name,
-					cost: card.cost,
-					type: card.type,
-					effect: card.effect,
-					image: card.image,
-					func: card.func
-				});
+				pushHand(card);
 			}
 		} else {
 			break;
 		}
 	}
-	const trash = tmpArea.splice(0, tmpArea.length);
+	const trash = deletAllTemporaryArea();
 	trash.forEach((card) => {
-		myTrash.push({
-			name: card.name,
-			cost: card.cost,
-			type: card.type,
-			effect: card.effect,
-			image: card.image,
-			func: card.func
-		});
+		pushTrash(card);
 	});
 	updateDeckDom();
 	updateHandDom();
@@ -1707,16 +1646,221 @@ function cardArtisanSub(){
 }
 function cardArtisanSubSub(){
 	// 5コスト以下のカード1枚を手札に獲得。手札1枚をデッキトップに置く
-	const deckCard = tmpArea.shift();
-	const index = myHand.findIndex((card) => card.id == deckCard.id);
-	const card = myHand.splice(index, 1)[0];
-	myDeck.unshift(card);
+	const deckCard = shiftTemporaryArea();
+	const index = findIndexHand('id', deckCard.id);
+	const card = spliceHand(index);
+	unshiftDeck(card);
 	updateHandDom();
 	updateDeckDom();
 
 	endAction();
 }
 
+/*****************************************************************************/
+/* システム関数
+/*****************************************************************************/
+/*******************************************************/
+/* changePhase：フェイズを変更する
+/*******************************************************/
+function changePhase(ph){
+	$('.phase-count').html(ph);
+	currentPhase = ph;
+}
+/*******************************************************/
+/* pushDeck：デッキキューの末尾にカードを追加する
+/*******************************************************/
+function pushDeck(card){
+	if ('id' in card) {
+		myDeck.push({
+			name: card.name,
+			cost: card.cost,
+			type: card.type,
+			effect: card.effect,
+			image: card.image,
+			func: card.func
+		});
+	} else {
+		myDeck.push(card);
+	}
+}
+/*******************************************************/
+/* unshiftDeck：デッキキューの先頭にデータを追加する
+/*******************************************************/
+function unshiftDeck(card){
+	if ('id' in card) {
+		myDeck.unshift({
+			name: card.name,
+			cost: card.cost,
+			type: card.type,
+			effect: card.effect,
+			image: card.image,
+			func: card.func
+		});
+	} else {
+		myDeck.unshift(card);
+	}
+}
+/*******************************************************/
+/* shiftDeck：デッキキューの先頭からデータを取り出す
+/*******************************************************/
+function shiftDeck(){
+	return myDeck.shift();
+}
+/*******************************************************/
+/* pushHand：手札キューの末尾にカードを追加する
+/*******************************************************/
+function pushHand(card){
+	// IDを採番しなおす
+	myHand = myHand.map((user, index) => ({
+		...user,
+		id: index + 1
+	}));
+	// デッキから手札へカードを引く
+	myHand.push({
+		id: myHand.length+1,
+		name: card.name,
+		cost: card.cost,
+		type: card.type,
+		effect: card.effect,
+		image: card.image,
+		func: card.func
+	});
+}
+/*******************************************************/
+/* spliceHand：手札キューのIndex番目のデータを取り出す
+/*******************************************************/
+function spliceHand(index){
+	return myHand.splice(index, 1)[0];
+}
+/*******************************************************/
+/* findIndexHand：手札キューから検索する
+/*******************************************************/
+function findIndexHand(id, key){
+	return myHand.findIndex((card) => card[id] == key);
+}
+/*******************************************************/
+/* deletAllHand：手札キューをすべて削除する
+/*******************************************************/
+function deletAllHand(){
+	return myHand.splice(0, myHand.length);
+}
+/*******************************************************/
+/* pushTrash：捨て札キューの末尾にカードを追加する
+/*******************************************************/
+function pushTrash(card){
+	if ('id' in card) {
+		myTrash.push({
+			name: card.name,
+			cost: card.cost,
+			type: card.type,
+			effect: card.effect,
+			image: card.image,
+			func: card.func
+		});
+	} else {
+		myTrash.push(card);
+	}
+}
+/*******************************************************/
+/* spliceTrash：捨て札キューのIndex番目のデータを取り出す
+/*******************************************************/
+function spliceTrash(index){
+	return myTrash.splice(index, 1)[0];
+}
+/*******************************************************/
+/* findIndexHand：手札キューから検索する
+/*******************************************************/
+function findIndexTrash(id, key){
+	return myTrash.findIndex((card) => card[id] == key);
+}
+/*******************************************************/
+/* deletAllTrash：捨て札キューをすべて削除する
+/*******************************************************/
+function deletAllTrash(){
+	return myTrash.splice(0, myTrash.length);
+}
+/*******************************************************/
+/* pushPlayArea：プレイエリアキューの末尾にカードを追加する
+/*******************************************************/
+function pushPlayArea(card){
+	if ('id' in card) {
+		playAreaCard.push({
+			name: card.name,
+			cost: card.cost,
+			type: card.type,
+			effect: card.effect,
+			image: card.image,
+			func: card.func
+		});
+	} else {
+		playAreaCard.push(card);
+	}
+}
+/*******************************************************/
+/* deletAllPlayArea：プレイエリアキューをすべて削除する
+/*******************************************************/
+function deletAllPlayArea(){
+	return playAreaCard.splice(0, playAreaCard.length);
+}
+/*******************************************************/
+/* pushDiscard：廃棄キューの末尾にカードを追加する
+/*******************************************************/
+function pushDiscard(card){
+	if ('id' in card) {
+		discard.push({
+			name: card.name,
+			cost: card.cost,
+			type: card.type,
+			effect: card.effect,
+			image: card.image,
+			func: card.func
+		});
+	} else {
+		discard.push(card);
+	}
+}
+/*******************************************************/
+/* pushTemporaryArea：一時用キューの末尾にカードを追加する
+/*******************************************************/
+function pushTemporaryArea(item){
+	tmpArea.push(item);
+}
+/*******************************************************/
+/* shiftTemporaryArea：一時用キューの先頭からデータを取り出す
+/*******************************************************/
+function shiftTemporaryArea(){
+	return tmpArea.shift();
+}
+/*******************************************************/
+/* spliceTemporaryArea：一時用キューのIndex番目のデータを取り出す
+/*******************************************************/
+function spliceTemporaryArea(index){
+	return tmpArea.splice(index, 1)[0];
+}
+/*******************************************************/
+/* findIndexTemporaryArea：一時用キューから検索する
+/*******************************************************/
+function findIndexTemporaryArea(id, key){
+	return tmpArea.findIndex((card) => card[id] == key);
+}
+/*******************************************************/
+/* spliceTemporaryArea：一時用キューをすべて削除する
+/*******************************************************/
+function deletAllTemporaryArea(){
+	return tmpArea.splice(0, tmpArea.length);
+}
+/*******************************************************/
+/* pushStackCard：カード効果実行キューの末尾にカードを追加する
+/*******************************************************/
+function pushStackCard(func){
+	stackCard.push(func);
+}
+/*******************************************************/
+/* shiftStackCard：カード効果実行キューの先頭からデータを取り出す
+/*******************************************************/
+function shiftStackCard(){
+	return stackCard.shift();
+}
 /*******************************************************/
 /* shuffleArray：配列のシャッフル
 /*******************************************************/
@@ -1730,4 +1874,65 @@ function shuffleArray(array) {
 		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
 	}
 	return shuffled;
+}
+
+/*******************************************************/
+/* debugAlert：デバッグ用アラート
+/*******************************************************/
+function debugAlert(text) {
+	alert(text);
+}
+
+/*****************************************************************************/
+/* アニメーション関数
+/*****************************************************************************/
+/*******************************************************/
+/* animateCleanupToTrash：クリーンアップの捨て札処理のアニメーション
+/*******************************************************/
+function animateCleanupToTrash(){
+	const playCardDiv = $('.play-card');
+	const handCardDiv = $('.hand-card');
+	playCardDiv
+		.css('transform', 'scale(0.7)')
+		.css('left', '');
+	playCardDiv.animate({
+		left: '700px', 
+		top: '5px', 
+	}, 400);
+	handCardDiv
+		.removeClass('available')
+		.css('position', 'absolute')
+		.css('transform', 'scale(0.7)');
+	handCardDiv.animate({
+		left: '840px', 
+		top: '-215px'
+	}, 400);
+}
+/*******************************************************/
+/* animateCleanupDrow：ドローのアニメーション
+/*******************************************************/
+function animateCleanupDrow(card){
+	const drowCardDiv = $('<div>');
+	$('.hand-info').append(drowCardDiv);
+	drowCardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('hand-card')
+		.removeClass('available')
+		.css('position', 'absolute')
+		.css('top', '-220px')
+		.css('left', '-30px')
+		.css('transform', 'scale(0.7)');
+	if (card.type == cardType.Point) {
+		drowCardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		drowCardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		drowCardDiv.addClass('kingdon-card');
+	}
+	drowCardDiv.animate({
+		left: '400px', 
+		top: '0px',
+		transform: 'scale(1)'
+	}, 400);
+
 }
