@@ -476,12 +476,14 @@
 }
 .modal-card{
 	width: 150px;
+	height: 180px;
 	aspect-ratio: 3 / 4;
 	display: flex;
 	flex-direction: column;
 	border: 2px solid black;
 	border-radius: 7px;
 	margin: 0 2px;
+	color: black;
 }
 .modal-card.available{
 	box-shadow: -5px -5px 15px 5px rgb(112, 253, 24), 5px 5px 15px 7px rgb(112, 253, 24) !important;
@@ -506,7 +508,7 @@
 .modal-card div div{
 	width: 30px;
 	height: 30px;
-	font-size: 18px;
+	font-size: 8px;
 	font-weight: 700;
 	color: black;
 	display: flex;
@@ -518,4 +520,54 @@
 	background-color: white;
 	border: 1px solid gray;
 	border-radius: 50%;
+}
+
+.modal-drop-area{
+	width: 300px;
+	height: 280px;
+	font-size: 24px;
+	color: white;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background-color: #444444;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.modal-drop-area>h1{
+	position: absolute;
+	top: 0;
+	font-size: 20px;
+}
+.modal-drop-area>p{
+	position: absolute;
+	bottom: 0;
+	font-size: 20px;
+}
+#modal-trash-area{
+	left: 5px;
+}
+#modal-discard-area{
+	right: 5px;
+}
+#modal-deck-area{
+	left: 50%;
+	transform: translate(-50%,-50%);
+}
+.modal-deck-area-order{
+	width: 150px;
+	height: 280px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.hold {
+	border: 4px solid #ccc;
+}
+.invisible {
+  display: none;
+}
+.hovered {
+  border: 2px dotted white;
 }

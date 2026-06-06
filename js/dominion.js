@@ -49,17 +49,17 @@ const phase = {
 	cleanup: 'クリーンアップフェイズ',
 	executeActionByCellar: 'アクション実行フェイズ(地下貯蔵庫)',
 	executeActionByChapel: 'アクション実行フェイズ(礼拝堂)',
-	executeActionByWorkshop: 'アクション実行フェイズ(工房)',
-	executeActionByRemodel: 'アクション実行フェイズ(改築)',
-	executeActionByMine: 'アクション実行フェイズ(鉱山)',
 	executeActionByVassal: 'アクション実行フェイズ(家臣)',
+	executeActionByWorkshop: 'アクション実行フェイズ(工房)',
+	executeActionByHarbinger: 'アクション実行フェイズ(前駆者)',
+	executeActionByRemodel: 'アクション実行フェイズ(改築)',
 	executeActionByMoneylender: 'アクション実行フェイズ(金貸し)',
 	executeActionByThroneRoom: 'アクション実行フェイズ(玉座の間)',
+	executeActionByPoacher: 'アクション実行フェイズ(密猟者)',
+	executeActionBySentry: 'アクション実行フェイズ(衛兵)',
+	executeActionByMine: 'アクション実行フェイズ(鉱山)',
 	executeActionByArtisan1: 'アクション実行フェイズ(職人1)',
 	executeActionByArtisan2: 'アクション実行フェイズ(職人2)',
-	executeActionBySentry: 'アクション実行フェイズ(衛兵)',
-	executeActionByHarbinger: 'アクション実行フェイズ(前駆者)',
-	executeActionByPoacher: 'アクション実行フェイズ(密猟者)',
 };
 
 let myDeck = [];//name, cost, type, effect, image
@@ -78,6 +78,7 @@ let currentPoint = 1;
 let currentPhase;
 let exchangeCost = -1;
 let MerchantFlag = false;
+let dropIndex;
 
 
 /*******************************************************/
@@ -124,6 +125,8 @@ function startTurn(){
 /* startActionPhase：アクションフェイズを開始する
 /*******************************************************/
 function startActionPhase(){
+	console.log('startActionPhase: myDeck');
+	console.log(myDeck);
 	// アクションフェイズに設定
 	changePhase(phase.action);
 	updateMultipleBtnDom(`アクション<br>フェイズ終了`);
@@ -156,7 +159,6 @@ function setupDeck(){
 	// プレイヤーに初期デッキとなる10枚のカードを配る
 	drawSupplyCard(treasurePointCard.Bronze, 7);
 	drawSupplyCard(victoryPointCard.Low, 3);
-	drawSupplyCard(kingdomCard.Harbinger, 3);
 	// 配ったカードをデッキに格納する
 	reconfigureDeck();
 }
@@ -204,7 +206,7 @@ function openExplanationModalDom(card){
 /*******************************************************/
 /* openModalDom：モーダル表示処理
 /*******************************************************/
-function openModalDom(title, width, dragFlag,...openCard){
+function openModalDom(title, width, ...openCard){
 	const modalTitle = $('.modal-title');
 	const modalContent = $('.modal-content');
 	const modalCards = [];
@@ -212,15 +214,9 @@ function openModalDom(title, width, dragFlag,...openCard){
 	// モーダルのタイトル部分を設定
 	modalTitle.html(title);
 	// モーダルコンテンツ内のカード部分を設定
-	openCard.forEach((card) => {
+	openCard.forEach((card, i) => {
 		const modalCard = $('<div>');
-		modalCard.addClass('modal-card');
-		modalCard.addClass('available');
-		modalCard.html(`
-			<h1>${card.name}</h1>
-			<img src="${card.image}">
-			<div>${card.effect}</div>
-		`);
+		modalCard.addClass('modal-card available');
 		if (card.type == cardType.Point) {
 			modalCard.addClass('victory-card');
 		} else if (card.type == cardType.Money) {
@@ -228,9 +224,13 @@ function openModalDom(title, width, dragFlag,...openCard){
 		} else if (card.type == cardType.Action) {
 			modalCard.addClass('kingdon-card');
 		}
-		modalContent.append(modalCard);
+		modalCard.html(`
+			<h1>${card.name}</h1>
+			<img src="${card.image}" draggable='false'>
+			<div>${card.effect}</div>
+		`);
 		modalCards.push(modalCard);
-		if (dragFlag){setupDragingCard(modalCard);}
+		modalContent.append(modalCard);
 	});
 	$('.modal').addClass('active');
 
@@ -238,47 +238,206 @@ function openModalDom(title, width, dragFlag,...openCard){
 }
 
 /*******************************************************/
-/* setupDragingCard：カードドラッグ追従の設定
+/* openModalForSentryDom：「衛兵」用モーダル表示処理
 /*******************************************************/
-function setupDragingCard(modalCard){
-	const $box = modalCard;
-	console.log($box);
-	modalCard.css('position', 'absolute');
-	// 初期位置を保存
-	const startX = $box.position().left;
-	const startY = $box.position().top;
+function openModalForSentryDom(title, ...openCard){
+	const modalContent = $('.modal-content');
+	const modalCards = [];
+	const dropTrashArea = $('<div>').addClass('modal-drop-area');
+	const dropDiscardArea = $('<div>').addClass('modal-drop-area');
+	const dropDeckArea = $('<div>').addClass('modal-drop-area');
+	const dropDeckAreaBottom = $('<div>').addClass('modal-deck-area-order');
+	const dropDeckAreaTop = $('<div>').addClass('modal-deck-area-order');
+	const dropAreas = [
+		dropTrashArea,
+		dropDeckAreaBottom,
+		dropDeckAreaTop,
+		dropDiscardArea,
+	];
+	const width = 940;
+	const top = 1;
+	const bottom = 0;
 
-	let isDragging = false;
-	let offsetX, offsetY;
+	$('.modal-body').css('width', `${width}px`);
+	// モーダルのタイトル部分を設定
+	$('.modal-title').html(title);
+	// 各エリアごとのcssのIDを設定
+	dropTrashArea.attr('id', 'modal-trash-area');
+	dropDiscardArea.attr('id', 'modal-discard-area');
+	dropDeckArea.attr('id', 'modal-deck-area');
+	dropDeckAreaBottom.attr('id', 'modal-deck-bottom-area');
+	dropDeckAreaTop.attr('id', 'modal-deck-top-area');
+	// 各エリアごとのタイトルを設定
+	dropTrashArea.append($('<h1>').html('捨て札'));
+	dropDeckArea.append($('<h1>').html('山札'));
+	dropDeckArea.append($('<p>').html('下　　　　　　上'));
+	dropDiscardArea.append($('<h1>').html('廃棄する'));
+	// modalContentに各エリアを設定
+	modalContent.append(dropTrashArea);
+	modalContent.append(dropDeckArea);
+	modalContent.append(dropDiscardArea);
+	// dropDeckAreaに各エリアを設定
+	dropDeckArea.append(dropDeckAreaBottom);
+	dropDeckArea.append(dropDeckAreaTop);
 
-		// 1. ドラッグ開始
-	$box.mousedown((e) => {
-		isDragging = true;
-		// マウスカーソルと要素内の相対位置を計算
-		offsetX = e.pageX - $box.offset().left;
-		offsetY = e.pageY - $box.offset().top;
-		$box.css('z-index', 100); // 最前面へ
-		return false; // テキスト選択などを防ぐ
-	});
-
-	// マウス移動で追従
-	$(document).mousemove((e) => {
-		if (!isDragging) return;
-		// マウスの座標からオフセットを引いて要素の位置を更新
-		const moveX = e.pageX - offsetX;
-		const moveY = e.pageY - offsetY;
-		$box.css({
-			left: moveX + 'px',
-			top: moveY + 'px'
+	// モーダルコンテンツ内のカード部分を設定
+	openCard.forEach((card, i) => {
+		const modalCard = $('<div>');
+		// modalCardのクラス設定
+		modalCard.addClass('modal-card available');
+		if (card.type == cardType.Point) {
+			modalCard.addClass('victory-card');
+		} else if (card.type == cardType.Money) {
+			modalCard.addClass('treasure-card');
+		} else if (card.type == cardType.Action) {
+			modalCard.addClass('kingdon-card');
+		}
+		modalCard.attr('id', `drop-card${i}`);
+		modalCard.attr('draggable', true);
+		// modalCardの内容の設定
+		modalCard.html(`
+			<h1>${card.name}</h1>
+			<img src="${card.image}" draggable='false'>
+			<div>${card.effect}</div>
+		`);
+		// 各カードのイベント登録
+		modalCard.on('dragstart', () => {
+			modalCard.addClass('hold');
+			dropIndex = modalCard.attr('id');
+			setTimeout(() => {modalCard.addClass('invisible');}, 0);
 		});
+		modalCard.on('dragend', () => {
+			modalCard.removeClass('hold invisible');
+		});
+		modalCards.push(modalCard);
 	});
-	// ドロップで定位置に戻る
-	$(document).mouseup(() => {
-		if (!isDragging) return;
-		isDragging = false;
+	// 各カードを配置
+	dropDeckAreaBottom.append(modalCards[bottom]);
+	dropDeckAreaTop.append(modalCards[top]);
+	// ドロップエリアのイベント登録
+	dropAreas.forEach((area) => {
+		area.on('dragover', (event) => {event.preventDefault();});
+		area.on('dragenter', () => {area.addClass('hovered');});
+		area.on('dragleave', () => {area.removeClass('hovered');});
 	});
+
+	// ドロップエリアのイベント登録を各エリアで実行
+	dropTrashArea.on('drop', () => {
+		dropTrashArea.removeClass('hovered');
+		if (modalCards[bottom].attr('id') == dropIndex) {
+			dropTrashArea.append(modalCards[0]);
+		} else if (modalCards[1].attr('id') == dropIndex){
+			dropTrashArea.append(modalCards[1]);
+		}
+	});
+	dropDiscardArea.on('drop', () => {
+		dropDiscardArea.removeClass('hovered');
+		if (modalCards[bottom].attr('id') == dropIndex) {
+			dropDiscardArea.append(modalCards[bottom]);
+		} else if (modalCards[1].attr('id') == dropIndex){
+			dropDiscardArea.append(modalCards[1]);
+		}
+	});
+	dropDeckAreaBottom.on('drop', () => {
+		dropDeckAreaBottom.removeClass('hovered');
+		if (modalCards[bottom].attr('id') == dropIndex) {//drop-card0がデッキ「下」にドロップしたとき
+			//かつ、drop-card1もデッキ「下」にある場合
+			if ($($('#drop-card1').parent()[0]).attr('id') == 'modal-deck-bottom-area') {
+				dropDeckAreaTop.append(modalCards[top]);
+			}
+			dropDeckAreaBottom.append(modalCards[bottom]);
+		} else if (modalCards[top].attr('id') == dropIndex){//drop-card1がデッキ「下」にドロップしたとき
+			//かつ、drop-card0もデッキ「下」にある場合
+			if ($($('#drop-card0').parent()[0]).attr('id') == 'modal-deck-bottom-area') {
+				dropDeckAreaTop.append(modalCards[bottom]);
+			}
+			dropDeckAreaBottom.append(modalCards[top]);
+		}
+	});
+	dropDeckAreaTop.on('drop', () => {
+		dropDeckAreaTop.removeClass('hovered');
+		if (modalCards[bottom].attr('id') == dropIndex) {//drop-card0がデッキ「上」にドロップしたとき
+			//かつ、drop-card1もデッキ「上」にある場合
+			if ($($('#drop-card1').parent()[0]).attr('id') == 'modal-deck-top-area') {
+				dropDeckAreaBottom.append(modalCards[top]);
+			}
+			dropDeckAreaTop.append(modalCards[0]);
+		} else if (modalCards[top].attr('id') == dropIndex){//drop-card1がデッキ「上」にドロップしたとき
+			//かつ、drop-card0もデッキ「上」にある場合
+			if ($($('#drop-card0').parent()[0]).attr('id') == 'modal-deck-top-area') {
+				dropDeckAreaBottom.append(modalCards[bottom]);
+			}
+			dropDeckAreaTop.append(modalCards[top]);
+		}
+	});
+	$('.modal').addClass('active');
+	return modalCards;
 }
 
+
+/*******************************************************/
+/* analysisModalForSentryDom：「衛兵」用モーダル解析処理
+/*******************************************************/
+function analysisModalForSentryDom(){
+	const dropTrashCards = $('#modal-trash-area').children('div');
+	const dropDiscardCards = $('#modal-discard-area').children('div');
+	const dropDeckTopCards = $('#modal-deck-top-area').children('div');
+	const dropDeckBottomCards = $('#modal-deck-bottom-area').children('div');
+	const dropCards = [
+		{id: 'drop-card0', name: $('#drop-card0').children('h1').html()},
+		{id: 'drop-card1', name: $('#drop-card1').children('h1').html()}
+	];
+
+	if (dropDeckBottomCards.length > 0) {
+		dropCards.forEach((dropCard) => {
+			if($(dropDeckBottomCards[0]).attr('id') == dropCard.id){
+				const index = tmpArea.findIndex((card) => card.name == dropCard.name);
+				if( index !== -1 ){
+					const deckCard = tmpArea.splice(index, 1)[0];
+					myDeck.unshift(deckCard);
+				}
+			}
+		});
+	}
+	if (dropDeckTopCards.length > 0) {
+		dropCards.forEach((dropCard) => {
+			if($(dropDeckTopCards[0]).attr('id') == dropCard.id){
+				const index = tmpArea.findIndex((card) => card.name == dropCard.name);
+				if( index !== -1 ){
+					const deckCard = tmpArea.splice(index, 1)[0];
+					myDeck.unshift(deckCard);
+				}
+			}
+		});
+	}
+	console.log('myDeck');
+	console.log(myDeck);
+	for (let i = 0; i < dropTrashCards.length; i++) {
+		dropCards.forEach((dropCard) => {
+			if($(dropTrashCards[i]).attr('id') == dropCard.id){
+				const index = tmpArea.findIndex((card) => card.name == dropCard.name);
+				if( index !== -1 ){
+					const trashCard = tmpArea.splice(index, 1)[0];
+					myTrash.push(trashCard);
+				}
+			}
+		});
+	}
+	for (let i = 0; i < dropDiscardCards.length; i++) {
+		dropCards.forEach((dropCard) => {
+			if($(dropDiscardCards[i]).attr('id') == dropCard.id){
+				const index = tmpArea.findIndex((card) => card.name == dropCard.name);
+				if( index !== -1 ){
+					const discardCard = tmpArea.splice(index, 1)[0];
+					discard.push(discardCard);
+				}
+			}
+		});
+	}
+	tmpArea.splice(0, tmpArea.length);
+	updateTrashDom();
+	updateDeckDom();
+}
 /*******************************************************/
 /* closeModalDom：モーダル非表示処理
 /*******************************************************/
@@ -482,6 +641,7 @@ function playHandCard(index){
 	});
 	updatePlayAreaDom();
 	stackCard.push(card.func);
+
 	endAction();
 }
 
@@ -966,15 +1126,11 @@ function clickHandProcess(handCardDiv, hand){
 				handCardDiv.removeClass("select");
 			}
 			break;
-			break;
 		case phase.cleanup:
 		default:
 			alert("このフェイズでは使用できません");
-			tmpArea.splice(0, tmpArea.length);
 			return false;
-			break;
 	}
-	tmpArea.splice(0, tmpArea.length);
 	return true;
 }
 /*******************************************************/
@@ -1093,7 +1249,7 @@ function cardVassal(){
 		updateInfomationDom(`アクションカードを使用しますか：${trashCard.name}`);
 		tmpArea.unshift(trashCard);
 
-		const modalCard = openModalDom(kingdomCard.Vassal.name, 500, false, trashCard)[0];
+		const modalCard = openModalDom(kingdomCard.Vassal.name, 500, trashCard)[0];
 		modalCard.click(trashCard,() => {
 			stackCard.push(trashCard.func);
 			myTrash.push(trashCard);
@@ -1386,6 +1542,10 @@ function cardMarket(){
 /*******************************************************/
 function cardSentry(){
 	// +1ドロー+1アクション、デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。
+	const top = 1;
+	const bottom = 0;
+	console.log('cardSentry: myDeck');
+	console.log(myDeck);
 	drawDeckCard(1);
 	actionCount += 1;
 	updateActionDom();
@@ -1393,19 +1553,27 @@ function cardSentry(){
 	if (myDeck.length < 2){
 		reconfigureDeck();
 	} 
-	const firstCard = myDeck.shift();
-	const secondCard = myDeck.shift();
+	const topCard = myDeck.shift();
+	const bottomCard = myDeck.shift();
+	updateDeckDom();
 	changePhase(phase.executeActionBySentry);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`衛兵効果：カードを廃棄か、捨て札か、山札に戻すか選ぶ`);
-	const modalCards = openModalDom(kingdomCard.Sentry.name, 900, true, firstCard, secondCard);
-	modalCards[0].click(firstCard,() => {
+	const modalCards = openModalForSentryDom(kingdomCard.Sentry.name, bottomCard, topCard);
+	tmpArea.push(topCard);
+	tmpArea.push(bottomCard);
+	modalCards[top].contextmenu(topCard ,() => {
+		openExplanationModalDom(topCard);
+		return false;
 	});
-	modalCards[1].click(secondCard,() => {
+	modalCards[bottom].contextmenu(bottomCard ,() => {
+		openExplanationModalDom(bottomCard);
+		return false;
 	});
 	return true;
 }
 function cardSentrySub(){
+	analysisModalForSentryDom();
 	
 	closeModalDom();
 	endAction();
