@@ -23,14 +23,28 @@
 	<div class="infomation-area">
 		<div class="left-info">
 			<div class="count-area">
-				<div class="action-count">1</div>
-				<div class="moon-count">0</div>
-				<div class="buy-count">1</div>
+				<div class="base-area action-area">
+					<img src="images/action.jpg" alt="">
+					<div class="base-count action-count">1</div>
+				</div>
+				<div class="base-area moon-area">
+					<img src="images/moon.png" alt="">
+					<div class="base-count moon-count">0</div>
+				</div>
+				<div class="base-area moon-area">
+					<img src="images/buy.jpg" alt="">
+					<div class="base-count buy-count">1</div>
+				</div>
+			</div>
+			<div class="base-area point-area">
+				<img src="images/point.jpg" alt="">
+				<div class="base-count point-count">1</div>
 			</div>
 			<div class="deck-area">
 				<img src="images/deck.png" alt="">
 				<div class="deck-count"></div>
 			</div>
+			<div class="phase-count"></div>
 		</div>
 		<div class="main-info">
 			<div class="info-text"></div>
@@ -41,15 +55,20 @@
 				<button class="multiple-btn" onclick="pushMultiplebtn()">次のフェイズへ</button>
 			</div>
 			<div class="trash-info">
+				<div class="discard-area">
+					<img src="images/discard.png" alt="">
+					<div class="discard-count">0</div>
+				</div>
 				<div class="trash-area">
 					<img src="images/trash.png" alt="">
 					<div class="trash-count">0</div>
 				</div>
-				<div class="count-area">
-					<div class="point-count">1</div>
+			</div>
+			<div class="btn-info">
+				<div class="btn-area setting-area">
+					<img class="setting-btn" src="images/setting.png" alt="">
 				</div>
 			</div>
-			<div class="phase-count"></div>
 		</div>
 	</div>
 	<div class="hand-area">
@@ -62,6 +81,10 @@
 		<div class="modal-body">
 			<div class="modal-title"></div>
 			<div class="modal-content"></div>
+		</div>
+	</div>
+	<div class="setting-modal">
+		<div class="setting-modal-body">
 		</div>
 	</div>
 

@@ -3,6 +3,7 @@
 	padding: 0;
 	margin: 0;
 	user-select: none;
+	font-family: "Skip Std B", "Skip ProN B", "Skip Pro B", sans-serif;
 }
 
 .back{
@@ -44,6 +45,21 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	position: relative;
+}
+.get-supply-card{
+	width: 150px;
+	aspect-ratio: 3 / 4;
+	border: 2px solid black;
+	border-radius: 5px;
+	text-align: center;
+	z-index: 1000;
+}
+.get-supply-card img{
+	width: 100%;
+}
+.get-supply-card div{
+	width: 100%;
 }
 .victory-point-area{
 	width: 130px;
@@ -136,71 +152,41 @@
 	height: 100%;
 }
 .count-area{
-	height: 40px;
+	height: 50px;
 	display: flex;
 	align-items: center;
 	margin: 5px 0px;
+	position: relative;
 }
-.action-count{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 40px;
-	height: 40px;
-	color: black;
-	font-size: 24px;
-	background-color: white;
-	border: 2px solid gray;
-	border-radius: 50%;
-	margin: 0 2px;
-}
-.buy-count{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 40px;
-	height: 40px;
-	color: black;
-	font-size: 24px;
-	background-color: gray;
-	border-radius: 50%;
-	margin: 0 2px;
 
+.base-area{
+	width: 50px;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	position: relative;
 }
-.moon-count{
+.base-area img{
+	width: 100%;
+}
+.base-count{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 40px;
-	height: 40px;
-	color: black;
-	font-size: 24px;
-	background-color: #f9f170;
-	border-radius: 50%;
-	margin: 0 2px;
+	width: 100%;
+	height: 100%;
+	color: white;
+	font-size: 30px;
+	font-weight: 900;
+	text-stroke: 1px black;
+	-webkit-text-stroke: 1px black;
+	position: absolute;
+}
 
-}
-.point-area{
-	height: 40px;
-	display: flex;
-	align-items: center;
-	margin: 10px 0;
-}
-.point-count{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 40px;
-	height: 40px;
-	color: black;
-	font-size: 24px;
-	background-color: #77f970;
-	border-radius: 50%;
-	margin: 0 2px;
-}
 .deck-area{
 	height: 108.07px;
 	width: 70px;
+	margin-top: 5px;
 	position: relative;
 }
 .deck-area img{
@@ -218,6 +204,8 @@
 	font-weight: 900;
 	background-color: #a71b1c;
 	border-radius: 50%;
+	text-stroke: 1px white;
+	-webkit-text-stroke: 1px white;
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -237,7 +225,8 @@
 }
 .info-text{
 	width: 90%;
-	height: 20px;
+	height: 25px;
+	line-height: 25px;
 	text-align: center;
 	color: white;
 	background-color: black;
@@ -291,6 +280,10 @@
 	color: white;
 	background-color: gray;
 }
+.multiple-btn:disabled{
+	opacity: 0;
+}
+
 .trash-info{
 	width: 100%;
 	display: flex;
@@ -323,7 +316,54 @@
 	margin: 0 2px;
 }
 
+.discard-area{
+	height: 100px;
+	width: 100px;
+	margin-top: 10px;
+	position: relative;
+}
+.discard-area img{
+	width: 100%;
+	z-index: -1;
+}
+.discard-count{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	top: 50%;
+	left: 47%;
+	transform: translate(-50%, -50%);
+	width: 40px;
+	height: 40px;
+	color: black;
+	font-size: 24px;
+	background-color: white;
+	border-radius: 50%;
+	margin: 0 2px;
+}
 
+.btn-info{
+	width: 100%;
+	height: 50px;
+	display: flex;
+	flex-direction: row-reverse;
+	margin-top: 10px;
+}
+.btn-area{
+	width: 50px;
+	height: 100%;
+}
+.btn-area img{
+	width: 100%;
+	cursor: pointer;
+}
+.btn-area img:hover{
+	opacity: 0.8;
+}
+.btn-area img:active{
+	transform: scale(0.95) translateY(2px);
+}
 /***********************************************************************/
 /* hand-area
 /***********************************************************************/
@@ -580,4 +620,43 @@
 }
 .hovered {
   border: 2px dotted white;
+}
+
+/***********************************************************************/
+/* 説明用モーダルの設定
+/***********************************************************************/
+/*モーダル本体の指定 + モーダル外側の背景の指定*/
+.setting-modal{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	background: rgba(0,0,0,0.5);
+	padding: 40px 20px;
+	overflow: auto;
+	opacity: 0;
+	visibility: hidden;
+	transition: all .3s;
+	box-sizing: border-box;
+	z-index: 1000;
+}
+
+/*モーダル本体に「active」クラス付与した時のスタイル*/
+.setting-modal.active{
+	opacity: 1;
+	visibility: visible;
+}
+/*モーダル枠の指定*/
+.setting-modal-body{
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+	max-width: 940px;
+	width: 500px;
+	height: 350px;
+	background-color: #1d1916;
+	border: 3px solid gray;
+	margin-top: 10px;
 }

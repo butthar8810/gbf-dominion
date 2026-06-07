@@ -14,7 +14,7 @@ const treasurePointCard = {
 };
 //用いる王国カード
 const kingdomCard = {
-	Cellar: {name: '騎空艇の貨物室', cost: 2, type: cardType.Action, remain: 10, func: cardCellar, effect: '+1アクション<br><br>手札を好きな枚数捨て、捨てた枚数だけドロー', image: 'images/Cellar.png'},
+	Cellar: {name: '騎空艇の貯蔵庫', cost: 2, type: cardType.Action, remain: 10, func: cardCellar, effect: '+1アクション<br><br>手札を好きな枚数捨て、捨てた枚数だけドロー', image: 'images/Cellar.png'},
 	Chapel: {name: 'ゼエン教', cost: 2, type: cardType.Action, remain: 10, func: cardChapel, effect: '手札を4枚まで廃棄可能', image: 'images/Chapel.png'},
 	Moat: {name: '堀', cost: 2, type: cardType.Action, remain: 10, func: cardMoat, effect: '+2 カードを引く', image: 'images/Moat.png'},
 	Vassal: {name: '氷皇の家臣', cost: 3, type: cardType.Action, remain: 10, func: cardVassal, effect: '+2Moon<br><br>デッキのトップを捨て、それがアクションなら使用できる', image: 'images/Vassal.png'},
@@ -41,6 +41,12 @@ const kingdomCard = {
 // 定数
 const supplyKingdomNum = 10;
 const initialHandNum = 5;
+// アニメーションの実行時間/待機時間
+const playWatiTime = 200;
+const drowWatiTime = 400;
+const trashWatiTime = 400;
+const modalWatiTime = 300;
+// フェイズ定数
 const phase = {
 	action: 'アクションフェイズ', 
 	buy: '購入フェイズ', 
@@ -59,6 +65,45 @@ const phase = {
 	executeActionByArtisan1: 'アクション実行フェイズ(職人1)',
 	executeActionByArtisan2: 'アクション実行フェイズ(職人2)',
 };
+// アニメーション用の座標定数
+const kingdomCoordinateForSupply = [
+	// 王国カードの座標
+	{top: '27px', left: '800px'},
+	{top: '27px', left: '665px'},
+	{top: '27px', left: '530px'},
+	{top: '27px', left: '395px'},
+	{top: '27px', left: '260px'},
+	{top: '193px', left: '800px'},
+	{top: '193px', left: '665px'},
+	{top: '193px', left: '530px'},
+	{top: '193px', left: '395px'},
+	{top: '193px', left: '260px'}
+];
+const victoryCoordinateForSupply = {
+	// 勝利点カードの座標
+	High: {top: '5px', left: '-7px'},
+	Middle: {top: '130px', left: '-7px'},
+	Low: {top: '255px', left: '-7px'}
+};
+const treasureCoordinateForSupply = {
+	// Moonカードの座標
+	Gold: {top: '5px', left: '127px'},
+	Silver: {top: '130px', left: '127px'},
+	Bronze: {top: '255px', left: '127px'}
+};
+const deckCoordinateForSupply = {top: '450px', left: '-30px', width: '130px'};
+const handCoordinateForSupply = {top: '630px', left: '395px', width: '120px'};
+const trashCoordinateForSupply = {top: '430px', left: '765px', width: '80px'};
+const discardCoordinateForSupply = {top: '430px', left: '850px', width: '80px'};
+const modalCoordinateForSupply = {top: '100px', left: '395px', width: '150px'};
+const deckCoordinateForHandArea = {top: '-170px', left: '-30px', width: '130px'};
+const handCoordinateForHandArea = {top: '0px', left: '400px', width: '120px'};
+const modalCoordinateForHandArea = {top: '-500px', left: '400px', width: '150px'};
+const trashCoordinateForHandArea = {top: '-215px', left: '740px', width: '80px'};
+const discardCoordinateForHandArea = {top: '-215px', left: '840px', width: '80px'};
+const handCoordinateForPlayArea = {top: '200px', left: '300px', width: '120px'};
+const playCoordinateForPlayArea = {top: '0px', left: '300px', width: '120px'};
+const trashCoordinateForPlayArea = {top: '5px', left: '600px', width: '80px'};
 //変数
 let myDeck = [];//name, cost, type, effect, image
 let myHand = [];//id, name, cost, type, effect, image
@@ -88,6 +133,7 @@ function startGame(){
 	// デッキの準備
 	setupDeck();
 	setupExplanationModal();
+	setupSettingBtn();
 
 	// 次のカードをプレイ人数に応じた枚数だけ表向きの山札にして並べる
 	supplyKingdom.sort((a, b) => b.cost - a.cost);
@@ -101,7 +147,20 @@ function startGame(){
 	updateBuyDom();
 	updateMoonDom();
 
-	startTurn();
+	setTimeout(() => {
+		startTurn();
+	}, drowWatiTime);
+}
+/*******************************************************/
+/* setupDeck：初期デッキとなる10枚のカードを配る
+/*******************************************************/
+function setupDeck(){
+	// プレイヤーに初期デッキとなる10枚のカードを配る
+	drawSupplyCard(treasurePointCard.Bronze, 7);
+	drawSupplyCard(victoryPointCard.Low, 3);
+	drawSupplyCard(kingdomCard.Artisan, 3);
+	// 配ったカードをデッキに格納する
+	reconfigureDeck();
 }
 /*******************************************************/
 /* startTurn：ターンの始まり
@@ -126,6 +185,7 @@ function startTurn(){
 function startActionPhase(){
 	// アクションフェイズに設定
 	changePhase(phase.action);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`アクション<br>フェイズ終了`);
 	updateInfomationDom(`アクションカードを使用してください`);
 	// 手札にアクションカードがなければ、次のフェイズに移行する
@@ -139,6 +199,7 @@ function startActionPhase(){
 /*******************************************************/
 function startBuyPhase(){
 	changePhase(phase.buy);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`購入フェイズ<br>終了`);
 	updateInfomationDom(`ムーンカードを使用してください`);
 	updateHandDom();
@@ -148,7 +209,10 @@ function startBuyPhase(){
 /*******************************************************/
 function startCleanupPhase(){
 	changePhase(phase.cleanup);
+	disabledMultipleBtn(true);
 	updateInfomationDom(`クリーンアップ中です。`);
+
+	disabledMultipleBtn(true);
 	// クリーンアップ処理を実行
 	animateCleanupToTrash();
 
@@ -166,18 +230,7 @@ function startCleanupPhase(){
 		updateTrashDom();
 		updatePlayAreaDom();
 		startTurn();
-	}, 400);
-}
-
-/*******************************************************/
-/* setupDeck：初期デッキとなる10枚のカードを配る
-/*******************************************************/
-function setupDeck(){
-	// プレイヤーに初期デッキとなる10枚のカードを配る
-	drawSupplyCard(treasurePointCard.Bronze, 7);
-	drawSupplyCard(victoryPointCard.Low, 3);
-	// 配ったカードをデッキに格納する
-	reconfigureDeck();
+	}, drowWatiTime);
 }
 
 /*******************************************************/
@@ -185,10 +238,9 @@ function setupDeck(){
 /*******************************************************/
 function setupExplanationModal(){
 	//モーダルの外側をクリックしたらモーダルを閉じる
-	$(document).on('click',function(e) {
+	$(document).click((e) => {
 		if(!$(e.target).closest('.explanation-modal-body').length) {
-			$('.explanation-modal').removeClass('active');
-			$('.explanation-modal-body').html('');
+			closeExplanationModalDom();
 		}
 	});
 }
@@ -213,6 +265,41 @@ function openExplanationModalDom(card){
 	explanationModal.addClass('explanation-modal-card');
 	$('.explanation-modal-body').append(explanationModal);
 	$('.explanation-modal').addClass('active');
+}
+/*******************************************************/
+/* closeExplanationModalDom：説明モーダル非表示処理
+/*******************************************************/
+function closeExplanationModalDom(){
+	$('.explanation-modal').removeClass('active');
+	$('.explanation-modal-body').html('');
+}
+/*******************************************************/
+/* setupSettingBtn：設定ボタンの初期設定
+/*******************************************************/
+function setupSettingBtn(){
+	$('.setting-btn').click((e) => {
+		openSettingModalDom();
+	});
+	$(document).click((e) => {
+		if(!$(e.target).closest('.setting-modal-body').length && !$(e.target).closest('.setting-btn').length) {
+			closeSettingModalDom();
+		}
+	});
+}
+/*******************************************************/
+/* openSettingModalDom：設定用モーダル表示処理
+/*******************************************************/
+function openSettingModalDom(){
+	console.log("openSettingModalDom");
+	$('.setting-modal').addClass('active');
+}
+/*******************************************************/
+/* closeSettingModalDom：設定用モーダル非表示処理
+/*******************************************************/
+function closeSettingModalDom(){
+	console.log("closeSettingModalDom");
+	$('.setting-modal').removeClass('active');
+	$('.setting-modal-body').html('');
 }
 /*******************************************************/
 /* openModalDom：モーダル表示処理
@@ -269,6 +356,7 @@ function openModalForSentryDom(title, ...openCard){
 	const top = 1;
 	const bottom = 0;
 
+	animateDeckToModal(openCard[top]);
 	$('.modal-body').css('width', `${width}px`);
 	// モーダルのタイトル部分を設定
 	$('.modal-title').html(title);
@@ -407,6 +495,7 @@ function analysisModalForSentryDom(){
 				const index = findIndexTemporaryArea('name', dropCard.name);
 				if( index !== -1 ){
 					const deckCard = spliceTemporaryArea(index);
+					animateModalToDeck(deckCard);
 					unshiftDeck(deckCard);
 				}
 			}
@@ -418,6 +507,7 @@ function analysisModalForSentryDom(){
 				const index = findIndexTemporaryArea('name', dropCard.name);
 				if( index !== -1 ){
 					const deckCard = spliceTemporaryArea(index);
+					animateModalToDeck(deckCard);
 					unshiftDeck(deckCard);
 				}
 			}
@@ -432,7 +522,7 @@ function analysisModalForSentryDom(){
 				if( index !== -1 ){
 					const trashCard = spliceTemporaryArea(index);
 					pushTrash(trashCard);
-					
+					animateModalToTrash(trashCard);
 				}
 			}
 		});
@@ -443,13 +533,15 @@ function analysisModalForSentryDom(){
 				const index = findIndexTemporaryArea('name', dropCard.name);
 				if( index !== -1 ){
 					const discardCard = spliceTemporaryArea(index);
-					pushDiscard(discardCard)
+					pushDiscard(discardCard);
+					animateModalToDiscard(discardCard);
 				}
 			}
 		});
 	}
 	deletAllTemporaryArea();
 	updateTrashDom();
+	updateDiscardDom();
 	updateDeckDom();
 }
 /*******************************************************/
@@ -474,6 +566,7 @@ function openModalTrashList(){
 	let trashCount = [];
 	let trashIndex = 0;
 	myTrash.forEach((card) => {
+		animateTrashToModal(card);
 		const trashIndex = findIndexTemporaryArea('name', card.name);
 		if (trashIndex === -1) {
 			const modalCard = $('<div>');
@@ -502,10 +595,13 @@ function openModalTrashList(){
 				if (index !== -1){
 					const trashCard = spliceTrash(index);
 					unshiftDeck(trashCard);
+					animateModalToDeck(card);
 					updateTrashDom();
 					updateDeckDom();
 					closeModalDom();
-					endAction();
+					setTimeout(() => {
+						endAction();
+					}, modalWatiTime);
 					return true;
 				} else {
 					return false;
@@ -600,7 +696,7 @@ function drawDeckCard(count = 1){
 			// デッキから手札へカードを引く
 			const card = shiftDeck();
 			pushHand(card);
-			animateCleanupDrow(card);
+			animateDrowDeck(card);
 		} else {
 			break;
 		}
@@ -608,7 +704,7 @@ function drawDeckCard(count = 1){
 	updateDeckDom();
 	setTimeout(() => {
 		updateHandDom();
-	}, 400);
+	}, drowWatiTime);
 }
 /*******************************************************/
 /* playHandCard：カードをプレイする
@@ -617,10 +713,11 @@ function playHandCard(index){
 	const card = spliceHand(index);
 	// 手札表示の更新
 	updateHandDom();
-	pushPlayArea(card);
 	updatePlayAreaDom();
+	pushPlayArea(card);
+	animatePlayHandCard(card);
+//	updatePlayAreaDom();
 	pushStackCard(card.func);
-
 	endAction();
 }
 
@@ -710,10 +807,9 @@ function pushMultiplebtn(){
 			cardArtisanSubSub();
 			break;
 		default:
-			endAction();
+			debugAlert('ボタンは使えません');
 			break;
 	}
-
 }
 /*******************************************************/
 /* DOM要素の更新処理
@@ -745,6 +841,9 @@ function updateTrashDom(){
 	}
 	$(`.trash-count`).html(`${myTrash.length}`);
 }
+function updateDiscardDom(){
+	$(`.discard-count`).html(`${discard.length}`);
+}
 function updateMultipleBtnDom(text){
 	$(`.multiple-btn`).html(text);
 }
@@ -772,7 +871,10 @@ function updateHandDom(){
 	$(`.hand-info`).html('');
 	myHand.forEach((hand, i) => {
 		const handCardDiv = $('<div>');
-		handCardDiv.addClass('hand-card');
+		handCardDiv
+			.attr('id', `hand-card${hand.id}`)
+			.addClass('hand-card')
+			.html(`${hand.name}<img src="${hand.image}">`);
 		if (hand.type == cardType.Point) {
 			handCardDiv.addClass('victory-card');
 		} else if (hand.type == cardType.Money) {
@@ -794,7 +896,6 @@ function updateHandDom(){
 			default:
 				break;
 		}
-		handCardDiv.html(`${hand.name}<img src="${hand.image}">`);
 		// 手札クリック時の処理登録
 		handCardDiv.click(hand ,() => {clickHandProcess(handCardDiv, hand);});
 		handCardDiv.contextmenu(hand ,() => {
@@ -813,7 +914,12 @@ function updateSupplyDom(){
 	// サプライエリアの設定
 	supplyKingdom.forEach((kingdom, i) => {
 		const supplyCardDiv = $('<div>');
-		supplyCardDiv.addClass('supply-card');
+		supplyCardDiv
+			.addClass('supply-card')
+			.html(kingdom.name)
+			.append(`<img src="${kingdom.image}"></img>`)
+			.append(`<div class="cost">${kingdom.cost}</div>`)
+			.append(`<div class="remain">${kingdom.remain}</div>`);
 		if (kingdom.remain <= 0) {
 			supplyCardDiv.addClass('empty-card');
 		}else if (kingdom.type == cardType.Point) {
@@ -823,28 +929,29 @@ function updateSupplyDom(){
 		} else if (kingdom.type == cardType.Action) {
 			supplyCardDiv.addClass('kingdon-card');
 		}
-		supplyCardDiv
-			.html(kingdom.name)
-			.append(`<img src="${kingdom.image}"></img>`)
-			.append(`<div class="cost">${kingdom.cost}</div>`)
-			.append(`<div class="remain">${kingdom.remain}</div>`);
 		supplyCardDiv.click(kingdom, () => {
 			switch(currentPhase) {
 				case phase.buy:
-						buySupplyCard(kingdom);
+						if(buySupplyCard(kingdom)){
+							animateDrowSupplyKingdom(kingdom, i);
+						}
 					break;
 				case phase.executeActionByRemodel:
 				case phase.executeActionByWorkshop:
 					if (kingdom.cost <= exchangeCost) {
 						const ret = drawSupplyCard(kingdom);
-						exchangeCost = -1;
-						if (ret) endAction();
+						if (ret) {
+							animateDrowSupplyKingdom(kingdom, i);
+							exchangeCost = -1;
+							endAction();
+						}
 						
 					}
 					break;
 				case phase.executeActionByArtisan1:
 					if (kingdom.cost <= exchangeCost) {
 						if (drowSupplyCardToHand(kingdom)){
+							animateDrowSupplyKingdomToHand(kingdom, i);
 							exchangeCost = -1;
 							cardArtisanSub();
 						}
@@ -877,7 +984,9 @@ function updateSupplyDom(){
 		supplyCardDiv.click(victoryPointCard[key], () => {
 			switch(currentPhase) {
 				case phase.buy:
-						buySupplyCard(victoryPointCard[key]);
+						if(buySupplyCard(victoryPointCard[key])){
+							animateDrowSupply(key);
+						}
 					break;
 				case phase.executeActionByRemodel:
 				case phase.executeActionByWorkshop:
@@ -887,13 +996,17 @@ function updateSupplyDom(){
 							break;
 						}
 						const ret = drawSupplyCard(victoryPointCard[key]);
-						exchangeCost = -1;
-						if (ret) endAction();
+						if (ret) {
+							animateDrowSupply(key);
+							exchangeCost = -1;
+							endAction();
+						}
 					}
 					break;
 				case phase.executeActionByArtisan1:
 					if (victoryPointCard[key].cost <= exchangeCost) {
 						if (drowSupplyCardToHand(victoryPointCard[key])){
+							animateDrowSupplyToHand(key);
 							exchangeCost = -1;
 							cardArtisanSub();
 						}
@@ -926,13 +1039,16 @@ function updateSupplyDom(){
 		supplyCardDiv.click(treasurePointCard[key], () => {
 			switch(currentPhase) {
 				case phase.buy:
-						buySupplyCard(treasurePointCard[key]);
+						if(buySupplyCard(treasurePointCard[key])){
+							animateDrowSupply(key);
+						}
 					break;
 				case phase.executeActionByRemodel:
 				case phase.executeActionByMine:
 				case phase.executeActionByWorkshop:
 					if (treasurePointCard[key].cost <= exchangeCost) {
 						if (drawSupplyCard(treasurePointCard[key])) {
+							animateDrowSupply(key);
 							exchangeCost = -1;
 							endAction();
 						}
@@ -941,6 +1057,7 @@ function updateSupplyDom(){
 				case phase.executeActionByArtisan1:
 					if (treasurePointCard[key].cost <= exchangeCost) {
 						if (drowSupplyCardToHand(treasurePointCard[key])){
+							animateDrowSupplyToHand(key);
 							exchangeCost = -1;
 							cardArtisanSub();
 						}
@@ -1143,7 +1260,8 @@ function cardCellar(){
 	actionCount += 1;
 	updateActionDom();
 	
-	chagePhase(phase.executeActionByCellar);
+	changePhase(phase.executeActionByCellar);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`捨てるカードを選んでください`);
 
@@ -1155,11 +1273,14 @@ function cardCellarSub(){
 		const trashCard = shiftTemporaryArea();
 		const index = findIndexHand('id', trashCard.id);
 		const card = spliceHand(index);
+		animateHnadToTrash(card);
 		pushTrash(card);
 	}
-	updateHandDom();
 	updateTrashDom();
-	endAction();
+	setTimeout(() => {
+		updateHandDom();
+		endAction();
+	}, drowWatiTime);
 	return true;
 }
 
@@ -1169,6 +1290,7 @@ function cardCellarSub(){
 function cardChapel(){
 	//手札を4枚まで廃棄可能
 	changePhase(phase.executeActionByChapel);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`廃棄するカードを選んでください`);
 
@@ -1180,9 +1302,13 @@ function cardChapelSub(){
 		const trashCard = shiftTemporaryArea();
 		const index = findIndexHand('id', trashCard.id);
 		const card = spliceHand(index);
+		animateHnadToDiscard(card);
 		pushDiscard(card);
 	}
-	endAction();
+	setTimeout(() => {
+		updateDiscardDom();
+		endAction();
+	}, drowWatiTime);
 	return true;
 }
 
@@ -1193,7 +1319,9 @@ function cardMoat(){
 	// +2ドロー/アタックカードが使用された時に公開すると効果を受けない
 	drawDeckCard(2);
 	
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 }
 /*******************************************************/
 /* 「家臣」の効果関数の宣言
@@ -1207,7 +1335,9 @@ function cardVassal(){
 	}
 	const trashCard = shiftDeck();
 	if (trashCard.type == cardType.Action) {
+		animateDeckToModal(trashCard);
 		changePhase(phase.executeActionByVassal);
+		disabledMultipleBtn(false);
 		updateMultipleBtnDom(`使用しない`);
 		updateInfomationDom(`アクションカードを使用しますか：${trashCard.name}`);
 		pushTemporaryArea(trashCard);
@@ -1226,12 +1356,15 @@ function cardVassal(){
 		});
 		return true;
 	} else {
+		animateDeckToTrash(trashCard);
 		pushTrash(trashCard);
 	}
 
 	updateDeckDom();
 	updateTrashDom();
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 	return true;
 }
 function cardVassalSub(){
@@ -1250,6 +1383,7 @@ function cardVassalSub(){
 function cardWorkshop(){
 	//4コスト以下のカード1枚を獲得
 	changePhase(phase.executeActionByWorkshop);
+	disabledMultipleBtn(true);
 	exchangeCost = 4;
 	updateInfomationDom(`獲得するカードを選んでください（コスト${exchangeCost}以下）`);
 
@@ -1266,7 +1400,9 @@ function cardMerchant(){
 	// シルバームーンを使用したときに+1Moonするフラグを立てる
 	MerchantFlag = true;
 	
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 }
 
 /*******************************************************/
@@ -1280,13 +1416,18 @@ function cardHarbinger(){
 
 	if (myTrash.length > 0){
 		changePhase(phase.executeActionByHarbinger);
+		disabledMultipleBtn(false);
 		updateMultipleBtnDom(`しない`);
 		updateInfomationDom(`${kingdomCard.Harbinger.name}:あなたの捨て札から1枚カードを山札の上に置きますか`);
-		updateHandDom();
-		const modalCards = openModalTrashList();
+		setTimeout(() => {
+			updateHandDom();
+		}, 400);
+			const modalCards = openModalTrashList();
 		return true;
 	}
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 	return true;
 }
 
@@ -1298,7 +1439,9 @@ function cardVillage(){
 	drawDeckCard(1);
 	actionCount += 2;
 	updateActionDom();
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 }
 
 /*******************************************************/
@@ -1312,6 +1455,7 @@ function cardRemodel(){
 		return true;
 	}
 	changePhase(phase.executeActionByRemodel);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`廃棄するカードを選んでください`);
 
@@ -1329,13 +1473,16 @@ function cardRemodelSub(){
 	}
 	const card = spliceHand(index);
 	const cost = card.cost;
+	animateHnadToDiscard(card);
 	pushDiscard(card);
+	updateDiscardDom();
 	updateSupplyDom();
-	updateHandDom();
-
 	exchangeCost = cost + 2;
 	updateInfomationDom(`獲得するカードを選んでください（コスト${exchangeCost}以下）`);
 	
+	setTimeout(() => {
+		updateHandDom();
+	}, trashWatiTime);
 	return true;
 }
 
@@ -1345,7 +1492,9 @@ function cardRemodelSub(){
 function cardSmithy(){
 	// +3ドロー
 	drawDeckCard(3);
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 }
 /*******************************************************/
 /* 「金貸し」の効果関数の宣言
@@ -1353,6 +1502,7 @@ function cardSmithy(){
 function cardMoneylender(){
 	// 銅貨1枚を廃棄してもよい、廃棄した場合+3Moon
 	changePhase(phase.executeActionByMoneylender);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`廃棄するカード(${treasurePointCard.Bronze.name})を選んでください`);
 
@@ -1370,14 +1520,17 @@ function cardMoneylenderSub(){
 		return false;
 	}
 	const card = spliceHand(index);
+	animateHnadToDiscard(card);
 	pushDiscard(card);
+	updateDiscardDom();
 
 	moonCount += 3;
 	updateMoonDom();
 	updateSupplyDom();
-	updateHandDom();
-
-	endAction();
+	setTimeout(() => {
+		updateHandDom();
+		endAction();
+	}, trashWatiTime);
 	return true;
 
 }
@@ -1387,6 +1540,7 @@ function cardMoneylenderSub(){
 function cardThroneRoom(){
 	// 手札のアクション1枚を2回使用してもよい
 	changePhase(phase.executeActionByThroneRoom);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`使用するアクションカードを選んでください`);
 
@@ -1440,15 +1594,18 @@ function cardPoacher(){
 			supplyCount++;
 		}
 	}
-	if(supplyCount > 0) {
-		changePhase(phase.executeActionByPoacher);
-		updateMultipleBtnDom(`ＯＫ`);
-		updateInfomationDom(`捨てるカードを選んでください（${supplyCount}枚）`);
-		updateHandDom();
-		return true;
-	}
 
-	endAction();
+	setTimeout(() => {
+		if(supplyCount > 0) {
+			changePhase(phase.executeActionByPoacher);
+			disabledMultipleBtn(false);
+			updateMultipleBtnDom(`ＯＫ`);
+			updateInfomationDom(`捨てるカードを選んでください（${supplyCount}枚）`);
+			updateHandDom();
+			return true;
+		}
+		endAction();
+	}, drowWatiTime);
 	return true;
 }
 function cardPoacherSub(){
@@ -1465,9 +1622,12 @@ function cardPoacherSub(){
 			return false;
 		}
 		const card = spliceHand(index);
+		animateHnadToTrash(card);
 		pushTrash(card);
 	}
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 	return true;
 }
 /*******************************************************/
@@ -1488,7 +1648,9 @@ function cardMarket(){
 	updateBuyDom();
 	moonCount += 1;
 	updateMoonDom();
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 }
 
 /*******************************************************/
@@ -1498,8 +1660,6 @@ function cardSentry(){
 	// +1ドロー+1アクション、デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。
 	const top = 1;
 	const bottom = 0;
-	console.log('cardSentry: myDeck');
-	console.log(myDeck);
 	drawDeckCard(1);
 	actionCount += 1;
 	updateActionDom();
@@ -1511,6 +1671,7 @@ function cardSentry(){
 	const bottomCard = shiftDeck();
 	updateDeckDom();
 	changePhase(phase.executeActionBySentry);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`衛兵効果：カードを廃棄か、捨て札か、山札に戻すか選ぶ`);
 	const modalCards = openModalForSentryDom(kingdomCard.Sentry.name, bottomCard, topCard);
@@ -1541,7 +1702,9 @@ function cardCouncilRoom(){
 	drawDeckCard(4);
 	buyCount += 1;
 	updateBuyDom();
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 }
 
 /*******************************************************/
@@ -1552,7 +1715,9 @@ function cardLaboratory(){
 	drawDeckCard(2);
 	actionCount += 1;
 	updateActionDom();
-	endAction();
+	setTimeout(() => {
+		endAction();
+	}, drowWatiTime);
 }
 
 /*******************************************************/
@@ -1561,6 +1726,7 @@ function cardLaboratory(){
 function cardMine(){
 	// Moon1枚を廃棄、(廃棄カードのコスト)+3以下のMoon1枚を手札に獲得
 	changePhase(phase.executeActionByMine);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`廃棄するカード(Moon)を選んでください`);
 
@@ -1572,10 +1738,13 @@ function cardMineSub(){
 	const index = findIndexHand('id', discardCard.id);
 	const card = spliceHand(index);
 	const cost = card.cost;
+	animateHnadToDiscard(card);
 	pushDiscard(card);
+	updateDiscardDom();
 	updateSupplyDom();
-	updateHandDom();
-
+	setTimeout(() => {
+		updateHandDom();
+	}, trashWatiTime);
 	exchangeCost = cost + 3;
 	updateInfomationDom(`獲得するカードを選んでください（コスト${exchangeCost}以下）`);
 }
@@ -1633,13 +1802,16 @@ function cardLibrary(){
 function cardArtisan(){
 	// 5コスト以下のカード1枚を手札に獲得。手札1枚をデッキトップに置く
 	changePhase(phase.executeActionByArtisan1);
+	disabledMultipleBtn(true);
 	exchangeCost = 5;
-	updateInfomationDom(`獲得するカードを選んでください（コスト${exchangeCost}以下）`);
+	updateInfomationDom(`獲得するサプライを選んでください（コスト${exchangeCost}以下）`);
+	updateHandDom();
 }
 
 function cardArtisanSub(){
 	// 5コスト以下のカード1枚を手札に獲得。手札1枚をデッキトップに置く
 	changePhase(phase.executeActionByArtisan2);
+	disabledMultipleBtn(false);
 	updateMultipleBtnDom(`ＯＫ`);
 	updateInfomationDom(`手札1枚をデッキトップに置いてください`);
 	updateHandDom();
@@ -1649,12 +1821,466 @@ function cardArtisanSubSub(){
 	const deckCard = shiftTemporaryArea();
 	const index = findIndexHand('id', deckCard.id);
 	const card = spliceHand(index);
+	animateHnadToDeck(card);
 	unshiftDeck(card);
-	updateHandDom();
 	updateDeckDom();
-
-	endAction();
+	setTimeout(() => {
+		updateHandDom();
+		endAction();
+	}, trashWatiTime);
 }
+
+/*****************************************************************************/
+/* アニメーション関数
+/*****************************************************************************/
+/*******************************************************/
+/* animateCleanupToTrash：クリーンアップの捨て札処理のアニメーション
+/*******************************************************/
+function animateCleanupToTrash(){
+	const playCardDiv = $('.play-card');
+	const handCardDiv = $('.hand-card');
+	playCardDiv
+		.css('transform', 'scale(0.7)')
+		.css('left', '');
+	playCardDiv.animate({
+		top: trashCoordinateForPlayArea.top, 
+		left: trashCoordinateForPlayArea.left,
+		width: trashCoordinateForPlayArea.width 
+	}, 400);
+	handCardDiv
+		.removeClass('available')
+		.css('position', 'absolute')
+		.css('transform', 'scale(0.7)');
+	handCardDiv.animate({ 
+		top: trashCoordinateForHandArea.top,
+		left: trashCoordinateForHandArea.left,
+		width: trashCoordinateForHandArea.width
+	}, trashWatiTime);
+}
+/*******************************************************/
+/* animateDrowDeck：ドローのアニメーション
+/*******************************************************/
+function animateDrowDeck(card){
+	const drowCardDiv = $('<div>');
+	$('.hand-info').append(drowCardDiv);
+	drowCardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('hand-card')
+		.removeClass('available')
+		.css('position', 'absolute')
+		.css('width', deckCoordinateForHandArea.width)
+		.css('top', deckCoordinateForHandArea.top)
+		.css('left', deckCoordinateForHandArea.left);
+	if (card.type == cardType.Point) {
+		drowCardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		drowCardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		drowCardDiv.addClass('kingdon-card');
+	}
+	drowCardDiv.animate({
+		left: handCoordinateForHandArea.left, 
+		top: handCoordinateForHandArea.top,
+		width: handCoordinateForHandArea.width
+	}, drowWatiTime);
+}
+/*******************************************************/
+/* animateDrowSupplyKingdom：王国カード購入のアニメーション
+/*******************************************************/
+function animateDrowSupplyKingdom(card, index){
+	console.log(card);
+	console.log(index);
+
+	const supplyCardDiv = $('<div>');
+	$('.supply-area').append(supplyCardDiv);
+	supplyCardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('top', kingdomCoordinateForSupply[index].top)
+		.css('left', kingdomCoordinateForSupply[index].left);
+	if (card.type == cardType.Point) {
+		supplyCardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		supplyCardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		supplyCardDiv.addClass('kingdon-card');
+	}
+	supplyCardDiv.animate({
+		top: trashCoordinateForSupply.top,
+		left: trashCoordinateForSupply.left,
+		width: trashCoordinateForSupply.width
+	}, trashWatiTime);
+	setTimeout(() => {
+		supplyCardDiv.remove();
+	}, trashWatiTime);
+}
+/*******************************************************/
+/* animateDrowSupply：サプライ(勝利点・Moon)カード購入のアニメーション
+/*******************************************************/
+function animateDrowSupply(key){
+	console.log(key);
+	const supplyCardDiv = $('<div>');
+	$('.supply-area').append(supplyCardDiv);
+	supplyCardDiv
+		.addClass('get-supply-card')
+		.css('position', 'absolute');
+	if(key in victoryCoordinateForSupply){
+		// 勝利点の場合
+		supplyCardDiv
+			.html(`${victoryPointCard[key].name}<img src="${victoryPointCard[key].image}">`)
+			.css('top', victoryCoordinateForSupply[key].top)
+			.css('left', victoryCoordinateForSupply[key].left);
+	} else if(key in treasureCoordinateForSupply){
+		// Moonの場合
+		console.log(key);
+		supplyCardDiv
+			.html(`${treasurePointCard[key].name}<img src="${treasurePointCard[key].image}">`)
+			.css('top', treasureCoordinateForSupply[key].top)
+			.css('left', treasureCoordinateForSupply[key].left);
+	} else {
+		return;
+	}
+	if (treasurePointCard[key].type == cardType.Point) {
+		supplyCardDiv.addClass('victory-card');
+	} else if (treasurePointCard[key].type == cardType.Money) {
+		supplyCardDiv.addClass('treasure-card');
+	} else if (treasurePointCard[key].type == cardType.Action) {
+		supplyCardDiv.addClass('kingdon-card');
+	}
+	supplyCardDiv.animate({
+		top: trashCoordinateForSupply.top,
+		left: trashCoordinateForSupply.left,
+		width: trashCoordinateForSupply.width
+	}, trashWatiTime);
+	setTimeout(() => {
+		supplyCardDiv.remove();
+	}, trashWatiTime);
+
+}
+/*******************************************************/
+/* animateDrowSupplyKingdomToHand：王国カードを手札に取得するアニメーション
+/*******************************************************/
+function animateDrowSupplyKingdomToHand(card, index){
+	console.log(card);
+	console.log(index);
+
+	const supplyCardDiv = $('<div>');
+	$('.supply-area').append(supplyCardDiv);
+	supplyCardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('top', kingdomCoordinateForSupply[index].top)
+		.css('left', kingdomCoordinateForSupply[index].left);
+	if (card.type == cardType.Point) {
+		supplyCardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		supplyCardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		supplyCardDiv.addClass('kingdon-card');
+	}
+	supplyCardDiv.animate({
+		top: handCoordinateForSupply.top,
+		left: handCoordinateForSupply.left,
+		width: handCoordinateForSupply.width
+	}, trashWatiTime);
+	setTimeout(() => {
+		supplyCardDiv.remove();
+	}, trashWatiTime);
+}
+/*******************************************************/
+/* animateDrowSupplyToHand：サプライ(勝利点・Moon)カードを手札に取得するアニメーション
+/*******************************************************/
+function animateDrowSupplyToHand(key){
+	console.log(key);
+	const supplyCardDiv = $('<div>');
+	$('.supply-area').append(supplyCardDiv);
+	supplyCardDiv
+		.addClass('get-supply-card')
+		.css('position', 'absolute');
+	if(key in victoryCoordinateForSupply){
+		// 勝利点の場合
+		supplyCardDiv
+			.html(`${victoryPointCard[key].name}<img src="${victoryPointCard[key].image}">`)
+			.css('top', victoryCoordinateForSupply[key].top)
+			.css('left', victoryCoordinateForSupply[key].left);
+	} else if(key in treasureCoordinateForSupply){
+		// Moonの場合
+		console.log(key);
+		supplyCardDiv
+			.html(`${treasurePointCard[key].name}<img src="${treasurePointCard[key].image}">`)
+			.css('top', treasureCoordinateForSupply[key].top)
+			.css('left', treasureCoordinateForSupply[key].left);
+	} else {
+		return;
+	}
+	if (treasurePointCard[key].type == cardType.Point) {
+		supplyCardDiv.addClass('victory-card');
+	} else if (treasurePointCard[key].type == cardType.Money) {
+		supplyCardDiv.addClass('treasure-card');
+	} else if (treasurePointCard[key].type == cardType.Action) {
+		supplyCardDiv.addClass('kingdon-card');
+	}
+	supplyCardDiv.animate({
+		top: handCoordinateForSupply.top,
+		left: handCoordinateForSupply.left,
+		width: handCoordinateForSupply.width
+	}, trashWatiTime);
+	setTimeout(() => {
+		supplyCardDiv.remove();
+	}, trashWatiTime);
+
+}
+/*******************************************************/
+/* animatePlayHandCard：手札からプレイするときのアニメーション
+/*******************************************************/
+function animatePlayHandCard(card){
+	const playCardDiv = $('<div>');
+	$('.play-area').append(playCardDiv);
+	playCardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('hand-card')
+		.css('position', 'absolute')
+		.css('top', handCoordinateForPlayArea.width)
+		.css('top', handCoordinateForPlayArea.top)
+		.css('left', handCoordinateForPlayArea.left);
+	if (card.type == cardType.Point) {
+		playCardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		playCardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		playCardDiv.addClass('kingdon-card');
+	}
+	playCardDiv.animate({
+		top: playCoordinateForPlayArea.top,
+		left: playCoordinateForPlayArea.left,
+		width: playCoordinateForPlayArea.width
+	}, playWatiTime);
+}
+/*******************************************************/
+/* animateHnadToDeck：手札からデッキ移動のアニメーション
+/*******************************************************/
+function animateHnadToDeck(card){
+	const handCardDiv = $(`#hand-card${card.id}`);
+	handCardDiv
+		.removeClass('available')
+		.css('position', 'absolute')
+		.css('transform', 'scale(0.7)');
+	handCardDiv.animate({
+		top: deckCoordinateForHandArea.top,
+		left: deckCoordinateForHandArea.left,
+		width: deckCoordinateForHandArea.width
+	}, trashWatiTime);
+}
+
+/*******************************************************/
+/* animateHnadToTrash：手札から捨て札移動のアニメーション
+/*******************************************************/
+function animateHnadToTrash(card){
+	const handCardDiv = $(`#hand-card${card.id}`);
+	handCardDiv
+		.removeClass('available')
+		.css('position', 'absolute')
+		.css('transform', 'scale(0.7)');
+	handCardDiv.animate({
+		top: trashCoordinateForHandArea.top,
+		left: trashCoordinateForHandArea.left,
+		width: trashCoordinateForHandArea.width
+	}, trashWatiTime);
+}
+/*******************************************************/
+/* animateHnadToDiscard：手札から廃棄へのアニメーション
+/*******************************************************/
+function animateHnadToDiscard(card){
+	const handCardDiv = $(`#hand-card${card.id}`);
+	handCardDiv
+		.removeClass('available')
+		.css('position', 'absolute')
+		.css('width', '120px')
+		.css('transform', 'scale(0.7)');
+	handCardDiv.animate({
+		top: discardCoordinateForHandArea.top,
+		left: discardCoordinateForHandArea.left,
+		width: discardCoordinateForHandArea.width
+	}, trashWatiTime);
+}
+/*******************************************************/
+/* animateDeckToTrash：デッキから捨て札移動のアニメーション
+/*******************************************************/
+function animateDeckToTrash(card){
+	const cardDiv = $('<div>');
+	$('.supply-area').append(cardDiv);
+	cardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('width', '130px')
+		.css('top', deckCoordinateForSupply.top)
+		.css('left', deckCoordinateForSupply.left);
+
+	if (card.type == cardType.Point) {
+		cardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		cardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		cardDiv.addClass('kingdon-card');
+	}
+	cardDiv.animate({
+		top: trashCoordinateForSupply.top,
+		left: trashCoordinateForSupply.left,
+		width: trashCoordinateForSupply.width
+	}, trashWatiTime);
+	setTimeout(() => {
+		cardDiv.remove();
+	}, trashWatiTime);
+}
+/*******************************************************/
+/* animateDeckToModal：デッキからモーダル移動のアニメーション
+/*******************************************************/
+function animateDeckToModal(card){
+	const cardDiv = $('<div>');
+	$('.supply-area').append(cardDiv);
+	cardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('width', '130px')
+		.css('top', deckCoordinateForSupply.top)
+		.css('left', deckCoordinateForSupply.left);
+	if (card.type == cardType.Point) {
+		cardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		cardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		cardDiv.addClass('kingdon-card');
+	}
+	cardDiv.animate({
+		top: modalCoordinateForSupply.top,
+		left: modalCoordinateForSupply.left,
+		width: modalCoordinateForSupply.width
+	}, modalWatiTime);
+	setTimeout(() => {
+		cardDiv.remove();
+	}, modalWatiTime);
+}
+/*******************************************************/
+/* animateModalToDeck：モーダルからデッキ移動のアニメーション
+/*******************************************************/
+function animateModalToDeck(card){
+	const cardDiv = $('<div>');
+	$('.supply-area').append(cardDiv);
+	cardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('width', '150px')
+		.css('top', modalCoordinateForSupply.top)
+		.css('left', modalCoordinateForSupply.left);
+	if (card.type == cardType.Point) {
+		cardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		cardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		cardDiv.addClass('kingdon-card');
+	}
+	cardDiv.animate({
+		top: deckCoordinateForSupply.top,
+		left: deckCoordinateForSupply.left,
+		width: deckCoordinateForSupply.width
+	}, modalWatiTime);
+	setTimeout(() => {
+		cardDiv.remove();
+	}, modalWatiTime);
+}
+/*******************************************************/
+/* animateTrashToModal：捨て札からモーダル移動のアニメーション
+/*******************************************************/
+function animateTrashToModal(card){
+	const cardDiv = $('<div>');
+	$('.supply-area').append(cardDiv);
+	cardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('width', '80px')
+		.css('top', trashCoordinateForSupply.top)
+		.css('left', trashCoordinateForSupply.left);
+	if (card.type == cardType.Point) {
+		cardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		cardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		cardDiv.addClass('kingdon-card');
+	}
+	cardDiv.animate({
+		top: modalCoordinateForSupply.top,
+		left: modalCoordinateForSupply.left,
+		width: modalCoordinateForSupply.width
+	}, modalWatiTime);
+	setTimeout(() => {
+		cardDiv.remove();
+	}, modalWatiTime);
+}
+/*******************************************************/
+/* animateModalToDeck：モーダルから捨て札移動のアニメーション
+/*******************************************************/
+function animateModalToTrash(card){
+	const cardDiv = $('<div>');
+	$('.supply-area').append(cardDiv);
+	cardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('width', '150px')
+		.css('top', modalCoordinateForSupply.top)
+		.css('left', '83px' );
+	if (card.type == cardType.Point) {
+		cardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		cardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		cardDiv.addClass('kingdon-card');
+	}
+	cardDiv.animate({
+		top: trashCoordinateForSupply.top,
+		left: trashCoordinateForSupply.left,
+		width: trashCoordinateForSupply.width
+	}, trashWatiTime);
+	setTimeout(() => {
+		cardDiv.remove();
+	}, trashWatiTime);
+}
+/*******************************************************/
+/* animateModalToDiscard：モーダルから廃棄へのアニメーション
+/*******************************************************/
+function animateModalToDiscard(card){
+	const cardDiv = $('<div>');
+	$('.supply-area').append(cardDiv);
+	cardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('width', '150px')
+		.css('top', modalCoordinateForSupply.top)
+		.css('left', '700px' );
+	if (card.type == cardType.Point) {
+		cardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		cardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		cardDiv.addClass('kingdon-card');
+	}
+	cardDiv.animate({
+		top: discardCoordinateForSupply.top,
+		left: discardCoordinateForSupply.left,
+		width: discardCoordinateForSupply.width
+	}, trashWatiTime);
+	setTimeout(() => {
+		cardDiv.remove();
+	}, trashWatiTime);
+}
+
 
 /*****************************************************************************/
 /* システム関数
@@ -1864,6 +2490,12 @@ function shiftStackCard(){
 /*******************************************************/
 /* shuffleArray：配列のシャッフル
 /*******************************************************/
+function disabledMultipleBtn(flag){
+	return $('.multiple-btn').prop('disabled', flag);
+}
+/*******************************************************/
+/* shuffleArray：配列のシャッフル
+/*******************************************************/
 function shuffleArray(array) {
 	const shuffled = [...array]; // 元の配列を破壊しないようにコピー
 	const mt = new MersenneTwister();
@@ -1881,58 +2513,4 @@ function shuffleArray(array) {
 /*******************************************************/
 function debugAlert(text) {
 	alert(text);
-}
-
-/*****************************************************************************/
-/* アニメーション関数
-/*****************************************************************************/
-/*******************************************************/
-/* animateCleanupToTrash：クリーンアップの捨て札処理のアニメーション
-/*******************************************************/
-function animateCleanupToTrash(){
-	const playCardDiv = $('.play-card');
-	const handCardDiv = $('.hand-card');
-	playCardDiv
-		.css('transform', 'scale(0.7)')
-		.css('left', '');
-	playCardDiv.animate({
-		left: '700px', 
-		top: '5px', 
-	}, 400);
-	handCardDiv
-		.removeClass('available')
-		.css('position', 'absolute')
-		.css('transform', 'scale(0.7)');
-	handCardDiv.animate({
-		left: '840px', 
-		top: '-215px'
-	}, 400);
-}
-/*******************************************************/
-/* animateCleanupDrow：ドローのアニメーション
-/*******************************************************/
-function animateCleanupDrow(card){
-	const drowCardDiv = $('<div>');
-	$('.hand-info').append(drowCardDiv);
-	drowCardDiv
-		.html(`${card.name}<img src="${card.image}">`)
-		.addClass('hand-card')
-		.removeClass('available')
-		.css('position', 'absolute')
-		.css('top', '-220px')
-		.css('left', '-30px')
-		.css('transform', 'scale(0.7)');
-	if (card.type == cardType.Point) {
-		drowCardDiv.addClass('victory-card');
-	} else if (card.type == cardType.Money) {
-		drowCardDiv.addClass('treasure-card');
-	} else if (card.type == cardType.Action) {
-		drowCardDiv.addClass('kingdon-card');
-	}
-	drowCardDiv.animate({
-		left: '400px', 
-		top: '0px',
-		transform: 'scale(1)'
-	}, 400);
-
 }
