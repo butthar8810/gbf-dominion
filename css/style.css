@@ -249,7 +249,6 @@
 	box-shadow: 1px 1px 5px black;
 	position: absolute;
 	top: 0;
-	z-index: 100;
 }
 .play-card img{
 	width: 100%;
@@ -394,7 +393,6 @@
 	text-align: center;
 	box-shadow: 1px 1px 5px black;
 	margin-right: -2rem;
-	z-index: 100;
 }
 .hand-card:hover{
 	transform: translateY(-30px);
@@ -654,7 +652,6 @@
 /*モーダル枠の指定*/
 .setting-modal-body{
 	position: relative;
-	max-width: 940px;
 	width: 300px;
 	height: 400px;
 	background-color: #1d1916;
@@ -667,4 +664,51 @@
 .setting-btn{
 	width: 200px;
 	margin: 10px 0;
+}
+
+
+/*モーダル本体の指定 + モーダル外側の背景の指定*/
+.rule-modal{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	visibility: hidden;
+	transition: all .3s;
+	box-sizing: border-box;
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/*モーダル本体に「active」クラス付与した時のスタイル*/
+.rule-modal.active{
+	visibility: visible;
+}
+
+.rule-modal-slider{
+	width: 900px;
+	height: 90vh;
+}
+.rule-modal-body{
+	position: relative;
+	width: 900px;
+	height: 100%;
+	background-color: white;
+	border: 3px solid gray;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	z-index: 2000;
+}
+.game-area-image{
+	width: 90%;
+}
+.rule-text{
+	width: 90%;
+	text-align: left;
+	font-size: 24px;
 }

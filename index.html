@@ -7,7 +7,11 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
 		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 	<script src="https://magicant.github.io/sjavascript/mt.js"></script>
+    <!-- Swiper CDN読み込み -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
 	<script src="js/dominion.js"></script>
+
 
 	<link rel="stylesheet" href="css/style.css">
 
@@ -91,7 +95,54 @@
 			<button class="setting-btn close-btn">閉じる</button>
 		</div>
 	</div>
+	<div class="rule-modal">
+		<div class="swiper rule-modal-slider">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<h1>グラニオンの画面説明</h1>
+						<img class="game-area-image" src="images/dammy.jpg" alt="">
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<h1>グラニオンの画面説明</h1>
+						<img class="game-area-image" src="images/dammy.jpg" alt="">
+					</div>
+				</div>
+				<div class="swiper-slidee">
+					<div class="rule-modal-body">
+						<h1>ゲームの勝利条件(目的)</h1>
+						<p class="rule-text">
+							ゲーム終了時に、より多くの「勝利点」を獲得していることがこのゲームの目的です。<br>
+							「グラニオン」は武器の強化を目指すゲームです。<br>
+							基本的には「ギガス鋼」から始まり「ダマスカス鋼」までの上限解放素材のカードにのみ勝利点が設定されています。
+						</p>
+						<h1>ゲームの終了条件</h1>
+						<p class="rule-text">
+							プレーヤーの手番終了時に下記のいずれかの条件を満たしている場合に
+							ゲームが終了し、得点計算を行います。
+							<ul>
+								<li>サプライにある「ダマスカス鋼」の枚数が０枚になっている</li>
+								<li>サプライにある３種類のカードの枚数が０枚になっている（財宝も含む）</li>
+							</ul>
+						</p>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<h1>グラニオンの画面説明</h1>
+						<img class="game-area-image" src="images/dammy.jpg" alt="">
+					</div>
+				</div>
+			</div>
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-button-next"></div>
+		</div>
+	</div>
 
+	<!-- script 宣言 -->>
+	<script src="js/swiper.js"></script>
 
 </body>
 </html>

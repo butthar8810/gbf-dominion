@@ -287,6 +287,10 @@ function setupSettingBtn(){
 	$('.close-btn').click((e) => {
 		closeSettingModalDom();
 	});
+	$('.rule-btn').click((e) => {
+		closeSettingModalDom();
+		openRuleModalDom();
+	});
 	$(document).click((e) => {
 		if(!$(e.target).closest('.setting-modal-body').length && !$(e.target).closest('.setting-open-btn').length) {
 			closeSettingModalDom();
@@ -306,6 +310,14 @@ function openSettingModalDom(){
 function closeSettingModalDom(){
 	console.log("closeSettingModalDom");
 	$('.setting-modal').removeClass('active');
+}
+
+/*******************************************************/
+/* closeSettingModalDom：設定用モーダル非表示処理
+/*******************************************************/
+function openRuleModalDom(){
+	console.log("openRuleModalDom");
+	$('.rule-modal').addClass('active');
 }
 /*******************************************************/
 /* openModalDom：モーダル表示処理
