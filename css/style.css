@@ -41,14 +41,14 @@
 	width: 100%;
 	max-width: 940px;
 	margin: 0px auto;
-	height: 380px;
+	height: 300px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	position: relative;
 }
 .get-supply-card{
-	width: 150px;
+	width: 120px;
 	aspect-ratio: 3 / 4;
 	border: 2px solid black;
 	border-radius: 5px;
@@ -62,39 +62,39 @@
 	width: 100%;
 }
 .victory-point-area{
-	width: 130px;
+	width: 100px;
 	display: grid;
-	grid-template-columns: 130px;
-	grid-template-rows: repeat(3, 120px);
-	gap: 5px;
+	grid-template-columns: 100px;
+	grid-template-rows: repeat(3, 95px);
+	gap: 2px;
 	margin: 0 2px;
 }
 .victory-point-area img{
 	width: 100%;
 }
 .treasure-point-area{
-	width: 130px;
+	width: 100px;
 	display: grid;
-	grid-template-columns: 130px;
-	grid-template-rows: repeat(3, 120px);
-	gap: 5px;
+	grid-template-columns: 100px;
+	grid-template-rows: repeat(3, 95px);
+	gap: 2px;
 	margin: 0 2px;
 }
 .treasure-point-area img{
 	width: 100%;
 }
 .kingdon-area{
-	width: 670px;
+	width: 710px;
 	display: grid;
-	grid-template-columns: repeat(5, 130px);
-	grid-template-rows: repeat(2, 160px);
+	grid-template-columns: repeat(5, 140px);
+	grid-template-rows: repeat(2, 130px);
 	direction: rtl;
-	gap: 5px;
+	gap: 2px;
 	position: relative;
 }
 
 .supply-card{
-	font-size: 15px;
+	font-size: 13px;
 	line-height: 20px;
 	text-align: center;
 	border: 2px solid black;
@@ -141,7 +141,7 @@
 	width: 100%;
 	max-width: 940px;
 	margin: 0px auto;
-	height: 25vh;
+	height: 230px;
 	display: flex;
 }
 /***********************************************************************/
@@ -370,8 +370,8 @@
 .hand-area{
 	width: 100%;
 	max-width: 940px;
-	height: 20vh;
-	margin: 10px auto;
+	height: 160px;
+	margin: 0 auto;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -497,7 +497,7 @@
 	vertical-align: middle;
 	max-width: 940px;
 	width: 500px;
-	height: 350px;
+	height: 280px;
 	background-color: #1d1916;
 	border: 3px solid gray;
 	margin-top: 10px;
@@ -574,7 +574,7 @@
 
 .modal-drop-area{
 	width: 300px;
-	height: 280px;
+	height: 235px;
 	font-size: 24px;
 	color: white;
 	position: absolute;
@@ -607,7 +607,7 @@
 }
 .modal-deck-area-order{
 	width: 150px;
-	height: 280px;
+	height: 180px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -640,6 +640,9 @@
 	visibility: hidden;
 	transition: all .3s;
 	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	z-index: 1000;
 }
 
@@ -651,12 +654,17 @@
 /*モーダル枠の指定*/
 .setting-modal-body{
 	position: relative;
-	display: inline-block;
-	vertical-align: middle;
 	max-width: 940px;
-	width: 500px;
-	height: 350px;
+	width: 300px;
+	height: 400px;
 	background-color: #1d1916;
 	border: 3px solid gray;
-	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.setting-btn{
+	width: 200px;
+	margin: 10px 0;
 }

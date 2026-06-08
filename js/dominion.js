@@ -16,19 +16,19 @@ const treasurePointCard = {
 const kingdomCard = {
 	Cellar: {name: '騎空艇の貯蔵庫', cost: 2, type: cardType.Action, remain: 10, func: cardCellar, effect: '+1アクション<br><br>手札を好きな枚数捨て、捨てた枚数だけドロー', image: 'images/Cellar.png'},
 	Chapel: {name: 'ゼエン教', cost: 2, type: cardType.Action, remain: 10, func: cardChapel, effect: '手札を4枚まで廃棄可能', image: 'images/Chapel.png'},
-	Moat: {name: '堀', cost: 2, type: cardType.Action, remain: 10, func: cardMoat, effect: '+2 カードを引く', image: 'images/Moat.png'},
+	Moat: {name: '空堀', cost: 2, type: cardType.Action, remain: 10, func: cardMoat, effect: '+2 カードを引く', image: 'images/Moat.png'},
 	Vassal: {name: '氷皇の家臣', cost: 3, type: cardType.Action, remain: 10, func: cardVassal, effect: '+2Moon<br><br>デッキのトップを捨て、それがアクションなら使用できる', image: 'images/Vassal.png'},
 	Workshop: {name: 'ククルの銃工房', cost: 3, type: cardType.Action, remain: 10, func: cardWorkshop, effect: '4コスト以下のカード1枚を獲得', image: 'images/Workshop.png'},
-	Merchant: {name: 'シェロカルテ', cost: 3, type: cardType.Action, remain: 10, func: cardMerchant, effect: `+1ドロー<br>+1アクション<br><br>${treasurePointCard.Silver.name}1枚を使用すれば+1Moon`, image: 'images/Merchant.png'},
+	Merchant: {name: '駄洒落好きな商人', cost: 3, type: cardType.Action, remain: 10, func: cardMerchant, effect: `+1ドロー<br>+1アクション<br><br>${treasurePointCard.Silver.name}1枚を使用すれば+1Moon`, image: 'images/Merchant.png'},
 	Harbinger: {name: '森の前駆者', cost: 3, type: cardType.Action, remain: 10, func: cardHarbinger, effect: '+1ドロー<br>+1アクション<br>捨て札からデッキトップにカード1枚を置ける', image: 'images/Harbinger.png'},
 	Village: {name: '故郷の村', cost: 3, type: cardType.Action, remain: 10, func: cardVillage, effect: '+1ドロー<br>+2アクション', image: 'images/Village.png'},
 	Remodel: {name: '改築', cost: 4, type: cardType.Action, remain: 10, func: cardRemodel, effect: '手札1枚を廃棄、(廃棄カードのコスト)+2コスト以下のカード1枚を獲得', image: 'images/Remodel.png'},
-	Smithy: {name: '鍛冶屋', cost: 4, type: cardType.Action, remain: 10, func: cardSmithy, effect: '+3ドロー', image: 'images/Smithy.png'},
+	Smithy: {name: '若者の鍛冶屋', cost: 4, type: cardType.Action, remain: 10, func: cardSmithy, effect: '+3ドロー', image: 'images/Smithy.png'},
 	Moneylender: {name: '金持ち', cost: 4, type: cardType.Action, remain: 10, func: cardMoneylender, effect: `${treasurePointCard.Bronze.name}1枚を廃棄してもよい、廃棄した場合+3Moon`, image: 'images/Moneylender.png'},
 	ThroneRoom: {name: '玉座の間', cost: 4, type: cardType.Action, remain: 10, func: cardThroneRoom, effect: '手札のアクション1枚を2回使用してもよい', image: 'images/ThroneRoom.png'},
 	Poacher: {name: '密漁者', cost: 4, type: cardType.Action, remain: 10, func: cardPoacher, effect: '+1ドロー<br>+1アクション<br>+1Moon<br><br>空になっているサプライの山札1つにつき、手札を1枚捨て札にする。', image: 'images/Poacher.png'},
-	Gardens: {name: '庭園', cost: 4, type: cardType.Point, remain: 10, func: cardGardens, effect: 'デッキ10枚につき1点', image: 'images/Gardens.png'},
-	Market: {name: '市場', cost: 5, type: cardType.Action, remain: 10, func: cardMarket, effect: '+1ドロー<br>+1アクション<br>+1購入<br>+1Moon', image: 'images/Market.png'},
+	Gardens: {name: 'ウェールズの庭園', cost: 4, type: cardType.Point, remain: 10, func: cardGardens, effect: 'デッキ10枚につき1点', image: 'images/Gardens.png'},
+	Market: {name: '市場(よろず屋)', cost: 5, type: cardType.Action, remain: 10, func: cardMarket, effect: '+1ドロー<br>+1アクション<br>+1購入<br>+1Moon', image: 'images/Market.png'},
 	Sentry: {name: '年長の衛兵', cost: 5, type: cardType.Action, remain: 10, func: cardSentry, effect: '+1ドロー<br>+1アクション<br>デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。', image: 'images/Sentry.png'},
 	CouncilRoom: {name: '賑やかな議事堂', cost: 5, type: cardType.Action, remain: 10, func: cardCouncilRoom, effect: '+4ドロー<br>+1購入<br><br>', image: 'images/CouncilRoom.png'},
 	Laboratory: {name: '開祖の研究所', cost: 5, type: cardType.Action, remain: 10, func: cardLaboratory, effect: '+2ドロー<br>+1アクション', image: 'images/Laboratory.png'},
@@ -44,7 +44,7 @@ const initialHandNum = 5;
 // アニメーションの実行時間/待機時間
 const playWatiTime = 200;
 const drowWatiTime = 400;
-const trashWatiTime = 400;
+const trashWaitTime = 400;
 const modalWatiTime = 300;
 // フェイズ定数
 const phase = {
@@ -66,44 +66,48 @@ const phase = {
 	executeActionByArtisan2: 'アクション実行フェイズ(職人2)',
 };
 // アニメーション用の座標定数
+const kingdomCoordinateTop = '19px';
+const kingdomCoordinateBottom = '151px';
 const kingdomCoordinateForSupply = [
 	// 王国カードの座標
-	{top: '27px', left: '800px'},
-	{top: '27px', left: '665px'},
-	{top: '27px', left: '530px'},
-	{top: '27px', left: '395px'},
-	{top: '27px', left: '260px'},
-	{top: '193px', left: '800px'},
-	{top: '193px', left: '665px'},
-	{top: '193px', left: '530px'},
-	{top: '193px', left: '395px'},
-	{top: '193px', left: '260px'}
+	{top: kingdomCoordinateTop, left: '799px'},
+	{top: kingdomCoordinateTop, left: '657px'},
+	{top: kingdomCoordinateTop, left: '516px'},
+	{top: kingdomCoordinateTop, left: '383px'},
+	{top: kingdomCoordinateTop, left: '230px'},
+	{top: kingdomCoordinateBottom, left: '799px'},
+	{top: kingdomCoordinateBottom, left: '657px'},
+	{top: kingdomCoordinateBottom, left: '516px'},
+	{top: kingdomCoordinateBottom, left: '373px'},
+	{top: kingdomCoordinateBottom, left: '230px'}
 ];
 const victoryCoordinateForSupply = {
 	// 勝利点カードの座標
-	High: {top: '5px', left: '-7px'},
-	Middle: {top: '130px', left: '-7px'},
-	Low: {top: '255px', left: '-7px'}
+	High: {top: '5px', left: '1px'},
+	Middle: {top: '102px', left: '1px'},
+	Low: {top: '199px', left: '1px'}
 };
 const treasureCoordinateForSupply = {
 	// Moonカードの座標
-	Gold: {top: '5px', left: '127px'},
-	Silver: {top: '130px', left: '127px'},
-	Bronze: {top: '255px', left: '127px'}
+	Gold: {top: '5px', left: '107px'},
+	Silver: {top: '102px', left: '107px'},
+	Bronze: {top: '199px', left: '107px'}
 };
-const deckCoordinateForSupply = {top: '450px', left: '-30px', width: '130px'};
-const handCoordinateForSupply = {top: '630px', left: '395px', width: '120px'};
-const trashCoordinateForSupply = {top: '430px', left: '765px', width: '80px'};
-const discardCoordinateForSupply = {top: '430px', left: '850px', width: '80px'};
-const modalCoordinateForSupply = {top: '100px', left: '395px', width: '150px'};
-const deckCoordinateForHandArea = {top: '-170px', left: '-30px', width: '130px'};
+const deckCoordinateForSupply = {top: '415px', left: '-5px', width: '80px'};
+const handCoordinateForSupply = {top: '530px', left: '440px', width: '120px'};
+const trashCoordinateForSupply = {top: '355px', left: '765px', width: '80px'};
+const discardCoordinateForSupply = {top: '355px', left: '850px', width: '80px'};
+const modalCoordinateForSupply = {top: '75px', left: '395px', width: '150px'};
+
+const deckCoordinateForHandArea = {top: '-170px', left: '-30px', width: '80px'};
 const handCoordinateForHandArea = {top: '0px', left: '400px', width: '120px'};
 const modalCoordinateForHandArea = {top: '-500px', left: '400px', width: '150px'};
-const trashCoordinateForHandArea = {top: '-215px', left: '740px', width: '80px'};
+const trashCoordinateForHandArea = {top: '-130px', left: '760px', width: '80px'};
 const discardCoordinateForHandArea = {top: '-215px', left: '840px', width: '80px'};
+
 const handCoordinateForPlayArea = {top: '200px', left: '300px', width: '120px'};
 const playCoordinateForPlayArea = {top: '0px', left: '300px', width: '120px'};
-const trashCoordinateForPlayArea = {top: '5px', left: '600px', width: '80px'};
+const trashCoordinateForPlayArea = {top: '20px', left: '620px', width: '80px'};
 //変数
 let myDeck = [];//name, cost, type, effect, image
 let myHand = [];//id, name, cost, type, effect, image
@@ -158,7 +162,7 @@ function setupDeck(){
 	// プレイヤーに初期デッキとなる10枚のカードを配る
 	drawSupplyCard(treasurePointCard.Bronze, 7);
 	drawSupplyCard(victoryPointCard.Low, 3);
-	drawSupplyCard(kingdomCard.Artisan, 3);
+//	drawSupplyCard(kingdomCard.Sentry, 3);
 	// 配ったカードをデッキに格納する
 	reconfigureDeck();
 }
@@ -277,11 +281,14 @@ function closeExplanationModalDom(){
 /* setupSettingBtn：設定ボタンの初期設定
 /*******************************************************/
 function setupSettingBtn(){
-	$('.setting-btn').click((e) => {
+	$('.setting-open-btn').click((e) => {
 		openSettingModalDom();
 	});
+	$('.close-btn').click((e) => {
+		closeSettingModalDom();
+	});
 	$(document).click((e) => {
-		if(!$(e.target).closest('.setting-modal-body').length && !$(e.target).closest('.setting-btn').length) {
+		if(!$(e.target).closest('.setting-modal-body').length && !$(e.target).closest('.setting-open-btn').length) {
 			closeSettingModalDom();
 		}
 	});
@@ -299,7 +306,6 @@ function openSettingModalDom(){
 function closeSettingModalDom(){
 	console.log("closeSettingModalDom");
 	$('.setting-modal').removeClass('active');
-	$('.setting-modal-body').html('');
 }
 /*******************************************************/
 /* openModalDom：モーダル表示処理
@@ -1482,7 +1488,7 @@ function cardRemodelSub(){
 	
 	setTimeout(() => {
 		updateHandDom();
-	}, trashWatiTime);
+	}, trashWaitTime);
 	return true;
 }
 
@@ -1530,7 +1536,7 @@ function cardMoneylenderSub(){
 	setTimeout(() => {
 		updateHandDom();
 		endAction();
-	}, trashWatiTime);
+	}, trashWaitTime);
 	return true;
 
 }
@@ -1744,7 +1750,7 @@ function cardMineSub(){
 	updateSupplyDom();
 	setTimeout(() => {
 		updateHandDom();
-	}, trashWatiTime);
+	}, trashWaitTime);
 	exchangeCost = cost + 3;
 	updateInfomationDom(`獲得するカードを選んでください（コスト${exchangeCost}以下）`);
 }
@@ -1827,7 +1833,7 @@ function cardArtisanSubSub(){
 	setTimeout(() => {
 		updateHandDom();
 		endAction();
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 
 /*****************************************************************************/
@@ -1846,7 +1852,7 @@ function animateCleanupToTrash(){
 		top: trashCoordinateForPlayArea.top, 
 		left: trashCoordinateForPlayArea.left,
 		width: trashCoordinateForPlayArea.width 
-	}, 400);
+	}, trashWaitTime);
 	handCardDiv
 		.removeClass('available')
 		.css('position', 'absolute')
@@ -1855,7 +1861,7 @@ function animateCleanupToTrash(){
 		top: trashCoordinateForHandArea.top,
 		left: trashCoordinateForHandArea.left,
 		width: trashCoordinateForHandArea.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 /*******************************************************/
 /* animateDrowDeck：ドローのアニメーション
@@ -1910,10 +1916,10 @@ function animateDrowSupplyKingdom(card, index){
 		top: trashCoordinateForSupply.top,
 		left: trashCoordinateForSupply.left,
 		width: trashCoordinateForSupply.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 	setTimeout(() => {
 		supplyCardDiv.remove();
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 /*******************************************************/
 /* animateDrowSupply：サプライ(勝利点・Moon)カード購入のアニメーション
@@ -1952,10 +1958,10 @@ function animateDrowSupply(key){
 		top: trashCoordinateForSupply.top,
 		left: trashCoordinateForSupply.left,
 		width: trashCoordinateForSupply.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 	setTimeout(() => {
 		supplyCardDiv.remove();
-	}, trashWatiTime);
+	}, trashWaitTime);
 
 }
 /*******************************************************/
@@ -1984,10 +1990,10 @@ function animateDrowSupplyKingdomToHand(card, index){
 		top: handCoordinateForSupply.top,
 		left: handCoordinateForSupply.left,
 		width: handCoordinateForSupply.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 	setTimeout(() => {
 		supplyCardDiv.remove();
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 /*******************************************************/
 /* animateDrowSupplyToHand：サプライ(勝利点・Moon)カードを手札に取得するアニメーション
@@ -2026,10 +2032,10 @@ function animateDrowSupplyToHand(key){
 		top: handCoordinateForSupply.top,
 		left: handCoordinateForSupply.left,
 		width: handCoordinateForSupply.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 	setTimeout(() => {
 		supplyCardDiv.remove();
-	}, trashWatiTime);
+	}, trashWaitTime);
 
 }
 /*******************************************************/
@@ -2040,7 +2046,7 @@ function animatePlayHandCard(card){
 	$('.play-area').append(playCardDiv);
 	playCardDiv
 		.html(`${card.name}<img src="${card.image}">`)
-		.addClass('hand-card')
+		.addClass('play-card')
 		.css('position', 'absolute')
 		.css('top', handCoordinateForPlayArea.width)
 		.css('top', handCoordinateForPlayArea.top)
@@ -2057,6 +2063,10 @@ function animatePlayHandCard(card){
 		left: playCoordinateForPlayArea.left,
 		width: playCoordinateForPlayArea.width
 	}, playWatiTime);
+	playCardDiv.contextmenu(card ,() => {
+		openExplanationModalDom(card);
+		return false;
+	});
 }
 /*******************************************************/
 /* animateHnadToDeck：手札からデッキ移動のアニメーション
@@ -2071,7 +2081,7 @@ function animateHnadToDeck(card){
 		top: deckCoordinateForHandArea.top,
 		left: deckCoordinateForHandArea.left,
 		width: deckCoordinateForHandArea.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 
 /*******************************************************/
@@ -2087,7 +2097,7 @@ function animateHnadToTrash(card){
 		top: trashCoordinateForHandArea.top,
 		left: trashCoordinateForHandArea.left,
 		width: trashCoordinateForHandArea.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 /*******************************************************/
 /* animateHnadToDiscard：手札から廃棄へのアニメーション
@@ -2097,18 +2107,49 @@ function animateHnadToDiscard(card){
 	handCardDiv
 		.removeClass('available')
 		.css('position', 'absolute')
-		.css('width', '120px')
+		.css('width', handCoordinateForHandArea.width)
 		.css('transform', 'scale(0.7)');
 	handCardDiv.animate({
 		top: discardCoordinateForHandArea.top,
 		left: discardCoordinateForHandArea.left,
 		width: discardCoordinateForHandArea.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 /*******************************************************/
 /* animateDeckToTrash：デッキから捨て札移動のアニメーション
 /*******************************************************/
 function animateDeckToTrash(card){
+	const cardDiv = $('<div>');
+	$('.supply-area').append(cardDiv);
+	cardDiv
+		.html(`${card.name}<img src="${card.image}">`)
+		.addClass('get-supply-card')
+		.css('position', 'absolute')
+		.css('width', deckCoordinateForSupply.width)
+		.css('top', deckCoordinateForSupply.top)
+		.css('left', deckCoordinateForSupply.left);
+
+	if (card.type == cardType.Point) {
+		cardDiv.addClass('victory-card');
+	} else if (card.type == cardType.Money) {
+		cardDiv.addClass('treasure-card');
+	} else if (card.type == cardType.Action) {
+		cardDiv.addClass('kingdon-card');
+	}
+	cardDiv.animate({
+		top: trashCoordinateForSupply.top,
+		left: trashCoordinateForSupply.left,
+		width: trashCoordinateForSupply.width
+	}, trashWaitTime);
+	setTimeout(() => {
+		cardDiv.remove();
+	}, trashWaitTime);
+
+}
+/*******************************************************/
+/* animateDeckToModal：デッキからモーダル移動のアニメーション
+/*******************************************************/
+function animateDeckToModal(card){
 	const cardDiv = $('<div>');
 	$('.supply-area').append(cardDiv);
 	cardDiv
@@ -2127,39 +2168,11 @@ function animateDeckToTrash(card){
 		cardDiv.addClass('kingdon-card');
 	}
 	cardDiv.animate({
-		top: trashCoordinateForSupply.top,
-		left: trashCoordinateForSupply.left,
-		width: trashCoordinateForSupply.width
-	}, trashWatiTime);
-	setTimeout(() => {
-		cardDiv.remove();
-	}, trashWatiTime);
-}
-/*******************************************************/
-/* animateDeckToModal：デッキからモーダル移動のアニメーション
-/*******************************************************/
-function animateDeckToModal(card){
-	const cardDiv = $('<div>');
-	$('.supply-area').append(cardDiv);
-	cardDiv
-		.html(`${card.name}<img src="${card.image}">`)
-		.addClass('get-supply-card')
-		.css('position', 'absolute')
-		.css('width', '130px')
-		.css('top', deckCoordinateForSupply.top)
-		.css('left', deckCoordinateForSupply.left);
-	if (card.type == cardType.Point) {
-		cardDiv.addClass('victory-card');
-	} else if (card.type == cardType.Money) {
-		cardDiv.addClass('treasure-card');
-	} else if (card.type == cardType.Action) {
-		cardDiv.addClass('kingdon-card');
-	}
-	cardDiv.animate({
 		top: modalCoordinateForSupply.top,
 		left: modalCoordinateForSupply.left,
 		width: modalCoordinateForSupply.width
 	}, modalWatiTime);
+
 	setTimeout(() => {
 		cardDiv.remove();
 	}, modalWatiTime);
@@ -2246,10 +2259,10 @@ function animateModalToTrash(card){
 		top: trashCoordinateForSupply.top,
 		left: trashCoordinateForSupply.left,
 		width: trashCoordinateForSupply.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 	setTimeout(() => {
 		cardDiv.remove();
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 /*******************************************************/
 /* animateModalToDiscard：モーダルから廃棄へのアニメーション
@@ -2275,10 +2288,10 @@ function animateModalToDiscard(card){
 		top: discardCoordinateForSupply.top,
 		left: discardCoordinateForSupply.left,
 		width: discardCoordinateForSupply.width
-	}, trashWatiTime);
+	}, trashWaitTime);
 	setTimeout(() => {
 		cardDiv.remove();
-	}, trashWatiTime);
+	}, trashWaitTime);
 }
 
 
