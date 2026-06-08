@@ -3,7 +3,24 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- meta(SEO対策) -->
+	<meta name="author" content="Butthar8810">
+	<meta name="keywords" content="グランブルーファンタジー, GRANBLUE FANTASY, ドミニオン, Dominion">
+	<meta name="description" content="グラブルの皮をかぶった一人用ドミニオン">
+	<meta name="robots" content="index, follow">
+	<meta property="og:title" content="Gura-Nion -グラニオン-">
+	<meta property="og:description" content="グラブルの皮をかぶった一人用ドミニオン">
+	<meta property="og:image" content="images/point.jpg">
+	<meta property="og:url" content="https://butthar8810.github.io/gbf-dominion/">
+	<meta property="og:site_name" content="Gura-Nion -グラニオン-" />
+	<meta property="og:locale" content="ja_JP" />
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:site" content="@Butthar_8810">
+	<meta name="twitter:title" content="Gura-Nion -グラニオン-">
+	<meta name="twitter:description" content="グラブルの皮をかぶった一人用ドミニオン">
+	<meta name="twitter:image" content="images/point.jpg">
 
+	<link rel="stylesheet" href="css/style.css">
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
 		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 	<script src="https://magicant.github.io/sjavascript/mt.js"></script>
@@ -12,9 +29,7 @@
     <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
 	<script src="js/dominion.js"></script>
 
-
-	<link rel="stylesheet" href="css/style.css">
-
+	<link rel="icon" href="images/point.jpg">
 	<title>Gura-Nion -グラニオン-</title>
 </head>
 <body onload="startGame()">
@@ -28,24 +43,24 @@
 		<div class="left-info">
 			<div class="count-area">
 				<div class="base-area action-area">
-					<img src="images/action.jpg" alt="アクションポイント">
+					<img src="images/infomation/action.jpg" alt="アクションポイント">
 					<div class="base-count action-count">1</div>
 				</div>
 				<div class="base-area moon-area">
-					<img src="images/moon.png" alt="ムーンポイント">
+					<img src="images/infomation/moon.png" alt="ムーンポイント">
 					<div class="base-count moon-count">0</div>
 				</div>
 				<div class="base-area moon-area">
-					<img src="images/buy.jpg" alt="購入ポイント">
+					<img src="images/infomation/buy.jpg" alt="購入ポイント">
 					<div class="base-count buy-count">1</div>
 				</div>
 			</div>
 			<div class="base-area point-area">
-				<img src="images/point.jpg" alt="勝利点">
+				<img src="images/infomation/point.jpg" alt="勝利点">
 				<div class="base-count point-count">1</div>
 			</div>
 			<div class="deck-area">
-				<img src="images/deck.png" alt="デッキ">
+				<img src="images/infomation/deck.png" alt="デッキ">
 				<div class="deck-count"></div>
 			</div>
 			<div class="phase-count"></div>
@@ -60,17 +75,17 @@
 			</div>
 			<div class="trash-info">
 				<div class="discard-area">
-					<img src="images/discard.png" alt="捨て札">
+					<img src="images/infomation/discard.png" alt="捨て札">
 					<div class="discard-count">0</div>
 				</div>
 				<div class="trash-area">
-					<img src="images/trash.png" alt="廃棄">
+					<img src="images/infomation/trash.png" alt="廃棄">
 					<div class="trash-count">0</div>
 				</div>
 			</div>
 			<div class="btn-info">
 				<div class="btn-area setting-area">
-					<img class="setting-open-btn" src="images/setting.png" alt="設定ボタン">
+					<img class="setting-open-btn" src="images/infomation/setting.png" alt="設定ボタン">
 				</div>
 			</div>
 		</div>
@@ -89,10 +104,33 @@
 	</div>
 	<div class="setting-modal">
 		<div class="setting-modal-body">
-			<button class="setting-btn menu-btn">メニュー</button>
-			<button class="setting-btn rule-btn">ルール</button>
-			<button class="setting-btn restart-btn">はじめから</button>
-			<button class="setting-btn close-btn">閉じる</button>
+			<div class="setting-btn info-btn">グラニオンについて</div>
+			<div class="setting-btn rule-btn">ルール</div>
+			<div class="setting-btn restart-btn">はじめから</div>
+			<div class="setting-btn close-modal-btn">閉じる</div>
+		</div>
+	</div>
+	<div class="infomation-modal">
+		<div class="infomation-modal-body">
+			<button class="close-infomation-modal-btn">×</button>
+			<h1>お問い合わせ</h1>
+			<p>
+				<a href="https://x.com/Butthar_8810">@Butthar_8810</a> / <a href="https://misskey.io/@Butthar">@Butthar@misskey.io</a><br>
+				感想・要望・バグ報告などは上記のTwitterアカウントかmisskey.ioアカウントへなんでもお気軽にお問い合わせください。<br>
+				DMでもリプでもお好きな方でどうぞ。 
+			</p>
+			<h1>お借りしたものなど</h1>
+			<ul>
+				<li><a href="https://gbf-wiki.com/index.php">グランブルーファンタジー(グラブル)攻略wiki</a></li>
+				<li><a href="https://wikiwiki.jp/dominiondeck/">ドミニオン Wiki</a></li>
+				<li><a href="https://jquery.com/">jQuery</a></li>
+				<li><a href="https://magicant.github.io/sjavascript/mt.html">Mersenne Twister in JavaScript</a></li>
+			</ul>
+			<h1>その他</h1>
+			<p>
+				「Gura-Nion -グラニオン-」は非公式であり、株式会社Cygamesやホビージャパン、リオグランデゲームズとは一切関係ありません。<br>
+				当サイトで使用されている情報の所有権および著作権はそれぞれの権利者に帰属します。<br>
+			</p>
 		</div>
 	</div>
 	<div class="rule-modal">
@@ -100,39 +138,156 @@
 			<div class="swiper-wrapper">
 				<div class="swiper-slide">
 					<div class="rule-modal-body">
-						<h1>グラニオンの画面説明</h1>
-						<img class="game-area-image" src="images/dammy.jpg" alt="">
-					</div>
-				</div>
-				<div class="swiper-slide">
-					<div class="rule-modal-body">
-						<h1>グラニオンの画面説明</h1>
-						<img class="game-area-image" src="images/dammy.jpg" alt="">
-					</div>
-				</div>
-				<div class="swiper-slidee">
-					<div class="rule-modal-body">
-						<h1>ゲームの勝利条件(目的)</h1>
+						<button class="close-rule-modal-btn">×</button>
+						<h1><img src="images/rule/basic.png"> 基本説明</h1>
 						<p class="rule-text">
-							ゲーム終了時に、より多くの「勝利点」を獲得していることがこのゲームの目的です。<br>
-							「グラニオン」は武器の強化を目指すゲームです。<br>
-							基本的には「ギガス鋼」から始まり「ダマスカス鋼」までの上限解放素材のカードにのみ勝利点が設定されています。
-						</p>
-						<h1>ゲームの終了条件</h1>
-						<p class="rule-text">
-							プレーヤーの手番終了時に下記のいずれかの条件を満たしている場合に
-							ゲームが終了し、得点計算を行います。
-							<ul>
-								<li>サプライにある「ダマスカス鋼」の枚数が０枚になっている</li>
-								<li>サプライにある３種類のカードの枚数が０枚になっている（財宝も含む）</li>
-							</ul>
+							「グラニオン」(ドミニオン)はデッキ構築型カードゲームです。<br>
+							ダマスカス鋼などの武器強化アイテムを手に入れ、武器の強化を目指しましょう。
 						</p>
 					</div>
 				</div>
 				<div class="swiper-slide">
 					<div class="rule-modal-body">
-						<h1>グラニオンの画面説明</h1>
-						<img class="game-area-image" src="images/dammy.jpg" alt="">
+						<button class="close-rule-modal-btn">×</button>
+						<h1><img src="images/rule/card.png"> サプライ(場札)</h1>
+						<p class="rule-text">
+							サプライは、ゲーム中デッキに加えることが可能なカードを置いておくエリアです。
+							サプライのカードはそれぞれ"山"になっています。<br>
+							サプライには「勝利点カード」「Moon(財宝)カード」「王国カード」の3種類が置かれています。
+						</p>
+						<ul>
+							<li>勝利点カード：
+								新しいカードを購入するときに使うお金となるカードです。
+								ダマスカス鋼、玉鋼、ギガス鋼の3種類があります。
+							</li>
+							<li>Moonカード：
+								勝利点が書かれたカードです。ゲーム中に使うことはありませんが、
+								ゲーム終了時点で勝利点が最も多い人が勝者となります。
+								ブロンズムーン、シルバームーン、ゴールドムーンの3種類があります。</li>
+							<li>王国カード：
+								上記以外のカード、様々な効果(アクション)を持つカードです。
+								数十種類ありますが、1回のゲームで使用するのは10種類のみです。
+								どのカードを選ぶかで、ゲームの展開も変わります。
+							</li>
+						</ul>
+						<img class="game-area-image" src="images/rule/supply.png" alt="">
+
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<button class="close-rule-modal-btn">×</button>
+						<h1><img src="images/rule/basic.png"> ドミニオンの基本ルール</h1>
+						<h2>初期デッキ</h2>
+						<p class="rule-text">グラニオンは初期デッキとして以下の10枚が配られます。</p>
+						<ul>
+							<li>ブロンズムーン：7枚</li>
+							<li>ギガス鋼：3枚</li>
+						</ul>
+						<p class="rule-text">この10枚を「山札」としてシャッフルし、5枚カードを引いて「手札」にします。</p>
+						<h2>ゲームの進行とフェイズ</h2>
+						<p class="rule-text">
+							初期デッキを配り、手札を引いたらゲームを開始します。<br>
+							プレイヤーは自分のターンに以下の3つのフェイズを順番に実行します。
+						</p>
+						<ol>
+							<li>
+								アクションフェイズ：<br>
+								アクションカードを1枚使用できる。
+								アクションポイントがなくなる、またはアクションカードを持っていない場合、購入フェイスへ移行する。
+							</li>
+							<li>
+								購入フェイズ：<br>
+								Moon(財宝)カードを好きなだけ使用する。
+								そして出したMoon以下のコストのカードを1枚サプライから購入し、獲得してもよい。
+								購入が終わった、または購入ポイントがなくなったらクリーンアップフェイズに移行する。
+							</li>
+							<li>
+								クリーンアップフェイズ：<br>
+								プレイエリアに出ているカードと手札を全て捨て札に置く。
+								そのあと、デッキからカードを5枚引く。
+								そしてアクションフェイズへ...
+							</li>
+						</ol>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<button class="close-rule-modal-btn">×</button>
+						<h1><img src="images/rule/action.jpg"> アクションフェイズ</h1>
+						<p class="rule-text">
+							アクションフェイズでは手札からアクションカードを1枚だけプレイエリアに出し、使用することができます。<br>
+							アクションカードが使用できない、あるいはアクションカードの使用をやめた場合、アクションフェイズは終了となります。<br>
+						</p>
+						<div>
+							<img src="images/rule/card_action.png" alt="">
+							<p class="rule-text">
+								王国カードの効果にて「＋〇アクション」となっている場合は、
+								指定されているアクション数分追加で王国カードをプレイすることができます。<br>
+								「＋〇購入」となっている場合は、後述する購入フェイズで可能な「購入」の回数が増えます。<br>
+								「＋〇Moon」となっている場合は、指定されているMoon数分「Moonポイント」が増えます。
+								Moonカードをサプライから獲得できるわけではないので、注意してください。
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<button class="close-rule-modal-btn">×</button>
+						<h1><img src="images/rule/buy.jpg"> 購入フェイズ</h1>
+						<p class="rule-text">
+							購入フェイズでは、サプライのカードを購入することができます。<br>
+							購入フェイズはさらに「財宝カードの使用」を行う段階と「カードの購入」を行う段階に分かれます。
+						</p>
+						<ul>
+							<li>
+								財宝カードの使用：<br>
+								購入フェイズに入ると、まず財宝カードを好きなだけ使用することができます。<br>
+								財宝カードが手札にない、あるいは財宝カードの使用をやめた場合、カードの購入を行います。
+							</li>
+							<li>
+								カードの購入：<br>
+								使用したMoon(財宝)カードから得たMoonポイント、およびアクションカードなどから得たMoonポイントを合計し、
+								得たMoonポイント以下のコスト（カードの左下(黄丸)）のカード1枚をサプライから獲得することができます。
+								獲得したカードは指示が無い限りは捨て札におきます。<br>
+								
+							</li>
+						</ul>
+						<div>
+							<img src="images/rule/kingdom.png" alt="">
+							<p class="rule-text">
+								サプライの各カードには残り枚数があり、ゲーム内ではカードの右下(白丸)に記載されています。
+								それ以上カードの購入が出来ない、あるいはカードの購入をやめた場合、購入フェイズは終了となります。
+								残ったコインを次に持ち越したりすることはできません。
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<button class="close-rule-modal-btn">×</button>
+						<h1><img src="images/rule/cleanup.jpg"> クリーンアップフェイズ</h1>
+						<p class="rule-text">
+							プレイエリアのカードと手札を全て捨て札置き場に置きます。使用していない手札も全て捨てます。
+							その後デッキからカードを5枚引きます。
+							この時、デッキからカードを引くことができない場合、
+							捨て札を全てシャッフルし新たな山札とし、そこから引きます。<br>
+							各フェーズが終わったら、1ターンが終わり、アクションフェイズに戻ります。<br>
+						</p>
+						<h1><img src="images/rule/end.jpg"> ゲームの終了条件</h1>
+						<p class="rule-text">
+							プレイヤーのターン終了時に、以下のいずれかを満たしている場合、ゲームが終了します。
+						</p>
+						<ul>
+							<li>「ダマスカス鋼」の残り枚数が0枚になっている</li>
+							<li>サプライの山札のうち、3種類以上の残り枚数が0枚になっている</li>
+							<li>15ターン経過する</li>
+						</ul>
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<button class="close-rule-modal-btn">×</button>
 					</div>
 				</div>
 			</div>
@@ -141,7 +296,7 @@
 		</div>
 	</div>
 
-	<!-- script 宣言 -->>
+	<!-- script 宣言 -->
 	<script src="js/swiper.js"></script>
 
 </body>

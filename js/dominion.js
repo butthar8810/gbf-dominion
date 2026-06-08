@@ -2,40 +2,42 @@
 const cardType = {Action: 'アクション', Point: '勝利点', Money: 'Moon'}
 // 勝利点カード
 const victoryPointCard = {
-	High: {name: 'ダマスカス鋼', cost: 8, type: cardType.Point, remain: 8, func: cardHigh, effect: '+6点', image: 'images/point_6.jpg'},
-	Middle: {name: '玉鋼', cost: 5, type: cardType.Point, remain: 8, func: cardMiddle, effect: '+3点', image: 'images/point_3.jpg'},
-	Low: {name: 'ギガス鋼', cost: 2, type: cardType.Point, remain: 8+3, func: cardLow, effect: '+1点', image: 'images/point_1.jpg'}
+	High: {name: 'ダマスカス鋼', cost: 8, type: cardType.Point, remain: 8, func: cardHigh, effect: '+6点', image: 'images/supply/point_6.jpg'},
+	Middle: {name: '玉鋼', cost: 5, type: cardType.Point, remain: 8, func: cardMiddle, effect: '+3点', image: 'images/supply/point_3.jpg'},
+	Low: {name: 'ギガス鋼', cost: 2, type: cardType.Point, remain: 8+3, func: cardLow, effect: '+1点', image: 'images/supply/point_1.jpg'}
 };
-// コイン(Moon)カード
+const victoryIndex = {High: 0, Middle: 1, Low: 2};
+// Moonカード
 const treasurePointCard = {
-	Gold: {name: 'ゴールドムーン', cost: 6, type: cardType.Money, remain: 30, func: cardGold, effect: '+3Moon', image: 'images/moon_Gold.png'},
-	Silver: {name: 'シルバームーン', cost: 3, type: cardType.Money, remain: 40, func: cardSilver, effect: '+2Moon', image: 'images/moon_Silver.png'},
-	Bronze: {name: 'ブロンズムーン', cost: 0, type: cardType.Money, remain: 46+7, func: cardBronze, effect: '+1Moon', image: 'images/moon_Bronze.png'}
+	Gold: {name: 'ゴールドムーン', cost: 6, type: cardType.Money, remain: 30, func: cardGold, effect: '+3Moon', image: 'images/supply/moon_Gold.png'},
+	Silver: {name: 'シルバームーン', cost: 3, type: cardType.Money, remain: 40, func: cardSilver, effect: '+2Moon', image: 'images/supply/moon_Silver.png'},
+	Bronze: {name: 'ブロンズムーン', cost: 0, type: cardType.Money, remain: 46+7, func: cardBronze, effect: '+1Moon', image: 'images/supply/moon_Bronze.png'}
 };
+const treasureIndex = {Gold: 0, Silver: 1, Bronze: 2};
 //用いる王国カード
 const kingdomCard = {
-	Cellar: {name: '騎空艇の貯蔵庫', cost: 2, type: cardType.Action, remain: 10, func: cardCellar, effect: '+1アクション<br><br>手札を好きな枚数捨て、捨てた枚数だけドロー', image: 'images/Cellar.png'},
-	Chapel: {name: 'ゼエン教', cost: 2, type: cardType.Action, remain: 10, func: cardChapel, effect: '手札を4枚まで廃棄可能', image: 'images/Chapel.png'},
-	Moat: {name: '空堀', cost: 2, type: cardType.Action, remain: 10, func: cardMoat, effect: '+2 カードを引く', image: 'images/Moat.png'},
-	Vassal: {name: '氷皇の家臣', cost: 3, type: cardType.Action, remain: 10, func: cardVassal, effect: '+2Moon<br><br>デッキのトップを捨て、それがアクションなら使用できる', image: 'images/Vassal.png'},
-	Workshop: {name: 'ククルの銃工房', cost: 3, type: cardType.Action, remain: 10, func: cardWorkshop, effect: '4コスト以下のカード1枚を獲得', image: 'images/Workshop.png'},
-	Merchant: {name: '駄洒落好きな商人', cost: 3, type: cardType.Action, remain: 10, func: cardMerchant, effect: `+1ドロー<br>+1アクション<br><br>${treasurePointCard.Silver.name}1枚を使用すれば+1Moon`, image: 'images/Merchant.png'},
-	Harbinger: {name: '森の前駆者', cost: 3, type: cardType.Action, remain: 10, func: cardHarbinger, effect: '+1ドロー<br>+1アクション<br>捨て札からデッキトップにカード1枚を置ける', image: 'images/Harbinger.png'},
-	Village: {name: '故郷の村', cost: 3, type: cardType.Action, remain: 10, func: cardVillage, effect: '+1ドロー<br>+2アクション', image: 'images/Village.png'},
-	Remodel: {name: '改築', cost: 4, type: cardType.Action, remain: 10, func: cardRemodel, effect: '手札1枚を廃棄、(廃棄カードのコスト)+2コスト以下のカード1枚を獲得', image: 'images/Remodel.png'},
-	Smithy: {name: '若者の鍛冶屋', cost: 4, type: cardType.Action, remain: 10, func: cardSmithy, effect: '+3ドロー', image: 'images/Smithy.png'},
-	Moneylender: {name: '金持ち', cost: 4, type: cardType.Action, remain: 10, func: cardMoneylender, effect: `${treasurePointCard.Bronze.name}1枚を廃棄してもよい、廃棄した場合+3Moon`, image: 'images/Moneylender.png'},
-	ThroneRoom: {name: '玉座の間', cost: 4, type: cardType.Action, remain: 10, func: cardThroneRoom, effect: '手札のアクション1枚を2回使用してもよい', image: 'images/ThroneRoom.png'},
-	Poacher: {name: '密漁者', cost: 4, type: cardType.Action, remain: 10, func: cardPoacher, effect: '+1ドロー<br>+1アクション<br>+1Moon<br><br>空になっているサプライの山札1つにつき、手札を1枚捨て札にする。', image: 'images/Poacher.png'},
-	Gardens: {name: 'ウェールズの庭園', cost: 4, type: cardType.Point, remain: 10, func: cardGardens, effect: 'デッキ10枚につき1点', image: 'images/Gardens.png'},
-	Market: {name: '市場(よろず屋)', cost: 5, type: cardType.Action, remain: 10, func: cardMarket, effect: '+1ドロー<br>+1アクション<br>+1購入<br>+1Moon', image: 'images/Market.png'},
-	Sentry: {name: '年長の衛兵', cost: 5, type: cardType.Action, remain: 10, func: cardSentry, effect: '+1ドロー<br>+1アクション<br>デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。', image: 'images/Sentry.png'},
-	CouncilRoom: {name: '賑やかな議事堂', cost: 5, type: cardType.Action, remain: 10, func: cardCouncilRoom, effect: '+4ドロー<br>+1購入<br><br>', image: 'images/CouncilRoom.png'},
-	Laboratory: {name: '開祖の研究所', cost: 5, type: cardType.Action, remain: 10, func: cardLaboratory, effect: '+2ドロー<br>+1アクション', image: 'images/Laboratory.png'},
-	Mine: {name: 'バルツ鉱山', cost: 5, type: cardType.Action, remain: 10, func: cardMine, effect: `Moon1枚を廃棄、(廃棄カードのコスト)+3以下のMoon1枚を手札に獲得`, image: 'images/Mine.png'},
-	Festival: {name: 'グラブルフェス', cost: 5, type: cardType.Action, remain: 10, func: cardFestival, effect: '+2アクション<br>+1購入<br>+2Moon', image: 'images/Festival.png'},
-	Library: {name: '書庫', cost: 5, type: cardType.Action, remain: 10, func: cardLibrary, effect: '手札が7枚になるまでカードを引く。アクションカードを引いた場合は脇に置き、7枚になるまで引いた後捨てる', image: 'images/Library.png'},
-	Artisan: {name: '頑固な職人', cost: 6, type: cardType.Action, remain: 10, func: cardArtisan, effect: '5コスト以下のカード1枚を手札に獲得。手札1枚をデッキトップに置く', image: 'images/Artisan.png'}
+	Cellar: {name: '騎空艇の貯蔵庫', cost: 2, type: cardType.Action, remain: 10, func: cardCellar, effect: '+1アクション<br><br>手札を好きな枚数捨て、捨てた枚数だけドロー', image: 'images/supply/Cellar.png'},
+	Chapel: {name: 'ゼエン教', cost: 2, type: cardType.Action, remain: 10, func: cardChapel, effect: '手札を4枚まで廃棄可能', image: 'images/supply/Chapel.png'},
+	Moat: {name: '空堀', cost: 2, type: cardType.Action, remain: 10, func: cardMoat, effect: '+2 カードを引く', image: 'images/supply/Moat.png'},
+	Vassal: {name: '氷皇の家臣', cost: 3, type: cardType.Action, remain: 10, func: cardVassal, effect: '+2Moon<br><br>デッキのトップを捨て、それがアクションなら使用できる', image: 'images/supply/Vassal.png'},
+	Workshop: {name: 'ククルの銃工房', cost: 3, type: cardType.Action, remain: 10, func: cardWorkshop, effect: '4コスト以下のカード1枚を獲得', image: 'images/supply/Workshop.png'},
+	Merchant: {name: '駄洒落好きな商人', cost: 3, type: cardType.Action, remain: 10, func: cardMerchant, effect: `+1ドロー<br>+1アクション<br><br>${treasurePointCard.Silver.name}1枚を使用すれば+1Moon`, image: 'images/supply/Merchant.png'},
+	Harbinger: {name: '森の前駆者', cost: 3, type: cardType.Action, remain: 10, func: cardHarbinger, effect: '+1ドロー<br>+1アクション<br>捨て札からデッキトップにカード1枚を置ける', image: 'images/supply/Harbinger.png'},
+	Village: {name: '故郷の村', cost: 3, type: cardType.Action, remain: 10, func: cardVillage, effect: '+1ドロー<br>+2アクション', image: 'images/supply/Village.png'},
+	Remodel: {name: '改造', cost: 4, type: cardType.Action, remain: 10, func: cardRemodel, effect: '手札1枚を廃棄、(廃棄カードのコスト)+2コスト以下のカード1枚を獲得', image: 'images/supply/Remodel.png'},
+	Smithy: {name: '若者の鍛冶屋', cost: 4, type: cardType.Action, remain: 10, func: cardSmithy, effect: '+3ドロー', image: 'images/supply/Smithy.png'},
+	Moneylender: {name: '金持ち', cost: 4, type: cardType.Action, remain: 10, func: cardMoneylender, effect: `${treasurePointCard.Bronze.name}1枚を廃棄してもよい、廃棄した場合+3Moon`, image: 'images/supply/Moneylender.png'},
+	ThroneRoom: {name: '玉座の間', cost: 4, type: cardType.Action, remain: 10, func: cardThroneRoom, effect: '手札のアクション1枚を2回使用してもよい', image: 'images/supply/ThroneRoom.png'},
+	Poacher: {name: '密漁者', cost: 4, type: cardType.Action, remain: 10, func: cardPoacher, effect: '+1ドロー<br>+1アクション<br>+1Moon<br><br>空になっているサプライの山札1つにつき、手札を1枚捨て札にする。', image: 'images/supply/Poacher.png'},
+	Gardens: {name: 'ウェールズの庭園', cost: 4, type: cardType.Point, remain: 10, func: cardGardens, effect: 'デッキ10枚につき1点', image: 'images/supply/Gardens.png'},
+	Market: {name: '市場(よろず屋)', cost: 5, type: cardType.Action, remain: 10, func: cardMarket, effect: '+1ドロー<br>+1アクション<br>+1購入<br>+1Moon', image: 'images/supply/Market.png'},
+	Sentry: {name: '年長の衛兵', cost: 5, type: cardType.Action, remain: 10, func: cardSentry, effect: '+1ドロー<br>+1アクション<br>デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。', image: 'images/supply/Sentry.png'},
+	CouncilRoom: {name: '賑やかな議事堂', cost: 5, type: cardType.Action, remain: 10, func: cardCouncilRoom, effect: '+4ドロー<br>+1購入<br><br>', image: 'images/supply/CouncilRoom.png'},
+	Laboratory: {name: '開祖の研究所', cost: 5, type: cardType.Action, remain: 10, func: cardLaboratory, effect: '+2ドロー<br>+1アクション', image: 'images/supply/Laboratory.png'},
+	Mine: {name: 'バルツ鉱山', cost: 5, type: cardType.Action, remain: 10, func: cardMine, effect: `Moon1枚を廃棄、(廃棄カードのコスト)+3以下のMoon1枚を手札に獲得`, image: 'images/supply/Mine.png'},
+	Festival: {name: 'グラブルフェス', cost: 5, type: cardType.Action, remain: 10, func: cardFestival, effect: '+2アクション<br>+1購入<br>+2Moon', image: 'images/supply/Festival.png'},
+	Library: {name: '書庫', cost: 5, type: cardType.Action, remain: 10, func: cardLibrary, effect: '手札が7枚になるまでカードを引く。アクションカードを引いた場合は脇に置き、7枚になるまで引いた後捨てる', image: 'images/supply/Library.png'},
+	Artisan: {name: '頑固な職人', cost: 6, type: cardType.Action, remain: 10, func: cardArtisan, effect: '5コスト以下のカード1枚を手札に獲得。手札1枚をデッキトップに置く', image: 'images/supply/Artisan.png'}
 };
 
 // 定数
@@ -81,38 +83,46 @@ const kingdomCoordinateForSupply = [
 	{top: kingdomCoordinateBottom, left: '373px'},
 	{top: kingdomCoordinateBottom, left: '230px'}
 ];
-const victoryCoordinateForSupply = {
+const victoryCoordinateForSupply = [
 	// 勝利点カードの座標
-	High: {top: '5px', left: '1px'},
-	Middle: {top: '102px', left: '1px'},
-	Low: {top: '199px', left: '1px'}
-};
-const treasureCoordinateForSupply = {
+	{top: '5px', left: '1px'},
+	{top: '102px', left: '1px'},
+	{top: '199px', left: '1px'}
+];
+const treasureCoordinateForSupply = [
 	// Moonカードの座標
-	Gold: {top: '5px', left: '107px'},
-	Silver: {top: '102px', left: '107px'},
-	Bronze: {top: '199px', left: '107px'}
-};
+	{top: '5px', left: '107px'},
+	{top: '102px', left: '107px'},
+	{top: '199px', left: '107px'}
+];
 const deckCoordinateForSupply = {top: '415px', left: '-5px', width: '80px'};
 const handCoordinateForSupply = {top: '530px', left: '440px', width: '120px'};
 const trashCoordinateForSupply = {top: '355px', left: '765px', width: '80px'};
 const discardCoordinateForSupply = {top: '355px', left: '850px', width: '80px'};
 const modalCoordinateForSupply = {top: '75px', left: '395px', width: '150px'};
 
-const deckCoordinateForHandArea = {top: '-170px', left: '-30px', width: '80px'};
+const deckCoordinateForHandArea = {top: '-110px', left: '-5px', width: '80px'};
 const handCoordinateForHandArea = {top: '0px', left: '400px', width: '120px'};
 const modalCoordinateForHandArea = {top: '-500px', left: '400px', width: '150px'};
-const trashCoordinateForHandArea = {top: '-130px', left: '760px', width: '80px'};
-const discardCoordinateForHandArea = {top: '-215px', left: '840px', width: '80px'};
+const trashCoordinateForHandArea = {top: '-180px', left: '760px', width: '80px'};
+const discardCoordinateForHandArea = {top: '-180px', left: '840px', width: '80px'};
 
 const handCoordinateForPlayArea = {top: '200px', left: '300px', width: '120px'};
 const playCoordinateForPlayArea = {top: '0px', left: '300px', width: '120px'};
 const trashCoordinateForPlayArea = {top: '20px', left: '620px', width: '80px'};
+// ローカルストレージのアクセスキー
+const keyContinueFlag = 'GuraNion.Continue.Flag';// 途中プレイがあるかのフラグ
+
+
+
+
 //変数
 let myDeck = [];//name, cost, type, effect, image
 let myHand = [];//id, name, cost, type, effect, image
 let myTrash = [];//name, cost, type, effect, image
 let playAreaCard = [];
+let supplyVictory = [];
+let supplyTreasure = [];
 let supplyKingdom = [];
 let discard = [];
 let tmpArea =[];
@@ -123,6 +133,7 @@ let buyCount = 1;
 let moonCount = 0;
 let currentPoint = 1;
 let currentPhase;
+let currentTurn = 0;
 let exchangeCost = -1;
 let MerchantFlag = false;
 let dropIndex;
@@ -132,10 +143,14 @@ let dropIndex;
 /* startGame：ゲームスタート
 /*******************************************************/
 function startGame(){
-	//用いる王国カードを10種類決める
-	supplyKingdom = shuffleArray(Object.values(kingdomCard)).slice(0, supplyKingdomNum);
+	// 各キューの初期化
+	initializeQueue();
+	// サプライのセットアップ
+	setupSupply();
+
 	// デッキの準備
 	setupDeck();
+
 	setupExplanationModal();
 	setupSettingBtn();
 
@@ -158,11 +173,46 @@ function startGame(){
 /*******************************************************/
 /* setupDeck：初期デッキとなる10枚のカードを配る
 /*******************************************************/
+function initializeQueue(){
+	deletAllSupply();
+	deletAllDeck();
+	deletAllHand();
+	deletAllTrash();
+	deletAllPlayArea();
+	deletAllDiscard();
+	deletAllTemporaryArea();
+	deletAllStackCard();
+	
+	updateHandDom();
+	updatePlayAreaDom();
+	updateSupplyDom();
+}
+
+/*******************************************************/
+/* setupSupply：サプライのセットアップ
+/*******************************************************/
+function setupSupply(){
+	//用いる王国カードを10種類決める
+	const shuffledSupplyKingdom = shuffleArray(Object.values(kingdomCard)).slice(0, supplyKingdomNum);
+	supplyKingdom = deepCopySupply(shuffledSupplyKingdom);
+
+	// 勝利点カードのキューをコピー
+	supplyVictory = deepCopySupply(Object.values(victoryPointCard));
+
+	// Moonカードのキューをコピー
+	supplyTreasure = deepCopySupply(Object.values(treasurePointCard));
+
+}
+/*******************************************************/
+/* setupDeck：初期デッキとなる10枚のカードを配る
+/*******************************************************/
 function setupDeck(){
 	// プレイヤーに初期デッキとなる10枚のカードを配る
-	drawSupplyCard(treasurePointCard.Bronze, 7);
-	drawSupplyCard(victoryPointCard.Low, 3);
-//	drawSupplyCard(kingdomCard.Sentry, 3);
+	console.log(supplyVictory);
+	console.log(supplyTreasure);
+	console.log(supplyKingdom);
+	drawSupplyCard(supplyTreasure[treasureIndex.Bronze], 7);
+	drawSupplyCard(supplyVictory[victoryIndex.Low], 3);
 	// 配ったカードをデッキに格納する
 	reconfigureDeck();
 }
@@ -170,7 +220,7 @@ function setupDeck(){
 /* startTurn：ターンの始まり
 /*******************************************************/
 function startTurn(){
-	
+	currentTurn++;
 	actionCount = 1;
 	buyCount = 1;
 	moonCount = 0;
@@ -182,7 +232,15 @@ function startTurn(){
 	startActionPhase();
 
 }
+/*******************************************************/
+/* startTurn：ターンの始まり
+/*******************************************************/
+function endTurn(){
 
+	// ストレージにセーブを行う
+	setLocalStorage(keyContinueFlag, true);
+	startTurn();
+}
 /*******************************************************/
 /* startActionPhase：アクションフェイズを開始する
 /*******************************************************/
@@ -233,7 +291,7 @@ function startCleanupPhase(){
 	setTimeout(() => {
 		updateTrashDom();
 		updatePlayAreaDom();
-		startTurn();
+		endTurn();
 	}, drowWatiTime);
 }
 
@@ -281,44 +339,44 @@ function closeExplanationModalDom(){
 /* setupSettingBtn：設定ボタンの初期設定
 /*******************************************************/
 function setupSettingBtn(){
+	// 設定モーダルの設定
 	$('.setting-open-btn').click((e) => {
-		openSettingModalDom();
+		$('.setting-modal').addClass('active');
 	});
-	$('.close-btn').click((e) => {
-		closeSettingModalDom();
-	});
-	$('.rule-btn').click((e) => {
-		closeSettingModalDom();
-		openRuleModalDom();
+	$('.close-modal-btn').click((e) => {
+		$('.setting-modal').removeClass('active');
 	});
 	$(document).click((e) => {
 		if(!$(e.target).closest('.setting-modal-body').length && !$(e.target).closest('.setting-open-btn').length) {
-			closeSettingModalDom();
+			$('.setting-modal').removeClass('active');
 		}
 	});
-}
-/*******************************************************/
-/* openSettingModalDom：設定用モーダル表示処理
-/*******************************************************/
-function openSettingModalDom(){
-	console.log("openSettingModalDom");
-	$('.setting-modal').addClass('active');
-}
-/*******************************************************/
-/* closeSettingModalDom：設定用モーダル非表示処理
-/*******************************************************/
-function closeSettingModalDom(){
-	console.log("closeSettingModalDom");
-	$('.setting-modal').removeClass('active');
+
+	// Infoモーダルの設定
+	$('.info-btn').click((e) => {
+		$('.setting-modal').removeClass('active');
+		$('.infomation-modal').addClass('active');
+	});
+	$('.close-infomation-modal-btn').click((e) => {
+		$('.infomation-modal').removeClass('active');
+	});
+	// Infoモーダルの設定
+	$('.rule-btn').click((e) => {
+		$('.setting-modal').removeClass('active');
+		$('.rule-modal').addClass('active');
+	});
+	$('.close-rule-modal-btn').click((e) => {
+		$('.rule-modal').removeClass('active');
+	});
+
+	// はじめからボタン
+	$('.restart-btn').click((e) => {
+		$('.setting-modal').removeClass('active');
+		startGame();
+	});
+
 }
 
-/*******************************************************/
-/* closeSettingModalDom：設定用モーダル非表示処理
-/*******************************************************/
-function openRuleModalDom(){
-	console.log("openRuleModalDom");
-	$('.rule-modal').addClass('active');
-}
 /*******************************************************/
 /* openModalDom：モーダル表示処理
 /*******************************************************/
@@ -675,7 +733,7 @@ function drowSupplyCardToHand(supplyCard, count = 1){
 	return true;
 }
 /*******************************************************/
-/* drawSupplyCard：サプライからカードを取得する
+/* buySupplyCard
 /*******************************************************/
 function buySupplyCard(supplyCard, count = 1){
 	if (moonCount < supplyCard.cost) {
@@ -832,6 +890,9 @@ function pushMultiplebtn(){
 /*******************************************************/
 /* DOM要素の更新処理
 /*******************************************************/
+function updateTurnDom(){
+	$(`.action-count`).html(`${currentTurn}`);
+}
 function updateActionDom(){
 	$(`.action-count`).html(`${actionCount}`);
 }
@@ -951,7 +1012,7 @@ function updateSupplyDom(){
 			switch(currentPhase) {
 				case phase.buy:
 						if(buySupplyCard(kingdom)){
-							animateDrowSupplyKingdom(kingdom, i);
+							animateDrowSupply(kingdom, i);
 						}
 					break;
 				case phase.executeActionByRemodel:
@@ -959,7 +1020,7 @@ function updateSupplyDom(){
 					if (kingdom.cost <= exchangeCost) {
 						const ret = drawSupplyCard(kingdom);
 						if (ret) {
-							animateDrowSupplyKingdom(kingdom, i);
+							animateDrowSupply(kingdom, i);
 							exchangeCost = -1;
 							endAction();
 						}
@@ -969,7 +1030,7 @@ function updateSupplyDom(){
 				case phase.executeActionByArtisan1:
 					if (kingdom.cost <= exchangeCost) {
 						if (drowSupplyCardToHand(kingdom)){
-							animateDrowSupplyKingdomToHand(kingdom, i);
+							animateDrowSupplyToHand(kingdom, i);
 							exchangeCost = -1;
 							cardArtisanSub();
 						}
@@ -986,44 +1047,45 @@ function updateSupplyDom(){
 		});
 		$(".kingdon-area").append(supplyCardDiv);
 	});
-	for (const key in victoryPointCard) {
+	supplyVictory.forEach((victory, i) => {
 		const supplyCardDiv = $('<div>');
 		supplyCardDiv.addClass('supply-card');
-		if (victoryPointCard[key].remain <= 0) {
+		if (victory.remain <= 0) {
 			supplyCardDiv.addClass('empty-card');
 		} else {
 			supplyCardDiv.addClass('victory-card');
 		}
 		supplyCardDiv
-			.html(victoryPointCard[key].name)
-			.append(`<img src="${victoryPointCard[key].image}"></img>`)
-			.append(`<div class="cost">${victoryPointCard[key].cost}</div>`)
-			.append(`<div class="remain">${victoryPointCard[key].remain}</div>`);
-		supplyCardDiv.click(victoryPointCard[key], () => {
+			.html(victory.name)
+			.append(`<img src="${victory.image}"></img>`)
+			.append(`<div class="cost">${victory.cost}</div>`)
+			.append(`<div class="remain">${victory.remain}</div>`);
+		supplyCardDiv.click(victory, () => {
 			switch(currentPhase) {
 				case phase.buy:
-						if(buySupplyCard(victoryPointCard[key])){
-							animateDrowSupply(key);
+						if(buySupplyCard(victory)){
+							console.log(victory);
+							animateDrowSupply(victory, i);
 						}
 					break;
 				case phase.executeActionByRemodel:
 				case phase.executeActionByWorkshop:
-					if (victoryPointCard[key].cost <= exchangeCost) {
-						if (victoryPointCard[key].remain <= 0) {
+					if (victory.cost <= exchangeCost) {
+						if (victory.remain <= 0) {
 							debugAlert('指定したサプライのカードがありません');
 							break;
 						}
-						const ret = drawSupplyCard(victoryPointCard[key]);
+						const ret = drawSupplyCard(victory);
 						if (ret) {
-							animateDrowSupply(key);
+							animateDrowSupply(victory, i);
 							exchangeCost = -1;
 							endAction();
 						}
 					}
 					break;
 				case phase.executeActionByArtisan1:
-					if (victoryPointCard[key].cost <= exchangeCost) {
-						if (drowSupplyCardToHand(victoryPointCard[key])){
+					if (victory.cost <= exchangeCost) {
+						if (drowSupplyCardToHand(victory, i)){
 							animateDrowSupplyToHand(key);
 							exchangeCost = -1;
 							cardArtisanSub();
@@ -1035,37 +1097,38 @@ function updateSupplyDom(){
 					break;
 			}
 		});
-		supplyCardDiv.contextmenu(victoryPointCard[key] ,() => {
-			openExplanationModalDom(victoryPointCard[key]);
+		supplyCardDiv.contextmenu(victory ,() => {
+			openExplanationModalDom(victory);
 			return false;
 		});
 		$(".victory-point-area").append(supplyCardDiv);
-	};
-	for (const key in treasurePointCard) {
+	});
+	
+	supplyTreasure.forEach((treasure, i) => {
 		const supplyCardDiv = $('<div>');
 		supplyCardDiv.addClass('supply-card');
-		if (treasurePointCard[key].remain <= 0) {
+		if (treasure.remain <= 0) {
 			supplyCardDiv.addClass('empty-card');
 		}else {
 			supplyCardDiv.addClass('treasure-card');
 		}
 		supplyCardDiv
-			.html(treasurePointCard[key].name)
-			.append(`<img src="${treasurePointCard[key].image}"></img>`)
-			.append(`<div class="cost">${treasurePointCard[key].cost}</div>`)
-			.append(`<div class="remain">${treasurePointCard[key].remain}</div>`);
-		supplyCardDiv.click(treasurePointCard[key], () => {
+			.html(treasure.name)
+			.append(`<img src="${treasure.image}"></img>`)
+			.append(`<div class="cost">${treasure.cost}</div>`)
+			.append(`<div class="remain">${treasure.remain}</div>`);
+		supplyCardDiv.click(treasure, () => {
 			switch(currentPhase) {
 				case phase.buy:
-						if(buySupplyCard(treasurePointCard[key])){
+						if(buySupplyCard(treasure)){
 							animateDrowSupply(key);
 						}
 					break;
 				case phase.executeActionByRemodel:
 				case phase.executeActionByMine:
 				case phase.executeActionByWorkshop:
-					if (treasurePointCard[key].cost <= exchangeCost) {
-						if (drawSupplyCard(treasurePointCard[key])) {
+					if (treasure.cost <= exchangeCost) {
+						if (drawSupplyCard(treasure)) {
 							animateDrowSupply(key);
 							exchangeCost = -1;
 							endAction();
@@ -1073,8 +1136,8 @@ function updateSupplyDom(){
 					}
 					break;
 				case phase.executeActionByArtisan1:
-					if (treasurePointCard[key].cost <= exchangeCost) {
-						if (drowSupplyCardToHand(treasurePointCard[key])){
+					if (treasure.cost <= exchangeCost) {
+						if (drowSupplyCardToHand(treasure)){
 							animateDrowSupplyToHand(key);
 							exchangeCost = -1;
 							cardArtisanSub();
@@ -1086,12 +1149,12 @@ function updateSupplyDom(){
 					break;
 			}
 		});
-		supplyCardDiv.contextmenu(treasurePointCard[key] ,() => {
-			openExplanationModalDom(treasurePointCard[key]);
+		supplyCardDiv.contextmenu(treasure ,() => {
+			openExplanationModalDom(treasure);
 			return false;
 		});
 		$(".treasure-point-area").append(supplyCardDiv);
-	};
+	});
 }
 function updatePlayAreaDom(){
 	$(`.play-area`).html('');
@@ -1219,9 +1282,9 @@ function clickHandProcess(handCardDiv, hand){
 		case phase.executeActionByPoacher:
 			if (index === -1) {
 				let supplyCount = 0;
+				supplyVictory.forEach((supply) => {if(supply.remain === 0){supplyCount++;}});
+				supplyTreasure.forEach((supply) => {if(supply.remain === 0){supplyCount++;}});
 				supplyKingdom.forEach((supply) => {if(supply.remain === 0){supplyCount++;}});
-				for (const key in victoryPointCard) {if(victoryPointCard[key].remain === 0){supplyCount++;}}
-				for (const key in treasurePointCard) {if(treasurePointCard[key].remain === 0){supplyCount++;}}
 				if(tmpArea.length < supplyCount){
 					pushTemporaryArea(hand);
 					handCardDiv.addClass("select");
@@ -1597,22 +1660,21 @@ function cardPoacher(){
 	updateMoonDom();
 
 	let supplyCount = 0;
+	supplyVictory.forEach((supply) => {
+		if(supply.remain === 0){
+			supplyCount++;
+		}
+	});
+	supplyTreasure.forEach((supply) => {
+		if(supply.remain === 0){
+			supplyCount++;
+		}
+	});
 	supplyKingdom.forEach((supply) => {
 		if(supply.remain === 0){
 			supplyCount++;
 		}
 	});
-	for (const key in victoryPointCard) {
-		if(victoryPointCard[key].remain === 0){
-			supplyCount++;
-		}
-	}
-	for (const key in treasurePointCard) {
-		if(treasurePointCard[key].remain === 0){
-			supplyCount++;
-		}
-	}
-
 	setTimeout(() => {
 		if(supplyCount > 0) {
 			changePhase(phase.executeActionByPoacher);
@@ -1903,68 +1965,37 @@ function animateDrowDeck(card){
 	}, drowWatiTime);
 }
 /*******************************************************/
-/* animateDrowSupplyKingdom：王国カード購入のアニメーション
+/* animateDrowSupply：サプライカード購入のアニメーション
 /*******************************************************/
-function animateDrowSupplyKingdom(card, index){
-	console.log(card);
-	console.log(index);
-
-	const supplyCardDiv = $('<div>');
-	$('.supply-area').append(supplyCardDiv);
-	supplyCardDiv
-		.html(`${card.name}<img src="${card.image}">`)
-		.addClass('get-supply-card')
-		.css('position', 'absolute')
-		.css('top', kingdomCoordinateForSupply[index].top)
-		.css('left', kingdomCoordinateForSupply[index].left);
-	if (card.type == cardType.Point) {
-		supplyCardDiv.addClass('victory-card');
-	} else if (card.type == cardType.Money) {
-		supplyCardDiv.addClass('treasure-card');
-	} else if (card.type == cardType.Action) {
-		supplyCardDiv.addClass('kingdon-card');
-	}
-	supplyCardDiv.animate({
-		top: trashCoordinateForSupply.top,
-		left: trashCoordinateForSupply.left,
-		width: trashCoordinateForSupply.width
-	}, trashWaitTime);
-	setTimeout(() => {
-		supplyCardDiv.remove();
-	}, trashWaitTime);
-}
-/*******************************************************/
-/* animateDrowSupply：サプライ(勝利点・Moon)カード購入のアニメーション
-/*******************************************************/
-function animateDrowSupply(key){
-	console.log(key);
+function animateDrowSupply(card, index){
 	const supplyCardDiv = $('<div>');
 	$('.supply-area').append(supplyCardDiv);
 	supplyCardDiv
 		.addClass('get-supply-card')
 		.css('position', 'absolute');
-	if(key in victoryCoordinateForSupply){
+	if(card.type == cardType.Point){
 		// 勝利点の場合
 		supplyCardDiv
-			.html(`${victoryPointCard[key].name}<img src="${victoryPointCard[key].image}">`)
-			.css('top', victoryCoordinateForSupply[key].top)
-			.css('left', victoryCoordinateForSupply[key].left);
-	} else if(key in treasureCoordinateForSupply){
+			.html(`${card.name}<img src="${card.image}">`)
+			.css('top', victoryCoordinateForSupply[index].top)
+			.css('left', victoryCoordinateForSupply[index].left)
+			.addClass('victory-card');
+	} else if(card.type == cardType.Money){
 		// Moonの場合
-		console.log(key);
 		supplyCardDiv
-			.html(`${treasurePointCard[key].name}<img src="${treasurePointCard[key].image}">`)
-			.css('top', treasureCoordinateForSupply[key].top)
-			.css('left', treasureCoordinateForSupply[key].left);
+			.html(`${card.name}<img src="${card.image}">`)
+			.css('top', treasureCoordinateForSupply[index].top)
+			.css('left', treasureCoordinateForSupply[index].left)
+			.addClass('treasure-card');
+	} else if(card.type == cardType.Action){
+		// アクションの場合
+		supplyCardDiv
+			.html(`${card.name}<img src="${card.image}">`)
+			.css('top', kingdomCoordinateForSupply[index].top)
+			.css('left', kingdomCoordinateForSupply[index].left)
+			.addClass('kingdon-card');
 	} else {
 		return;
-	}
-	if (treasurePointCard[key].type == cardType.Point) {
-		supplyCardDiv.addClass('victory-card');
-	} else if (treasurePointCard[key].type == cardType.Money) {
-		supplyCardDiv.addClass('treasure-card');
-	} else if (treasurePointCard[key].type == cardType.Action) {
-		supplyCardDiv.addClass('kingdon-card');
 	}
 	supplyCardDiv.animate({
 		top: trashCoordinateForSupply.top,
@@ -1977,68 +2008,37 @@ function animateDrowSupply(key){
 
 }
 /*******************************************************/
-/* animateDrowSupplyKingdomToHand：王国カードを手札に取得するアニメーション
+/* animateDrowSupplyToHand：サプライカードを手札に取得するアニメーション
 /*******************************************************/
-function animateDrowSupplyKingdomToHand(card, index){
-	console.log(card);
-	console.log(index);
-
-	const supplyCardDiv = $('<div>');
-	$('.supply-area').append(supplyCardDiv);
-	supplyCardDiv
-		.html(`${card.name}<img src="${card.image}">`)
-		.addClass('get-supply-card')
-		.css('position', 'absolute')
-		.css('top', kingdomCoordinateForSupply[index].top)
-		.css('left', kingdomCoordinateForSupply[index].left);
-	if (card.type == cardType.Point) {
-		supplyCardDiv.addClass('victory-card');
-	} else if (card.type == cardType.Money) {
-		supplyCardDiv.addClass('treasure-card');
-	} else if (card.type == cardType.Action) {
-		supplyCardDiv.addClass('kingdon-card');
-	}
-	supplyCardDiv.animate({
-		top: handCoordinateForSupply.top,
-		left: handCoordinateForSupply.left,
-		width: handCoordinateForSupply.width
-	}, trashWaitTime);
-	setTimeout(() => {
-		supplyCardDiv.remove();
-	}, trashWaitTime);
-}
-/*******************************************************/
-/* animateDrowSupplyToHand：サプライ(勝利点・Moon)カードを手札に取得するアニメーション
-/*******************************************************/
-function animateDrowSupplyToHand(key){
-	console.log(key);
+function animateDrowSupplyToHand(card, index){
 	const supplyCardDiv = $('<div>');
 	$('.supply-area').append(supplyCardDiv);
 	supplyCardDiv
 		.addClass('get-supply-card')
 		.css('position', 'absolute');
-	if(key in victoryCoordinateForSupply){
+	if(card.type == cardType.Point){
 		// 勝利点の場合
 		supplyCardDiv
-			.html(`${victoryPointCard[key].name}<img src="${victoryPointCard[key].image}">`)
-			.css('top', victoryCoordinateForSupply[key].top)
-			.css('left', victoryCoordinateForSupply[key].left);
-	} else if(key in treasureCoordinateForSupply){
+			.html(`${card.name}<img src="${card.image}">`)
+			.css('top', victoryCoordinateForSupply[index].top)
+			.css('left', victoryCoordinateForSupply[index].left)
+			.addClass('victory-card');
+	} else if(card.type == cardType.Money){
 		// Moonの場合
-		console.log(key);
 		supplyCardDiv
-			.html(`${treasurePointCard[key].name}<img src="${treasurePointCard[key].image}">`)
-			.css('top', treasureCoordinateForSupply[key].top)
-			.css('left', treasureCoordinateForSupply[key].left);
+			.html(`${card.name}<img src="${card.image}">`)
+			.css('top', treasureCoordinateForSupply[index].top)
+			.css('left', treasureCoordinateForSupply[index].left)
+			.addClass('treasure-card');
+	} else if(card.type == cardType.Action){
+		// アクションの場合
+		supplyCardDiv
+			.html(`${card.name}<img src="${card.image}">`)
+			.css('top', kingdomCoordinateForSupply[index].top)
+			.css('left', kingdomCoordinateForSupply[index].left)
+			.addClass('kingdon-card');
 	} else {
 		return;
-	}
-	if (treasurePointCard[key].type == cardType.Point) {
-		supplyCardDiv.addClass('victory-card');
-	} else if (treasurePointCard[key].type == cardType.Money) {
-		supplyCardDiv.addClass('treasure-card');
-	} else if (treasurePointCard[key].type == cardType.Action) {
-		supplyCardDiv.addClass('kingdon-card');
 	}
 	supplyCardDiv.animate({
 		top: handCoordinateForSupply.top,
@@ -2318,6 +2318,36 @@ function changePhase(ph){
 	currentPhase = ph;
 }
 /*******************************************************/
+/* deletAllSupplyKingdom：王国カード配列をディープコピーする
+/*******************************************************/
+function deepCopySupply(arraySupply){
+	const cloneArray = [];
+	arraySupply.forEach((supplyOjt) => {
+		console.log(supplyOjt);
+		const cloneOjt = {};
+		cloneOjt.name = supplyOjt.name;
+		cloneOjt.cost = supplyOjt.cost;
+		cloneOjt.type = supplyOjt.type;
+		cloneOjt.remain = supplyOjt.remain;
+		cloneOjt.func = supplyOjt.func;
+		cloneOjt.effect = supplyOjt.effect;
+		cloneOjt.image = supplyOjt.image;
+		cloneArray.push(cloneOjt);
+	});
+	console.log(cloneArray);
+	return cloneArray;
+}
+
+/*******************************************************/
+/* deletAllSupplyKingdom：サプライカードキューをすべて削除する
+/*******************************************************/
+function deletAllSupply(){
+	supplyVictory.splice(0, supplyVictory.length);
+	supplyTreasure.splice(0, supplyTreasure.length);
+	supplyKingdom.splice(0, supplyKingdom.length);
+}
+
+/*******************************************************/
 /* pushDeck：デッキキューの末尾にカードを追加する
 /*******************************************************/
 function pushDeck(card){
@@ -2356,6 +2386,12 @@ function unshiftDeck(card){
 /*******************************************************/
 function shiftDeck(){
 	return myDeck.shift();
+}
+/*******************************************************/
+/* deletAllDeck：デッキキューをすべて削除する
+/*******************************************************/
+function deletAllDeck(){
+	return myDeck.splice(0, myDeck.length);
 }
 /*******************************************************/
 /* pushHand：手札キューの末尾にカードを追加する
@@ -2471,6 +2507,12 @@ function pushDiscard(card){
 	}
 }
 /*******************************************************/
+/* deletAllDiscard：廃棄キューをすべて削除する
+/*******************************************************/
+function deletAllDiscard(){
+	return discard.splice(0, discard.length);
+}
+/*******************************************************/
 /* pushTemporaryArea：一時用キューの末尾にカードを追加する
 /*******************************************************/
 function pushTemporaryArea(item){
@@ -2495,7 +2537,7 @@ function findIndexTemporaryArea(id, key){
 	return tmpArea.findIndex((card) => card[id] == key);
 }
 /*******************************************************/
-/* spliceTemporaryArea：一時用キューをすべて削除する
+/* deletAllTemporaryArea：一時用キューをすべて削除する
 /*******************************************************/
 function deletAllTemporaryArea(){
 	return tmpArea.splice(0, tmpArea.length);
@@ -2511,6 +2553,12 @@ function pushStackCard(func){
 /*******************************************************/
 function shiftStackCard(){
 	return stackCard.shift();
+}
+/*******************************************************/
+/* deletAllStackCard：カード効果実行キューをすべて削除する
+/*******************************************************/
+function deletAllStackCard(){
+	return stackCard.splice(0, stackCard.length);
 }
 /*******************************************************/
 /* shuffleArray：配列のシャッフル
@@ -2532,7 +2580,25 @@ function shuffleArray(array) {
 	}
 	return shuffled;
 }
-
+/*******************************************************/
+/* localStorage：localStorageアクセス関数
+/*******************************************************/
+function getLocalStorage(key) {
+	console.log(key);
+	const item = localStorage.getItem(key);
+	const parseItem = item ? JSON.parse(item) : null;
+	console.log(parseItem);
+	return parseItem;
+}
+function setLocalStorage(key, value) {
+	console.log(key);
+	console.log(value);
+	localStorage.setItem(key, JSON.stringify(value));
+}
+function removeLocalStorage(key) {
+	console.log(key);
+	localStorage.removeItem(key);
+}
 /*******************************************************/
 /* debugAlert：デバッグ用アラート
 /*******************************************************/

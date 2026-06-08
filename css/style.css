@@ -242,6 +242,7 @@
 }
 .play-card{
 	width: 120px;
+	font-size: 14px;
 	aspect-ratio: 3 / 4;
 	text-align: center;
 	border: 2px solid black;
@@ -386,6 +387,7 @@
 	align-items: center;
 }
 .hand-card{
+	font-size: 14px;
 	width: 120px;
 	aspect-ratio: 3 / 4;
 	border: 2px solid black;
@@ -621,7 +623,7 @@
 }
 
 /***********************************************************************/
-/* 説明用モーダルの設定
+/* メニュー用モーダルの設定
 /***********************************************************************/
 /*モーダル本体の指定 + モーダル外側の背景の指定*/
 .setting-modal{
@@ -662,22 +664,34 @@
 	align-items: center;
 }
 .setting-btn{
-	width: 200px;
+	font-size: 24px;
+	width: 250px;
+	height: 40px;
 	margin: 10px 0;
+	background-color: #e9e6d8;
+	border: 2px solid #503e38;
+}
+.setting-btn:hover{
+	background-color: #ffffff;
+}
+.setting-btn:active{
+	transform: scale(0.95) translateY(3px);
 }
 
-
+/***********************************************************************/
+/* ルール用モーダルの設定
+/***********************************************************************/
 /*モーダル本体の指定 + モーダル外側の背景の指定*/
 .rule-modal{
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
+	height: 100%;
 	text-align: center;
 	visibility: hidden;
 	transition: all .3s;
 	box-sizing: border-box;
-	margin-top: 20px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -690,25 +704,154 @@
 
 .rule-modal-slider{
 	width: 900px;
-	height: 90vh;
+	height: 800px;
 }
 .rule-modal-body{
 	position: relative;
 	width: 900px;
 	height: 100%;
-	background-color: white;
-	border: 3px solid gray;
+	background-color: #eee9d8;
+	border: 3px solid #432d23;
+	padding: 0 40px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	z-index: 2000;
 }
+.rule-modal-body h1{
+	width: 100%;
+	text-align: left;
+	line-height: 40px;
+}
+.rule-modal-body h2{
+	width: 100%;
+	text-align: left;
+}
+.rule-modal-body h1 img{
+	height: 30px;
+}
+.rule-modal-body div{
+	display: flex;
+	width: 100%;
+	margin-top: 10px;
+}
+.rule-modal-body div img{
+	width: 300px;
+	margin: 0 10px;
+}
+.close-rule-modal-btn{
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	width: 30px;
+	height: 30px;
+	font-size: 24px;
+	font-weight: 900;
+	color: white;
+	background-color: black;
+	border: 2px solid #432d23;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.close-rule-modal-btn:active{
+	transform: scale(0.95);
+}
 .game-area-image{
-	width: 90%;
+	width: 100%;
+	margin: 10px 0;
 }
 .rule-text{
-	width: 90%;
+	width: 100%;
+	text-align: left;
+	font-size: 24px;
+}
+.rule-modal-body ul,.rule-modal-body ol{
+	width: 100%;
+	text-align: left;
+	padding-left: 20px;
+}
+.rule-modal-body ul li,
+.rule-modal-body ol li{
+	text-align: left;
+	font-size: 24px;
+}
+/***********************************************************************/
+/* Info用モーダルの設定
+/***********************************************************************/
+.infomation-modal{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	visibility: hidden;
+	transition: all .3s;
+	box-sizing: border-box;
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/*モーダル本体に「active」クラス付与した時のスタイル*/
+.infomation-modal.active{
+	visibility: visible;
+}
+
+.infomation-modal-body{
+	position: relative;
+	width: 900px;
+	height: 800px;
+	background-color: #eee9d8;
+	border: 3px solid #432d23;
+	padding: 0 40px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	z-index: 2000;
+}
+.close-infomation-modal-btn{
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	width: 30px;
+	height: 30px;
+	font-size: 24px;
+	font-weight: 900;
+	color: white;
+	background-color: black;
+	border: 2px solid #432d23;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.close-infomation-modal-btn:active{
+	transform: scale(0.95);
+}
+
+.infomation-modal-body h1{
+	width: 100%;
+	text-align: left;
+	line-height: 40px;
+	margin-top: 20px;
+}
+.infomation-modal-body p{
+	width: 100%;
+	text-align: left;
+	font-size: 24px;
+}
+.infomation-modal-body ul,
+.infomation-modal-body ol{
+	width: 100%;
+	text-align: left;
+	padding-left: 20px;
+}
+.infomation-modal-body ul li,
+.infomation-modal-body ol li{
 	text-align: left;
 	font-size: 24px;
 }
