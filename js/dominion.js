@@ -347,6 +347,7 @@ function endTurn(){
 	// 指定ターン経過、ダマスカス鋼完売
 	if (currentTurn >= goalTurn || supplyVictory[victoryIndex.High].remain === 0){
 		terminationProcessing();
+		return;
 	}
 	startTurn();
 }
