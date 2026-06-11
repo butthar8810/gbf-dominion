@@ -55,9 +55,15 @@
 					<div class="base-count buy-count">1</div>
 				</div>
 			</div>
-			<div class="base-area point-area">
-				<img src="images/infomation/point.jpg" alt="勝利点">
-				<div class="base-count point-count">1</div>
+			<div class="count-area">
+				<div class="base-area point-area">
+					<img src="images/infomation/point.jpg" alt="勝利点">
+					<div class="base-count point-count">1</div>
+				</div>
+				<div class="base-area turn-area">
+					<img src="images/infomation/turn.jpg" alt="経過ターン">
+					<div class="base-count turn-count">0</div>
+				</div>
 			</div>
 			<div class="deck-area">
 				<img src="images/infomation/deck.png" alt="デッキ">
@@ -102,12 +108,31 @@
 			<div class="modal-content"></div>
 		</div>
 	</div>
+	<div class="ending-modal">
+		<div class="ending-modal-body">
+			<div class="ending-modal-title">結果</div>
+			<div class="ending-modal-content">
+				<p>あなたの最終得点は</p>
+				<div class="final-score-area">
+					<img src="images/infomation/point.jpg" alt="勝利点">
+					<div class="final-score">0</div>
+				</div>
+				<div class="continue-area">
+					<div class="setting-btn close-ending-modal-btn">閉じる</div>
+					<div class="setting-btn rematch-btn">はじめから</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div class="setting-modal">
 		<div class="setting-modal-body">
-			<div class="setting-btn info-btn">グラニオンについて</div>
-			<div class="setting-btn rule-btn">ルール</div>
-			<div class="setting-btn restart-btn">はじめから</div>
-			<div class="setting-btn close-modal-btn">閉じる</div>
+			<div class="setting-modal-title">メニュー</div>
+			<div class="setting-modal-content">
+				<div class="setting-btn info-btn">グラニオンについて</div>
+				<div class="setting-btn rule-btn">ルール</div>
+				<div class="setting-btn restart-btn">はじめから</div>
+				<div class="setting-btn close-modal-btn">閉じる</div>
+			</div>
 		</div>
 	</div>
 	<div class="infomation-modal">
@@ -125,6 +150,7 @@
 				<li><a href="https://wikiwiki.jp/dominiondeck/">ドミニオン Wiki</a></li>
 				<li><a href="https://jquery.com/">jQuery</a></li>
 				<li><a href="https://magicant.github.io/sjavascript/mt.html">Mersenne Twister in JavaScript</a></li>
+				<li><a href="https://swiperjs.com/">Swiper</a></li>
 			</ul>
 			<h1>その他</h1>
 			<p>
@@ -142,7 +168,8 @@
 						<h1><img src="images/rule/basic.png"> 基本説明</h1>
 						<p class="rule-text">
 							「グラニオン」(ドミニオン)はデッキ構築型カードゲームです。<br>
-							ダマスカス鋼などの武器強化アイテムを手に入れ、武器の強化を目指しましょう。
+							お金の代わりとなるMoon(財宝)カードや王国カードをデッキに加えていき、
+							ダマスカス鋼などの武器強化カードを手に入れ、武器の強化を目指しましょう。
 						</p>
 					</div>
 				</div>
@@ -156,13 +183,13 @@
 							サプライには「勝利点カード」「Moon(財宝)カード」「王国カード」の3種類が置かれています。
 						</p>
 						<ul>
-							<li>勝利点カード：
-								新しいカードを購入するときに使うお金となるカードです。
+							<li>武器強化(勝利点)カード：
+								勝利点が書かれたカードです。ゲーム中に使うことはありませんが、
+								この勝利点を集めて得点を競います。
 								ダマスカス鋼、玉鋼、ギガス鋼の3種類があります。
 							</li>
 							<li>Moonカード：
-								勝利点が書かれたカードです。ゲーム中に使うことはありませんが、
-								ゲーム終了時点で勝利点が最も多い人が勝者となります。
+								カードを購入するときに使うお金となるカードです。
 								ブロンズムーン、シルバームーン、ゴールドムーンの3種類があります。</li>
 							<li>王国カード：
 								上記以外のカード、様々な効果(アクション)を持つカードです。
@@ -184,7 +211,7 @@
 							<li>ブロンズムーン：7枚</li>
 							<li>ギガス鋼：3枚</li>
 						</ul>
-						<p class="rule-text">この10枚を「山札」としてシャッフルし、5枚カードを引いて「手札」にします。</p>
+						<p class="rule-text">この10枚を「山札」としてシャッフルし、最初に5枚カードを引いて「手札」にします。</p>
 						<h2>ゲームの進行とフェイズ</h2>
 						<p class="rule-text">
 							初期デッキを配り、手札を引いたらゲームを開始します。<br>
@@ -193,8 +220,8 @@
 						<ol>
 							<li>
 								アクションフェイズ：<br>
-								アクションカードを1枚使用できる。
-								アクションポイントがなくなる、またはアクションカードを持っていない場合、購入フェイスへ移行する。
+								王国カードを1枚使用できる。
+								アクションポイントがなくなる、または王国カードを持っていない場合、購入フェイスへ移行する。
 							</li>
 							<li>
 								購入フェイズ：<br>
@@ -206,7 +233,6 @@
 								クリーンアップフェイズ：<br>
 								プレイエリアに出ているカードと手札を全て捨て札に置く。
 								そのあと、デッキからカードを5枚引く。
-								そしてアクションフェイズへ...
 							</li>
 						</ol>
 					</div>
@@ -216,8 +242,8 @@
 						<button class="close-rule-modal-btn">×</button>
 						<h1><img src="images/rule/action.jpg"> アクションフェイズ</h1>
 						<p class="rule-text">
-							アクションフェイズでは手札からアクションカードを1枚だけプレイエリアに出し、使用することができます。<br>
-							アクションカードが使用できない、あるいはアクションカードの使用をやめた場合、アクションフェイズは終了となります。<br>
+							アクションフェイズでは手札から王国カードを1枚だけプレイエリアに出し、使用することができます。<br>
+							王国カードが使用できない、あるいは王国カードの使用をやめた場合、アクションフェイズは終了となります。<br>
 						</p>
 						<div>
 							<img src="images/rule/card_action.png" alt="">
@@ -247,7 +273,7 @@
 							</li>
 							<li>
 								カードの購入：<br>
-								使用したMoon(財宝)カードから得たMoonポイント、およびアクションカードなどから得たMoonポイントを合計し、
+								使用したMoon(財宝)カードから得たMoonポイント、および王国カードなどから得たMoonポイントを合計し、
 								得たMoonポイント以下のコスト（カードの左下(黄丸)）のカード1枚をサプライから獲得することができます。
 								獲得したカードは指示が無い限りは捨て札におきます。<br>
 								
@@ -280,14 +306,46 @@
 						</p>
 						<ul>
 							<li>「ダマスカス鋼」の残り枚数が0枚になっている</li>
-							<li>サプライの山札のうち、3種類以上の残り枚数が0枚になっている</li>
-							<li>15ターン経過する</li>
+							<li>20ターン経過する</li>
 						</ul>
 					</div>
 				</div>
 				<div class="swiper-slide">
 					<div class="rule-modal-body">
 						<button class="close-rule-modal-btn">×</button>
+						<h1><img src="images/rule/cleanup.jpg"> ゲーム画面の説明</h1>
+						<img class="game-area-image" src="images/rule/full.png" alt="">
+					</div>
+				</div>
+				<div class="swiper-slide">
+					<div class="rule-modal-body">
+						<button class="close-rule-modal-btn">×</button>
+						<h1><img src="images/rule/cleanup.jpg"> ゲーム画面の説明</h1>
+						<div>
+							<img src="images/rule/left-area.png" alt="">
+							<p class="rule-text">
+								ゲーム画面左部分では各ポイントとデッキの残り枚数を表示しています。<br>
+								<img src="images/rule/action.jpg" style="width: 40px;">
+								：アクションポイント<br>
+								<img src="images/rule/moon.png" style="width: 40px;">
+								：Moonポイント<br>
+								<img src="images/rule/buy.jpg" style="width: 40px;">
+								：購入ポイント（残り購入回数）<br>
+								<img src="images/rule/point.jpg" style="width: 40px;">
+								：勝利点<br>
+								<img src="images/rule/turn.jpg" style="width: 40px;">
+								：ターン数<br>
+							</p>
+						</div>
+						<div>
+							<img src="images/rule/right-area.png" alt="">
+							<p class="rule-text">
+								ゲーム画面右部分では捨て札(左の絵札)と廃棄した札(右の墓場マーク)、ボタン、
+								そしてメニューボタンを表示しています。<br>
+								<img src="images/rule/setting.png" style="width: 40px;">
+								：メニューボタン<br>
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
