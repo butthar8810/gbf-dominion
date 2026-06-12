@@ -35,6 +35,53 @@
 	opacity: 0.3;
 }
 /***********************************************************************/
+/* main
+/***********************************************************************/
+.main{
+	width: 100%;
+	max-width: 900px;
+	height: 100vh;
+	position: relative;
+}
+.game-logo{
+	margin-top: 300px;
+	width: 500px;
+}
+.start-btn-area{
+	height: 100px;
+	width: 100%;
+	position: absolute;
+	bottom: 100px;
+	left: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transform: translateX(-50%);
+	display: flex;
+}
+.start-btn-area a{
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-decoration: none;
+	width: 200px;
+	height: 50px;
+	margin: 0 10px;
+}
+.start-btn-area a:active{
+	transform: scale(0.95) translate(0,2px);
+}
+
+.start-btn-area a span{
+	position: absolute;
+	color: white;
+	font-size: 24px;
+	font-weight: 900;
+	text-stroke: 1px #895d34;
+	-webkit-text-stroke: 1px #895d34;
+}
+/***********************************************************************/
 /* supply-area
 /***********************************************************************/
 .supply-area{
@@ -264,25 +311,29 @@
 	display: flex;
 	flex-direction: column;
 }
-.multiple-btn{
+.phase-info{
+	position: relative;
+	cursor: pointer;
+}
+.phase-info:active{
+	transform: scale(0.95) translate(0,2px);
+}
+.phase-info img{
 	width: 100%;
-	height: 3rem;
-	color: black;
-	background-color: white;
+}
+.phase-info span{
+	width: 100%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
 	font-size: 16px;
 	font-weight: 900;
-	border: 2px solid gray;
-	border-radius: 1.5rem;
-	line-height: 20px;
-	transition: all 0.3s ease;
-}
-.multiple-btn:hover{
 	color: white;
-	background-color: gray;
+	text-shadow: 1px 1px 3px black;
 }
-.multiple-btn:disabled{
-	opacity: 0;
-}
+
 
 .trash-info{
 	width: 100%;

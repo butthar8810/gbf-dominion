@@ -432,7 +432,7 @@ function changePhase(ph, addText = ''){
 	setLocalStorage(keyContinuePhase, ph);
 	switch(ph){
 		case phase.action:
-			updateMultipleBtnDom(`アクション<br>フェイズ終了`);
+			updateMultipleBtnDom(`ｱｸｼｮﾝﾌｪｲｽﾞ終了`);
 			updateInfomationDom(`アクションカードを使用してください`);
 			disabledMultipleBtn(false);
 			// 手札にアクションカードがなければ、次のフェイズに移行する
@@ -442,7 +442,7 @@ function changePhase(ph, addText = ''){
 			}
 			break;
 		case phase.buy:
-			updateMultipleBtnDom(`購入フェイズ<br>終了`);
+			updateMultipleBtnDom(`購入フェイズ終了`);
 			updateInfomationDom(`ムーンカードを使用してください`);
 			disabledMultipleBtn(false);
 			updateHandDom();
@@ -512,6 +512,7 @@ function changePhase(ph, addText = ''){
 			updateInfomationDom(`廃棄するカード(Moon)を選んでください`);
 			disabledMultipleBtn(false);
 			updateHandDom();
+			break;
 		case phase.executeActionByMine2:
 			cost = shiftTemporaryArea();
 			if(cost !== undefined){
@@ -543,7 +544,7 @@ function changePhase(ph, addText = ''){
 			disabledMultipleBtn(true);
 			break;
 		case phase.executeActionByHarbinger:
-			updateMultipleBtnDom(`しない`);
+			updateMultipleBtnDom(`置かない`);
 			updateInfomationDom(`${kingdomCard.Harbinger.name}:あなたの捨て札から1枚カードを山札の上に置きますか`);
 			disabledMultipleBtn(false);
 			setTimeout(() => {
@@ -658,6 +659,7 @@ function setupSettingBtn(){
 	// はじめからボタン
 	$('.restart-btn').click((e) => {
 		$('.setting-modal').removeClass('active');
+		setLocalStorage(keyContinueFlag, false);
 		endGame();
 	});
 
@@ -1013,10 +1015,12 @@ function terminationProcessing(){
 	console.log("terminationProcessing()");
 	$('.rematch-btn').click((e) => {
 		$('.ending-modal').removeClass('active');
+		setLocalStorage(keyContinueFlag, false);
 		endGame();
 	});
 	$('.close-ending-modal-btn').click((e) => {
 		$('.ending-modal').removeClass('active');
+		setLocalStorage(keyContinueFlag, false);
 	});
 	$('.ending-modal').addClass('active');
 		currentPoint = 0;
@@ -1468,7 +1472,7 @@ function updateDiscardDom(){
 	$(`.discard-count`).html(`${discard.length}`);
 }
 function updateMultipleBtnDom(text){
-	$(`.multiple-btn`).html(text);
+	$(`.multiple-btn`).html(`<img src="images/btn2.png"><span>${text}</span>`);
 }
 function updateInfomationDom(text){
 	$(`.info-text`).html(text);
