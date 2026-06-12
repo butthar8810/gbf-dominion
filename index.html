@@ -27,44 +27,19 @@
     <!-- Swiper CDN読み込み -->
     <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+	<script src="js/toppage.js"></script>
 
 	<link rel="icon" href="images/infomation/point.jpg">
 	<title>Gran-Nion -グラニオン-</title>
 </head>
-<body onload="startGame()">
+<body onload="toppage()">
 	<img class="back" src="images/back2.jpg" alt="背景">
 	<div class="main">
 		<img class="game-logo" src="images/GranNion.png" alt="">
 		<div class="start-btn-area">
 			<a href="grannion.html"><img src="images/btn1.png"><span>プレイ</span></a>
-			<a href="#"><img src="images/btn1.png"><span>ルール</span></a>
-			<a href="#"><img src="images/btn1.png"><span>クレジット</span></a>
-		</div>
-	</div>
-
-	<div class="explanation-modal">
-		<div class="explanation-modal-body"></div>
-	</div>
-	<div class="modal">
-		<div class="modal-body">
-			<div class="modal-title"></div>
-			<div class="modal-content"></div>
-		</div>
-	</div>
-	<div class="ending-modal">
-		<div class="ending-modal-body">
-			<div class="ending-modal-title">結果</div>
-			<div class="ending-modal-content">
-				<p>あなたの最終得点は</p>
-				<div class="final-score-area">
-					<img src="images/infomation/point.jpg" alt="勝利点">
-					<div class="final-score">0</div>
-				</div>
-				<div class="continue-area">
-					<div class="setting-btn close-ending-modal-btn">閉じる</div>
-					<div class="setting-btn rematch-btn">再戦</div>
-				</div>
-			</div>
+			<a class="toppage-rule-btn"><img src="images/btn1.png"><span>ルール</span></a>
+			<a class="toppage-credit-btn"><img src="images/btn1.png"><span>クレジット</span></a>
 		</div>
 	</div>
 	<div class="setting-modal">

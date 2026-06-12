@@ -30,7 +30,7 @@ const kingdomCard = {
 	Moneylender: {name: '金持ち', cost: 4, type: cardType.Action, remain: kingdomRemain, func: 'cardMoneylender', effect: `${treasurePointCard.Bronze.name}1枚を廃棄してもよい、廃棄した場合+3Moon`, image: 'images/supply/Moneylender.png'},
 	ThroneRoom: {name: '玉座の間', cost: 4, type: cardType.Action, remain: kingdomRemain, func: 'cardThroneRoom', effect: '手札のアクション1枚を2回使用してもよい', image: 'images/supply/ThroneRoom.png'},
 	Poacher: {name: '密漁者', cost: 4, type: cardType.Action, remain: kingdomRemain, func: 'cardPoacher', effect: '+1ドロー<br>+1アクション<br>+1Moon<br><br>空になっているサプライの山札1つにつき、手札を1枚捨て札にする。', image: 'images/supply/Poacher.png'},
-	Gardens: {name: 'ウェールズの庭園', cost: 4, type: cardType.Point, remain: kingdomRemain, func: 'cardGardens', effect: 'デッキkingdomRemain枚につき1点', image: 'images/supply/Gardens.png'},
+	Gardens: {name: 'ウェールズの庭園', cost: 4, type: cardType.Point, remain: kingdomRemain, func: 'cardGardens', effect: 'デッキ10枚につき1点', image: 'images/supply/Gardens.png'},
 	Market: {name: '市場(よろず屋)', cost: 5, type: cardType.Action, remain: kingdomRemain, func: 'cardMarket', effect: '+1ドロー<br>+1アクション<br>+1購入<br>+1Moon', image: 'images/supply/Market.png'},
 	Sentry: {name: '年長の衛兵', cost: 5, type: cardType.Action, remain: kingdomRemain, func: 'cardSentry', effect: '+1ドロー<br>+1アクション<br>デッキの上2枚を見て、それぞれ廃棄するか、捨て札にするか、デッキの上に戻す。', image: 'images/supply/Sentry.png'},
 	CouncilRoom: {name: '賑やかな議事堂', cost: 5, type: cardType.Action, remain: kingdomRemain, func: 'cardCouncilRoom', effect: '+4ドロー<br>+1購入<br><br>', image: 'images/supply/CouncilRoom.png'},
@@ -170,6 +170,7 @@ function startGame(){
 	initializeQueue();
 	// サプライのセットアップ
 	setupSupply();
+	currentTurn = 0;
 
 	// デッキの準備
 	setupDeck();
@@ -647,7 +648,7 @@ function setupSettingBtn(){
 	$('.close-infomation-modal-btn').click((e) => {
 		$('.infomation-modal').removeClass('active');
 	});
-	// Infoモーダルの設定
+	// ルールモーダルの設定
 	$('.rule-btn').click((e) => {
 		$('.setting-modal').removeClass('active');
 		$('.rule-modal').addClass('active');
@@ -1018,12 +1019,9 @@ function terminationProcessing(){
 		setLocalStorage(keyContinueFlag, false);
 		endGame();
 	});
-	$('.close-ending-modal-btn').click((e) => {
-		$('.ending-modal').removeClass('active');
-		setLocalStorage(keyContinueFlag, false);
-	});
+
 	$('.ending-modal').addClass('active');
-		currentPoint = 0;
+	currentPoint = 0;
 	const handPointCard = myHand.filter(Hand => Hand.type === cardType.Point);
 	const deckPointCard = myDeck.filter(Hand => Hand.type === cardType.Point);
 	const trashPointCard = myTrash.filter(Hand => Hand.type === cardType.Point);
@@ -1046,6 +1044,8 @@ function terminationProcessing(){
 		}
 	});
 	$('.final-score').html(currentPoint);
+	setLocalStorage(keyContinueFlag, false);
+
 }
 /***************************************************************************************/
 /* 根幹処理
@@ -1322,10 +1322,8 @@ function clickHandProcess(handCardDiv, hand){
 		case phase.executeActionByCellar:
 		case phase.executeActionByChapel:
 			if (index === -1) {
-				if(tmpArea.length < 4){
-					pushTemporaryArea(hand);
-					handCardDiv.addClass("select");
-				}
+				pushTemporaryArea(hand);
+				handCardDiv.addClass("select");
 			} else {
 				spliceTemporaryArea(index);
 				handCardDiv.removeClass("select");
@@ -1472,7 +1470,7 @@ function updateDiscardDom(){
 	$(`.discard-count`).html(`${discard.length}`);
 }
 function updateMultipleBtnDom(text){
-	$(`.multiple-btn`).html(`<img src="images/btn2.png"><span>${text}</span>`);
+	$(`.multiple-btn`).html(text);
 }
 function updateInfomationDom(text){
 	$(`.info-text`).html(text);
@@ -2153,7 +2151,14 @@ function cardPoacherSub(){
 /*******************************************************/
 /* 「庭園」の効果関数の宣言
 /*******************************************************/
-function cardGardens(){return Math.floor(myHand.length/10);}
+function cardGardens(){
+	const allDeckLength = 
+		myHand.length + 
+		myDeck.length + 
+		myTrash.length + 
+		playAreaCard.length;
+	return Math.floor(allDeckLength/10);
+}
 
 
 /*******************************************************/
@@ -2448,7 +2453,14 @@ function animateDrowSupply(card, index){
 	supplyCardDiv
 		.addClass('get-supply-card')
 		.css('position', 'absolute');
-	if(card.type == cardType.Point){
+	if (card.name === kingdomCard.Gardens.name) {
+		// ウェールズの庭園の場合、扱いはポイント、引く場所は王国という形にしなければならない
+		supplyCardDiv
+			.html(`${card.name}<img src="${card.image}">`)
+			.css('top', kingdomCoordinateForSupply[index].top)
+			.css('left', kingdomCoordinateForSupply[index].left)
+			.addClass('victory-card');
+	}else if(card.type == cardType.Point){
 		// 勝利点の場合
 		supplyCardDiv
 			.html(`${card.name}<img src="${card.image}">`)
