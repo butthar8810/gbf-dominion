@@ -446,11 +446,14 @@ function changePhase(ph, addText = ''){
 			updateMultipleBtnDom(`購入フェイズ終了`);
 			updateInfomationDom(`ムーンカードを使用してください`);
 			disabledMultipleBtn(false);
+			disabledTogetherBtn(false);
+			checkMoonCard();
 			updateHandDom();
 			break;
 		case phase.cleanup:
 			updateInfomationDom(`クリーンアップ中です。`);
 			disabledMultipleBtn(true);
+			disabledTogetherBtn(true);
 			// クリーンアップ処理を実行
 			animateCleanupToTrash();
 
@@ -1169,6 +1172,8 @@ function playHandCard(index){
 	setLocalStorage(keyContinuePlayArea, playAreaCard);
 	setLocalStorage(keyContinueStack, stackCard);
 
+	checkMoonCard();
+
 	endAction();
 }
 
@@ -1212,6 +1217,21 @@ function endMoon(){
 	}
 	setLocalStorage(keyContinueStack, stackCard);
 	return ret;
+}
+/*******************************************************/
+/* checkMoonCard：手札にMoonカードがあるかチェックし、各種操作を行う
+/*******************************************************/
+function checkMoonCard(){
+	let moonCount = 0;
+	myHand.forEach((hand) => {
+		if (hand.type == cardType.Money) {
+			moonCount++;
+		}
+	});
+	if(currentPhase == phase.buy && moonCount === 0){
+		disabledTogetherBtn(true);
+		updateInfomationDom(`カードを購入`);
+	}
 }
 /*******************************************************/
 /* reconfigureDeck：捨て札のカードをデッキに再構成する
@@ -1280,7 +1300,25 @@ function pushMultiplebtn(){
 			break;
 	}
 }
-
+/*******************************************************/
+/* pushMultiplebtn：マルチボタンが押された時の処理を行う
+/*******************************************************/
+function pushTogetherbtn(){
+	console.log('pushTogetherbtn');
+	const moonCard = [];
+	myHand.forEach((hand, i) => {
+		console.log(hand);
+		if (hand.type == cardType.Money){
+			console.log(`index: ${i}`);
+			moonCard.unshift(i);
+		}
+	});
+	moonCard.forEach((index) => {
+		console.log(`index: ${index}`);
+		playHandCard(index);
+	});
+	
+}
 /***************************************************************************************/
 /* クリック時の処理
 /***************************************************************************************/
@@ -1470,7 +1508,7 @@ function updateDiscardDom(){
 	$(`.discard-count`).html(`${discard.length}`);
 }
 function updateMultipleBtnDom(text){
-	$(`.multiple-btn`).html(text);
+	$(`.multiple-btn-text`).html(text);
 }
 function updateInfomationDom(text){
 	$(`.info-text`).html(text);
@@ -3040,10 +3078,16 @@ function deletAllStackCard(){
 	return stackCard.splice(0, stackCard.length);
 }
 /*******************************************************/
-/* shuffleArray：配列のシャッフル
+/* disabledMultipleBtn：マルチボタンを使用不可にする
 /*******************************************************/
 function disabledMultipleBtn(flag){
-	return $('.multiple-btn').prop('disabled', flag);
+	$('.multiple-btn').prop("disabled", flag);
+}
+/*******************************************************/
+/* disabledTogetherBtn：まとめて出すボタンを使用不可にする
+/*******************************************************/
+function disabledTogetherBtn(flag){
+	return $('.put-together-btn').prop('disabled', flag);
 }
 /*******************************************************/
 /* shuffleArray：配列のシャッフル

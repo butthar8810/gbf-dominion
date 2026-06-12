@@ -230,10 +230,15 @@
 	position: absolute;
 }
 
+.deck-space{
+	display: flex;
+	align-items: flex-end
+}
 .deck-area{
 	height: 108.07px;
 	width: 70px;
 	margin-top: 5px;
+	margin-right: 5px;
 	position: relative;
 }
 .deck-area img{
@@ -259,6 +264,20 @@
 	transform: translate(-50%, -50%);
 }
 
+.btn-area{
+	width: 50px;
+	height: 100%;
+}
+.btn-area img{
+	width: 100%;
+	cursor: pointer;
+}
+.btn-area img:hover{
+	opacity: 0.8;
+}
+.btn-area img:active{
+	transform: scale(0.95) translateY(2px);
+}
 /***********************************************************************/
 /* main-info
 /***********************************************************************/
@@ -311,17 +330,23 @@
 	display: flex;
 	flex-direction: column;
 }
-.phase-info{
+.multiple-btn{
 	position: relative;
 	cursor: pointer;
+	background-color: transparent;
+	border: none;
 }
-.phase-info:active{
+.multiple-btn:active{
 	transform: scale(0.95) translate(0,2px);
 }
-.phase-info img{
+.multiple-btn:disabled{
+	opacity: 0;
+	cursor: default;
+}
+.multiple-btn img{
 	width: 100%;
 }
-.phase-info span{
+.multiple-btn span{
 	width: 100%;
 	position: absolute;
 	top: 50%;
@@ -394,26 +419,33 @@
 	margin: 0 2px;
 }
 
-.btn-info{
-	width: 100%;
-	height: 50px;
-	display: flex;
-	flex-direction: row-reverse;
-	margin-top: 10px;
-}
-.btn-area{
-	width: 50px;
-	height: 100%;
-}
-.btn-area img{
-	width: 100%;
+.put-together-btn{
+	position: relative;
 	cursor: pointer;
+	background-color: transparent;
+	border: none;
 }
-.btn-area img:hover{
-	opacity: 0.8;
+.put-together-btn:active{
+	transform: scale(0.95) translate(0,2px);
 }
-.btn-area img:active{
-	transform: scale(0.95) translateY(2px);
+.put-together-btn:disabled{
+	opacity: 0;
+	cursor: default;
+}
+.put-together-btn img{
+	width: 100%;
+}
+.put-together-btn span{
+	width: 100%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -60%);
+	text-align: center;
+	font-size: 16px;
+	font-weight: 900;
+	color: white;
+	text-shadow: 1px 1px 3px black;
 }
 /***********************************************************************/
 /* hand-area
@@ -423,6 +455,7 @@
 	max-width: 940px;
 	height: 160px;
 	margin: 0 auto;
+	position: relative;
 	display: flex;
 	justify-content: center;
 	align-items: center;
