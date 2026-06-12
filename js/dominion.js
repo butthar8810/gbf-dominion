@@ -1648,7 +1648,7 @@ function updateSupplyDom(){
 			switch(currentPhase) {
 				case phase.buy:
 						if(buySupplyCard(treasure)){
-							animateDrowSupply(key);
+							animateDrowSupply(treasure, i);
 						}
 					break;
 				case phase.executeActionByRemodel2:
@@ -1656,7 +1656,7 @@ function updateSupplyDom(){
 				case phase.executeActionByWorkshop:
 					if (treasure.cost <= exchangeCost) {
 						if (drawSupplyCard(treasure)) {
-							animateDrowSupply(key);
+							animateDrowSupply(treasure, i);
 							exchangeCost = -1;
 							endAction();
 						}
@@ -1665,7 +1665,7 @@ function updateSupplyDom(){
 				case phase.executeActionByArtisan1:
 					if (treasure.cost <= exchangeCost) {
 						if (drowSupplyCardToHand(treasure)){
-							animateDrowSupplyToHand(key);
+							animateDrowSupplyToHand(treasure, i);
 							exchangeCost = -1;
 							cardArtisanSub();
 						}
