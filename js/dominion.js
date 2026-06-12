@@ -136,7 +136,7 @@ const keyContinueAction = 'GranNion.Continue.Action';
 const keyContinueBuy = 'GranNion.Continue.Buy';
 const keyContinueMoon = 'GranNion.Continue.Moon';
 const keyContinuePhase = 'GranNion.Continue.Phase';
-const keyContinueExchangeCost = 'GranNion.Continue.Exchange.Cost';
+
 
 //変数
 let myDeck = [];//name, cost, type, effect, image
@@ -160,12 +160,17 @@ let exchangeCost = -1;
 let MerchantFlag = false;
 let dropIndex;
 
-
+/*******************************************************/
+/* startGame：ゲームスタート
+/*******************************************************/
+function loadGame(){
+	setupSettingBtn();
+	startGame();
+}
 /*******************************************************/
 /* startGame：ゲームスタート
 /*******************************************************/
 function startGame(){
-	console.log("startGame");
 	// 各キューの初期化
 	initializeQueue();
 	// サプライのセットアップ
@@ -176,7 +181,6 @@ function startGame(){
 	setupDeck();
 	// モーダル表示のセットアップ
 	setupExplanationModal();
-	setupSettingBtn();
 
 	// 次のカードをプレイ人数に応じた枚数だけ表向きの山札にして並べる
 	supplyKingdom.sort((a, b) => b.cost - a.cost);
@@ -186,7 +190,6 @@ function startGame(){
 	setupHandCard();
 
 	if (getLocalStorage(keyContinueFlag)) {
-		console.log('途中から始める');
 		startContinue();
 	} else {
 		setTimeout(() => {
@@ -252,33 +255,27 @@ function setupSupply(){
 	if(lastSupplyVictory !== null && continueFlag){
 		// 続きからの場合
 		supplyVictory = lastSupplyVictory;
-		console.log(supplyVictory);
 	} else {
 		// 勝利点カードのキューをコピー
 		supplyVictory = deepCopySupply(Object.values(victoryPointCard));
-		console.log(supplyVictory);
 		removeLocalStorage(keyContinueVictory);
 		setLocalStorage(keyContinueVictory, supplyVictory);
 	}
 	if(lastSupplyTreasure !== null && continueFlag){
 		// 続きからの場合
 		supplyTreasure = lastSupplyTreasure;
-		console.log(supplyTreasure);
 	} else {
 		// Moonカードのキューをコピー
 		supplyTreasure = deepCopySupply(Object.values(treasurePointCard));
-		console.log(supplyTreasure);
 		removeLocalStorage(keyContinueTreasure);
 		setLocalStorage(keyContinueTreasure, supplyTreasure);
 	}
 	if(lastSupplyKingdom !== null && continueFlag){
 		supplyKingdom = lastSupplyKingdom;
-		console.log(supplyKingdom);
 	} else {
 		//用いる王国カードを10種類決める
 		const shuffledSupplyKingdom = shuffleArray(Object.values(kingdomCard)).slice(0, supplyKingdomNum);
 		supplyKingdom = deepCopySupply(shuffledSupplyKingdom);
-		console.log(supplyKingdom);
 		removeLocalStorage(keyContinueKingdom);
 		setLocalStorage(keyContinueKingdom, supplyKingdom);
 	}
@@ -344,13 +341,13 @@ function startTurn(){
 /* endTurn：ターンの始まり
 /*******************************************************/
 function endTurn(){
-	console.log("endTurn()");
 	// 指定ターン経過、ダマスカス鋼完売
 	if (currentTurn >= goalTurn || supplyVictory[victoryIndex.High].remain === 0){
 		terminationProcessing();
 		return;
 	}
 	startTurn();
+	return;
 }
 /*******************************************************/
 /* startContinue：続きから始める
@@ -395,6 +392,7 @@ function startContinue(){
 	updateActionDom();
 	updateBuyDom();
 	updateMoonDom();
+	updateTurnDom();
 	// キューの再現
 	if (lastTrash !== null){
 		myTrash = lastTrash;
@@ -414,7 +412,6 @@ function startContinue(){
 	updateTrashDom();
 	updatePlayAreaDom();
 	updateDiscardDom();
-	updateTurnDom();
 	// フェイズ
 	if (lastPhase !== null){
 		changePhase(lastPhase);
@@ -666,7 +663,12 @@ function setupSettingBtn(){
 		setLocalStorage(keyContinueFlag, false);
 		endGame();
 	});
-
+	// 再戦ボタン
+	$('.rematch-btn').click((e) => {
+		$('.ending-modal').removeClass('active');
+		setLocalStorage(keyContinueFlag, false);
+		endGame();
+	});
 }
 
 /*******************************************************/
@@ -1016,12 +1018,6 @@ function openModalTrashList(){
 /* terminationProcessing：ゲーム終了モーダルを表示する
 /*******************************************************/
 function terminationProcessing(){
-	console.log("terminationProcessing()");
-	$('.rematch-btn').click((e) => {
-		$('.ending-modal').removeClass('active');
-		setLocalStorage(keyContinueFlag, false);
-		endGame();
-	});
 
 	$('.ending-modal').addClass('active');
 	currentPoint = 0;
@@ -1304,17 +1300,13 @@ function pushMultiplebtn(){
 /* pushMultiplebtn：マルチボタンが押された時の処理を行う
 /*******************************************************/
 function pushTogetherbtn(){
-	console.log('pushTogetherbtn');
 	const moonCard = [];
 	myHand.forEach((hand, i) => {
-		console.log(hand);
 		if (hand.type == cardType.Money){
-			console.log(`index: ${i}`);
 			moonCard.unshift(i);
 		}
 	});
 	moonCard.forEach((index) => {
-		console.log(`index: ${index}`);
 		playHandCard(index);
 	});
 	
