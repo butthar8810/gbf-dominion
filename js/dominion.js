@@ -294,7 +294,7 @@ function setupDeck(){
 		// プレイヤーに初期デッキとなる10枚のカードを配る
 		drawSupplyCard(supplyTreasure[treasureIndex.Bronze], 7);
 		drawSupplyCard(supplyVictory[victoryIndex.Low], 3);
-//		drawSupplyCard(kingdomCard.Remodel, 3);
+//		drawSupplyCard(kingdomCard.Harbinger, 3);
 		// 配ったカードをデッキに格納する
 		reconfigureDeck();
 		removeLocalStorage(keyContinueDeck);
@@ -1272,6 +1272,9 @@ function pushMultiplebtn(){
 		case phase.executeActionByVassal://家臣
 			cardVassalSub();
 			break;
+		case phase.executeActionByHarbinger://前駆者
+			cardHarbingerSub();
+			break;
 		case phase.executeActionByRemodel1://改築
 			cardRemodelSub();
 			break;
@@ -1352,10 +1355,20 @@ function clickHandProcess(handCardDiv, hand){
 			}
 			break;
 		case phase.executeActionByCellar:
-		case phase.executeActionByChapel:
 			if (index === -1) {
 				pushTemporaryArea(hand);
 				handCardDiv.addClass("select");
+			} else {
+				spliceTemporaryArea(index);
+				handCardDiv.removeClass("select");
+			}
+			break;
+		case phase.executeActionByChapel:
+			if (index === -1) {
+				if (tmpArea.length < 4){
+					pushTemporaryArea(hand);
+					handCardDiv.addClass("select");
+				}
 			} else {
 				spliceTemporaryArea(index);
 				handCardDiv.removeClass("select");
@@ -1665,7 +1678,7 @@ function updateSupplyDom(){
 				case phase.executeActionByArtisan1:
 					if (victory.cost <= exchangeCost) {
 						if (drowSupplyCardToHand(victory, i)){
-							animateDrowSupplyToHand(key);
+							animateDrowSupplyToHand(victory, i);
 							exchangeCost = -1;
 							cardArtisanSub();
 						}
@@ -1961,6 +1974,7 @@ function cardMerchant(){
 
 /*******************************************************/
 /* 「前駆者」の効果関数の宣言
+/* TODO: 捨て札を見たとき、置かないボタンが効かない
 /*******************************************************/
 function cardHarbinger(){
 	// +1ドロー+1アクション、捨て札からデッキトップにカード1枚を置ける
@@ -1974,11 +1988,14 @@ function cardHarbinger(){
 		return true;
 	}
 	setTimeout(() => {
-		endAction();
 	}, drowWatiTime);
 	return true;
 }
-
+function cardHarbingerSub(){
+	closeModalDom();
+	endAction();
+	return true;
+}
 /*******************************************************/
 /* 「村」の効果関数の宣言
 /*******************************************************/
@@ -2555,7 +2572,14 @@ function animateDrowSupplyToHand(card, index){
 	supplyCardDiv
 		.addClass('get-supply-card')
 		.css('position', 'absolute');
-	if(card.type == cardType.Point){
+	if (card.name === kingdomCard.Gardens.name) {
+		// ウェールズの庭園の場合、扱いはポイント、引く場所は王国という形にしなければならない
+		supplyCardDiv
+			.html(`${card.name}<img src="${card.image}">`)
+			.css('top', kingdomCoordinateForSupply[index].top)
+			.css('left', kingdomCoordinateForSupply[index].left)
+			.addClass('victory-card');
+	}else if(card.type == cardType.Point){
 		// 勝利点の場合
 		supplyCardDiv
 			.html(`${card.name}<img src="${card.image}">`)
