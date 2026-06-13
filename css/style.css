@@ -25,6 +25,12 @@
 .treasure-card{
 	background-color: #fff897;
 }
+.enough-card{
+	background-color: #6d6d6d;
+}
+.enough-card img{
+	opacity: 0.5;
+}
 .empty-card{
 	background-color: #1d1916;
 }
@@ -706,6 +712,18 @@
   border: 2px dotted white;
 }
 
+#drop-card0:hover,
+#drop-card1:hover{
+	cursor:-moz-grab;
+	cursor:-webkit-grab;
+	cursor: grab;
+}
+#drop-card0:active,
+#drop-card1:active{
+	cursor:-moz-grabbing;
+	cursor:-webkit-grabbing;
+	cursor: grabbing;
+}
 /***********************************************************************/
 /* メニュー用モーダルの設定
 /***********************************************************************/

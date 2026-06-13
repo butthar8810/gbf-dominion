@@ -448,6 +448,7 @@ function changePhase(ph, addText = ''){
 			updateHandDom();
 			break;
 		case phase.cleanup:
+			updateSupplyDom();
 			updateInfomationDom(`クリーンアップ中です。`);
 			disabledMultipleBtn(true);
 			disabledTogetherBtn(true);
@@ -1192,6 +1193,7 @@ function endAction(){
 		} 
 	}
 	setLocalStorage(keyContinueStack, stackCard);
+	updateSupplyDom();
 	return ret;
 }
 /*******************************************************/
@@ -1523,14 +1525,28 @@ function updateHandDom(){
 		}
 		switch(currentPhase){
 			case phase.action:
+			case phase.executeActionByThroneRoom:
 				if( hand.type == cardType.Action ){
 					handCardDiv.addClass('available');
 				}
 				break;
 			case phase.buy:
+			case phase.executeActionByMine1:
 				if( hand.type == cardType.Money ){
 					handCardDiv.addClass('available');
 				}
+				break;
+			case phase.executeActionByMoneylender:
+				if( hand.name == treasurePointCard.Bronze.name ){
+					handCardDiv.addClass('available');
+				}
+				break;
+			case phase.executeActionByCellar:
+			case phase.executeActionByPoacher:
+			case phase.executeActionByChapel:
+			case phase.executeActionByRemodel1:
+			case phase.executeActionByArtisan2:
+				handCardDiv.addClass('available');
 				break;
 			default:
 				break;
@@ -1561,6 +1577,8 @@ function updateSupplyDom(){
 			.append(`<div class="remain">${kingdom.remain}</div>`);
 		if (kingdom.remain <= 0) {
 			supplyCardDiv.addClass('empty-card');
+		}else if (currentPhase == phase.buy && kingdom.cost > moonCount) {
+			supplyCardDiv.addClass('enough-card');
 		}else if (kingdom.type == cardType.Point) {
 			supplyCardDiv.addClass('victory-card');
 		} else if (kingdom.type == cardType.Money) {
@@ -1612,6 +1630,8 @@ function updateSupplyDom(){
 		supplyCardDiv.addClass('supply-card');
 		if (victory.remain <= 0) {
 			supplyCardDiv.addClass('empty-card');
+		}else if (currentPhase == phase.buy && victory.cost > moonCount) {
+			supplyCardDiv.addClass('enough-card');
 		} else {
 			supplyCardDiv.addClass('victory-card');
 		}
@@ -1668,6 +1688,8 @@ function updateSupplyDom(){
 		supplyCardDiv.addClass('supply-card');
 		if (treasure.remain <= 0) {
 			supplyCardDiv.addClass('empty-card');
+		}else if (currentPhase == phase.buy && treasure.cost > moonCount) {
+			supplyCardDiv.addClass('enough-card');
 		}else {
 			supplyCardDiv.addClass('treasure-card');
 		}
@@ -3113,5 +3135,6 @@ function removeLocalStorage(key) {
 /* debugAlert：デバッグ用アラート
 /*******************************************************/
 function debugAlert(text) {
-	alert(text);
+//	alert(text);
+	console.log(text);
 }
